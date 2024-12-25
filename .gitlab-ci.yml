@@ -9,7 +9,7 @@ PlaygroundWeb:
     - echo "copy CSS files..."
     - cp css/*.css /var/www/playground.fmsoft.cn/ec2/css -f
     - echo "copy JS files..."
-    - cp js/*.js /var/www/playground.fmsoft.cn/ec2/js -f
+    - cp js/*.js js/*.wasm /var/www/playground.fmsoft.cn/ec2/js -f
     - echo "done"
   only:
     refs:
