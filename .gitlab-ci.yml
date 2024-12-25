@@ -1,0 +1,22 @@
+PlaygroundWeb:
+#  image: busybox:latest
+  stage: deploy
+  script:
+    - echo "copy images..."
+    - cp assets/*.gif assets/*.png assets/*.jpg assets/*.webp assets/*.svg /var/www/playground.fmsoft.cn/ec2/assets -f
+    - echo "copy HTML files..."
+    - cp *.html /var/www/playground.fmsoft.cn/ec2/ -f
+    - echo "copy CSS files..."
+    - cp css/*.css /var/www/playground.fmsoft.cn/ec2/css -f
+    - echo "copy JS files..."
+    - cp js/*.js /var/www/playground.fmsoft.cn/ec2/js -f
+    - echo "done"
+  only:
+    refs:
+      - master
+    changes:
+      - index.html
+      - assets/*
+      - css/*
+      - js/*
+
