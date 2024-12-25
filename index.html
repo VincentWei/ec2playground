@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考鼎码 · EC2 Playground</title>
+
+
+
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>可执行考鼎码 · EC2 Playground</h1>
+    </div>
+
+    <div class="toolbar">
+        <button onclick="runCode()">运行代码</button>
+        <button onclick="downloadCode()">下载代码</button>
+        <button onclick="clearCode()">清除代码</button>
+        <!-- <button onclick="wasmIOclapshow()">鼓掌</button> -->
+        <!-- 可以根据需要添加更多按钮 -->
+    </div>
+
+    <div class="content">
+        <div class="editor">
+            <textarea id="codeEditor"></textarea>
+        </div>
+        <div class="result">
+            <pre id="output"></pre>
+        </div>
+    </div>
+    <!-- 弹窗结构 -->
+    <div id="clapModal" class="modal">
+        <div class="modal-content">
+            <!-- <span class="close-button" onclick="wasmIOclapclose()">&times;</span> -->
+            <img src="./image/clap.gif" alt="Clapping GIF">
+        </div>
+    </div>
+    <!-- include segment -->
+    <!-- include codemirror -->
+    <link rel="stylesheet" href="./codemirror-5.65.18/lib/codemirror.css">
+    <script src="./codemirror-5.65.18/lib/codemirror.js"></script>
+    <script src="./codemirror-5.65.18/mode/ec2/ec2.js"></script>
+    <!-- include theme style -->
+    <link rel="stylesheet" href="./codemirror-5.65.18/theme/solarized.css">
+    <!-- incldue  extension -->
+    <!-- <link rel="stylesheet" href="./codemirror-5.65.18/addon/hint/show-hint.css"> -->
+    <script src="./codemirror-5.65.18/addon/hint/show-hint.js"></script>
+    <!-- <link rel="stylesheet" href="./codemirror-5.65.18/addon/lint/lint.css -->
+    <script src="./codemirror-5.65.18/addon/lint/lint.js"></script>
+    <!-- include idnex js&css -->
+    <script src="./js/index.js"></script>
+    <script src="./js/wasm.js"></script>
+    <link rel="stylesheet" href="./css/index.css">
+</body>
+
+</html>

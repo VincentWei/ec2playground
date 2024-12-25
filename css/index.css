@@ -1,0 +1,148 @@
+/* index css, editor result & gif */
+body {
+    font-family: 'Poppins', sans-serif; /* 使用更现代的字体 */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(135deg, #e6f7ff, #ffecf9); /* 渐变背景 */
+}
+
+.header {
+    background-color: #6200ea; /* 深蓝色 */
+    color: white;
+    padding: 2px 2px;
+    text-align: center;
+    border-bottom: 2px solid #3700b3; /* 深紫色 */
+}
+
+.toolbar {
+    background-color: #e5e0e0; /* 白色背景 */
+    padding: 20px;
+    display: flex;
+    justify-content: flex-start; /* 靠左排列 */
+    gap: 15px; /* 按钮之间的间隔 */
+    border-bottom: 2px solid #d1c4e9; /* 浅紫色 */
+}
+
+.toolbar button {
+    padding: 15px 30px;
+    border: none;
+    background-color: #4caf50; /* 鲜艳绿色 */
+    color: white;
+    cursor: pointer;
+    border-radius: 10px; /* 圆角 */
+    transition: background-color 0.3s ease; /* 过渡效果 */
+    font-weight: bold; /* 加粗字体 */
+    font-size: large;
+}
+
+.toolbar button:hover {
+    background-color: #005207; /* 更深的绿色 */
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    padding: 10px; /* 更多间距 */
+    overflow-y:scroll;
+}
+
+.editor {
+    width: 50%;
+    padding: 10px;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: #ffffff; /* 白色背景 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 阴影 */
+}
+
+.result {
+    width: 50%;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #ffffff; /* 白色背景 */
+    border-left: 1px solid #d1c4e9; /* 浅紫色 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 阴影 */
+    overflow-x: auto;
+}
+
+/* codemirror 样式 */
+.CodeMirror {
+    height: 100%;
+    font-size: 24px; /* 更大的字体 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 阴影 */
+    background-color: #ffffff; /* 白色背景 */
+}
+
+.CodeMirror-hints {
+    border: 1px solid #ccc;
+    background: #ffffff;
+    font-size: 24px; /* 更大的字体 */
+    font-family: 'Poppins', sans-serif; /* 使用更现代的字体 */
+    max-height: 20em;
+    overflow-y: auto;
+    position: absolute;
+    z-index: 10;
+    list-style-type: disc; /* 无序列表 */
+    padding-left: 2em; /* 项目符号间距 */
+    border-radius: 15px; /* 圆角 */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 阴影 */
+}
+
+.CodeMirror-hint {
+    margin: 0;
+    padding: 0.4em 0.8em;
+    white-space: pre;
+    color: #333;
+    cursor: pointer;
+    list-style-position: outside; /* 项目符号位置 */
+}
+
+.CodeMirror-hint-active {
+    background: #bb86fc; /* 浅紫色 */
+    color: white;
+    border-radius: 10px; /* 圆角 */
+}
+
+/* 拍手样式 */
+/* 弹窗样式 */
+.modal {
+    display: none; /* 默认隐藏 */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* 半透明背景 */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    text-align: center;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
