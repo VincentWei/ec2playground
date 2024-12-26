@@ -12,7 +12,7 @@
 
 本项目编码工作由编程语言[洛书]()开发团队完成：
 
-- [CHEN Zhaocheng](#)
+- [CHEN Chaocheng](#)
 - [CHENG Tianyu](#)
 - [HUANG Dongqiao](#)
 
