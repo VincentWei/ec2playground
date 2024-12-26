@@ -20,9 +20,9 @@
 
 本项目的成功开发和实施离不开如下赞助人的支持：
 
-- [WEI Yongming](https://github.com/VincentWei)
 - [LIU Ken](#)
 - [HU Jun](#)
+- [WEI Yongming](https://github.com/VincentWei)
 
 ## 许可证
 
