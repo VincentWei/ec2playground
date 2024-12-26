@@ -26,7 +26,7 @@
 
 ## 许可证
 
-EC2 Playground - The playground for the Executable Coding Code.
+EC2 Playground - The playground for the Executable Coding Code.  
 Copyright (C) 2024, 2025 EC2 Community
 
 This program is free software: you can redistribute it and/or modify
