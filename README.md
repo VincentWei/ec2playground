@@ -20,7 +20,7 @@
 
 本项目的成功开发和实施离不开如下赞助人的支持：
 
-- [LIU Ken](#)
+- [LIU Yongkang](#)
 - [HU Jun](#)
 - [WEI Yongming](https://github.com/VincentWei)
 
