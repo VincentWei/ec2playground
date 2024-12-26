@@ -20,8 +20,8 @@
 
 本项目的成功开发和实施离不开如下赞助人的支持：
 
-- [LIU Yongkang](#)
-- [HU Jun](#)
+- [LIU Yongkang](https://github.com/yongkangl)
+- [HU Jun](https://gitee.com/biparadox)
 - [WEI Yongming](https://github.com/VincentWei)
 
 ## 许可证
