@@ -2,8 +2,8 @@
     height := 整数(height)
 
     若始 (height > 100)
-        输出 100
+        输出(100)
     若否
-        输出 height
+        输出(height)
     若终
 算终
