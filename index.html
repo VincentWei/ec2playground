@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>考鼎码在线练习场</title>
+    <link href="/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 </head>
 
 <body>
@@ -36,22 +36,25 @@
             <img src="assets/clap.gif" alt="Clapping GIF">
         </div>
     </div>
-    <!-- include segment -->
-    <!-- include codemirror -->
+
+    <!-- include assets of bootstrap -->
+    <script src="/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <!-- include assets of codemirror -->
     <link rel="stylesheet" href="/codemirror-5.65.18/lib/codemirror.css">
+    <link rel="stylesheet" href="/codemirror-5.65.18/theme/solarized.css">
+    <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/hint/show-hint.css"> -->
     <script src="/codemirror-5.65.18/lib/codemirror.js"></script>
     <script src="/codemirror-5.65.18/mode/ec2/ec2.js"></script>
-    <!-- include theme style -->
-    <link rel="stylesheet" href="/codemirror-5.65.18/theme/solarized.css">
-    <!-- incldue  extension -->
-    <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/hint/show-hint.css"> -->
     <script src="/codemirror-5.65.18/addon/hint/show-hint.js"></script>
     <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/lint/lint.css -->
     <script src="/codemirror-5.65.18/addon/lint/lint.js"></script>
-    <!-- include idnex js&css -->
+
+    <!-- include site-specific assets -->
     <script src="js/global.js"></script>
     <script src="js/wasm.js"></script>
     <link rel="stylesheet" href="css/global.css">
+
 </body>
 
 </html>
