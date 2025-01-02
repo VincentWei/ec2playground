@@ -15,7 +15,7 @@ PlaygroundWeb:
     refs:
       - master
     changes:
-      - index.html
+      - *.html
       - assets/*
       - css/*
       - js/*
