@@ -2,6 +2,11 @@ PlaygroundWeb:
 #  image: busybox:latest
   stage: deploy
   script:
+    - echo "copy codemirror-5.65.18..."
+    - cp -a codemirror-5.65.18/lib /var/www/play.fmsoft.cn/codemirror-5.65.18/
+    - cp -a codemirror-5.65.18/theme /var/www/play.fmsoft.cn/codemirror-5.65.18/
+    - cp -a codemirror-5.65.18/mode /var/www/play.fmsoft.cn/codemirror-5.65.18/
+    - cp -a codemirror-5.65.18/addon /var/www/play.fmsoft.cn/codemirror-5.65.18/
     - echo "copy images..."
     - cp assets/*.gif assets/*.png assets/*.jpg assets/*.webp assets/*.svg /var/www/play.fmsoft.cn/ec2/assets -f
     - echo "copy HTML files..."
@@ -20,4 +25,8 @@ PlaygroundWeb:
       - assets/*
       - css/*
       - js/*
+      - codemirror-5.65.18/lib/*
+      - codemirror-5.65.18/theme/*
+      - codemirror-5.65.18/mode/*
+      - codemirror-5.65.18/addon/*
 
