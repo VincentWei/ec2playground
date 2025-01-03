@@ -18,17 +18,18 @@ body {
 #program-list {
   position: fixed;
   z-index: 100;
-  left: 0px;
+  width: 280px;
   height: 100%;
+  left: -280px;
   transition: left 0.5s ease-in-out .1s;
 }
 
 #output-area {
   position: fixed;
-  z-index:100;
+  z-index: 100;
   width: 50%;
   height: -webkit-fill-available;
-  right: 0px;
+  right: -50%;
   transition: right 0.5s ease-in-out .1s;
 }
 
