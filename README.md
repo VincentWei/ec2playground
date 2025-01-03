@@ -12,9 +12,9 @@
 
 本项目编码工作由编程语言[洛书]()开发团队完成：
 
-- [CHEN Chaocheng](#)
-- [CHENG Tianyu](#)
-- [HUANG Dongqiao](#)
+- [CHEN Chaocheng](https://gitee.com/cthree2004)
+- [CHENG Tianyu](https://gitee.com/matriller)
+- [HUANG Dongqiao](https://gitee.com/lulihaha)
 
 ## 赞助人
 
