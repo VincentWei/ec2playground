@@ -1,10 +1,6 @@
-.form-control-dark {
-  border-color: var(--bs-gray);
-}
-
-.form-control-dark:focus {
-  border-color: #fff;
-  box-shadow: 0 0 0 .25rem rgba(255, 255, 255, .25);
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 .text-small {
@@ -19,29 +15,30 @@
   outline: 0;
 }
 
-body {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-}
-
-html {
-  height: -webkit-fill-available;
-}
-
-main {
-  height: 100vh;
-  height: -webkit-fill-available;
-  max-height: 100vh;
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
 #program-list {
   position: fixed;
   z-index: 100;
   left: 0px;
   height: 100%;
   transition: left 0.5s ease-in-out .1s;
+}
+
+#output-area {
+  position: fixed;
+  z-index:100;
+  width: 50%;
+  height: -webkit-fill-available;
+  right: 0px;
+  transition: right 0.5s ease-in-out .1s;
+}
+
+.form-control-dark {
+  border-color: var(--bs-gray);
+}
+
+.form-control-dark:focus {
+  border-color: #fff;
+  box-shadow: 0 0 0 .25rem rgba(255, 255, 255, .25);
 }
 
 .dropdown-toggle { outline: 0; }
@@ -103,20 +100,6 @@ main {
     border-radius: 15px; /* 圆角 */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* 阴影 */
     overflow-y:scroll;
-}
-
-.execution {
-    position: fixed;
-    z-index:100;
-    right: 0px;
-    width: 50%;
-    height: -webkit-fill-available;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: #000;
-    border-left: 1px solid #d1c4e9;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
 }
 
 /* codemirror 样式 */

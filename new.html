@@ -150,7 +150,17 @@
     </div>
   </header>
 
-  <aside class="execution">
+  <aside id="output-area" class="p-1 bg-dark shadow-lg">
+    <div class="d-flex justify-content-between pb-3 mb-3 border-bottom">
+      <div>
+        <a href="#" class="link-dark text-decoration-none">输出</a>
+      </div>
+      <div>
+        <button type="button" class="btn-close" aria-label="关闭"
+            onclick="getElementById('output-area').style.setProperty('right', '-50%')">
+        </button>
+      </div>
+    </div>
     <pre id="output"></pre>
   </aside>
 
