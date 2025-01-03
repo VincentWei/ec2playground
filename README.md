@@ -10,7 +10,7 @@
 
 ## 开发者
 
-本项目编码工作由编程语言[洛书]()开发团队完成：
+本项目编码工作由编程语言[洛书](https://losu.tech)开发团队完成：
 
 - [CHEN Chaocheng](https://gitee.com/cthree2004)
 - [CHENG Tianyu](https://gitee.com/matriller)
