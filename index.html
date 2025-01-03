@@ -1,49 +1,147 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>考鼎码在线练习场</title>
-    <link rel="stylesheet" href="/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>考鼎码在线练习场</title>
+  <link rel="stylesheet" href="/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <link rel="stylesheet" href="/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/playground.css">
 </head>
 
 <body>
 
+ <aside id="program-list" class="d-flex flex-nowrap shadow">
+
+  <div class="flex-shrink-0 w-100 p-3 bg-white">
+    <div class="d-flex justify-content-between pb-3 mb-3 border-bottom">
+      <div>
+        <a href="#" class="link-dark text-decoration-none">仓库</a>
+      </div>
+      <div>
+        <button type="button" class="btn-close" aria-label="关闭"
+            onclick="getElementById('program-list').style.setProperty('left', '-300px')">
+        </button>
+      </div>
+    </div>
+
+    <div class="h-100 overflow-y-auto">
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1">
+        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+          第二单元
+        </button>
+        <div class="collapse show" id="home-collapse" style="">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数乘法</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数次幂</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数除法</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数取模</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="true">
+          Dashboard
+        </button>
+        <div class="collapse show" id="dashboard-collapse" style="">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Overview</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Weekly</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Monthly</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Annually</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="true">
+          Orders
+        </button>
+        <div class="collapse show" id="orders-collapse" style="">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Processed</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Shipped</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Returned</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="border-top my-3"></li>
+      <li class="mb-1">
+        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+          Account
+        </button>
+        <div class="collapse" id="account-collapse" style="">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Profile</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
+            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+    </div>
+  </div>
+ </aside>
 
   <header>
     <div class="px-3 py-2 text-bg-dark">
       <div class="container">
-        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between">
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
             <li>
-              <a href="#" class="nav-link text-white">
-                <i class="bi bi-cloud-arrow-down d-block mx-auto mb-1" style="font-size: 2rem"></i>
-                装载
+              <a href="#" class="nav-link text-white"
+                    onclick="getElementById('program-list').style.setProperty('left', '0px')">
+                <i class="bi bi-box-seam d-block mx-auto mb-1 cmd-icon"></i>
+                仓库
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
-                <i class="bi bi-textarea-t d-block mx-auto mb-1" style="font-size: 2rem"></i>
+                <i class="bi bi-textarea-t d-block mx-auto mb-1 cmd-icon"></i>
                 插入
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-secondary">
-                <i class="bi bi-caret-right-fill d-block mx-auto mb-1" style="font-size: 2rem"></i>
+              <a href="#" class="nav-link text-primary" onclick="runCode()">
+                <i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>
                 运行
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-white">
-                <i class="bi bi-cloud-upload d-block mx-auto mb-1" style="font-size: 2rem"></i>
-                保存
+              <a href="#" class="nav-link text-white" onclick="downloadCode()">
+                <i class="bi bi-download d-block mx-auto mb-1 cmd-icon"></i>
+                下载
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link text-warning" onclick="clearCode()">
+                <i class="bi bi-eraser-fill d-block mx-auto mb-1 cmd-icon"></i>
+                清空
+              </a>
+            </li>
+          </ul>
+          <div class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 text-info">
+            <i class="bi bi-playstation" style="font-size: 2rem"></i>
+          </div>
+          <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
+            <li>
+              <a href="#" class="nav-link text-white" onclick="downloadCode()">
+                <i class="bi bi-cloud-upload d-block mx-auto mb-1 cmd-icon"></i>
+                分享
               </a>
             </li>
             <li>
               <a href="#" class="nav-link text-white">
-                <i class="bi bi-eraser-fill d-block mx-auto mb-1" style="font-size: 2rem"></i>
-                清空
+                <i class="bi bi-question-circle d-block mx-auto mb-1 cmd-icon"></i>
+                帮助
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link text-white">
+                <i class="bi bi-people-fill d-block mx-auto mb-1 cmd-icon"></i>
+                人们
               </a>
             </li>
           </ul>
@@ -52,52 +150,53 @@
     </div>
   </header>
 
-    <div class="header">
-        <h1>可执行考鼎码 · 在线练习场</h1>
+  <aside id="output-area" class="p-1 text-white bg-dark shadow-lg">
+    <div class="d-flex justify-content-between border-bottom">
+      <div>
+      </div>
+      <div>
+        <h3>输出</h3>
+      </div>
+      <div data-bs-theme="dark">
+        <button type="button" class="btn-close" aria-label="关闭"
+            onclick="getElementById('output-area').style.setProperty('right', '-50%')">
+        </button>
+      </div>
     </div>
+    <pre id="output"></pre>
+  </aside>
 
-    <div class="toolbar">
-        <button onclick="runCode()">运行代码</button>
-        <button onclick="downloadCode()">下载代码</button>
-        <button onclick="clearCode()">清除代码</button>
-        <!-- <button onclick="wasmIOclapshow()">鼓掌</button> -->
-        <!-- 可以根据需要添加更多按钮 -->
+  <main class="contents">
+    <div class="code-editor">
+        <textarea id="codeEditor"></textarea>
     </div>
+  </main>
 
-    <div class="content">
-        <div class="editor">
-            <textarea id="codeEditor"></textarea>
-        </div>
-        <div class="result">
-            <pre id="output"></pre>
-        </div>
+  <!-- 弹窗结构 -->
+  <div id="clapModal" class="modal">
+    <div class="modal-content">
+      <!-- <span class="close-button" onclick="wasmIOclapclose()">&times;</span> -->
+      <img src="assets/clap.gif" alt="Clapping GIF">
     </div>
-    <!-- 弹窗结构 -->
-    <div id="clapModal" class="modal">
-        <div class="modal-content">
-            <!-- <span class="close-button" onclick="wasmIOclapclose()">&times;</span> -->
-            <img src="assets/clap.gif" alt="Clapping GIF">
-        </div>
-    </div>
+  </div>
 
-    <!-- include assets of bootstrap -->
-    <script src="/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <!-- include assets of bootstrap -->
+  <script src="/bootstrap@5.3.3/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
-    <!-- include assets of codemirror -->
-    <link rel="stylesheet" href="/codemirror-5.65.18/lib/codemirror.css">
-    <link rel="stylesheet" href="/codemirror-5.65.18/theme/solarized.css">
-    <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/hint/show-hint.css"> -->
-    <script src="/codemirror-5.65.18/lib/codemirror.js"></script>
-    <script src="/codemirror-5.65.18/mode/ec2/ec2.js"></script>
-    <script src="/codemirror-5.65.18/addon/hint/show-hint.js"></script>
-    <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/lint/lint.css -->
-    <script src="/codemirror-5.65.18/addon/lint/lint.js"></script>
+  <!-- include assets of codemirror -->
+  <link rel="stylesheet" href="/codemirror-5.65.18/lib/codemirror.css">
+  <link rel="stylesheet" href="/codemirror-5.65.18/theme/solarized.css">
+  <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/hint/show-hint.css"> -->
+  <script src="/codemirror-5.65.18/lib/codemirror.js"></script>
+  <script src="/codemirror-5.65.18/mode/ec2/ec2.js"></script>
+  <script src="/codemirror-5.65.18/addon/hint/show-hint.js"></script>
+  <!-- <link rel="stylesheet" href="/codemirror-5.65.18/addon/lint/lint.css -->
+  <script src="/codemirror-5.65.18/addon/lint/lint.js"></script>
 
-    <!-- include site-specific assets -->
-    <script src="js/global.js"></script>
-    <script src="js/wasm.js"></script>
-    <link rel="stylesheet" href="css/global.css">
-
+  <!-- include site-specific assets -->
+  <script src="js/playground.js"></script>
+  <script src="js/wasm.js"></script>
 </body>
 
 </html>
+

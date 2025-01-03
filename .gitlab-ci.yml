@@ -21,7 +21,6 @@ PlaygroundWeb:
       - master
     changes:
       - index.html
-      - new.html
       - assets/*
       - css/*
       - js/*
