@@ -4,7 +4,7 @@
 #include <string.h>
 #include <time.h>
 
-wasmLibApi wasmLibList[] = { wasm_libcore__init__ };
+wasmLibApi wasmLibList[] = { wasm_libcore__init__, wasm_libmath__init__ };
 
 static int32_t
 test (LosuVm *vm)
@@ -30,11 +30,11 @@ wasmIOrunCode ()
   if (vm_dostring (vm, emscripten_run_script_string ("wasmIOgetCode()"),
                    "Ec2-Playground")
           == 0
-      && vm->main)
+      && vm->main.main)
     {
       clock_t start, end;
       double cpu_time_used;
-      int narg = vm->main->value.func->func.sdef->narg;
+      int narg = vm->main.main->value.func->func.sdef->narg;
       __losuvmJmp *oldjmp = vm->errjmp;
       __losuvmJmp newjmp;
       vm->errjmp = &newjmp;
@@ -43,10 +43,11 @@ wasmIOrunCode ()
         {
         case 0:
           {
-            stack_push (vm, *vm->main);
+            stack_push (vm, *vm->main.main);
             for (int i = 0; i < narg; i++)
               {
-                sprintf (str, "wasmIOinput('请输入第 %d 个参数')", i + 1);
+                sprintf (str, "wasmIOinput('算法: %s 请输入第 %d 个参数: %s')",
+                         vm->main.funcname, i + 1, vm->main.funcargs[i]);
                 stack_push (
                     vm, obj_newstr (vm, emscripten_run_script_string (str)));
               }

@@ -209,6 +209,10 @@ typedef enum
   EC2INS_BITXOR, /* iO   1   2 */
   EC2INS_BITLSH, /* iO   1   2 */
   EC2INS_BITRSH, /* iO   1   2 */
+
+  EC2INS_PUSHSTA, /*iO 0 0 */
+  EC2INS_POPSTA,  /* iO 0 0 */
+  EC2INS_SETSTA,  /* iO 0 0 */
   vmIns_Number,
 
 } vmInsList;
@@ -248,8 +252,8 @@ typedef enum
 
 typedef enum
 {
-  INS_UNOP_NEG, /* - */
-  INS_UNOP_NOT, /* not */
+  INS_UNOP_NEG,    /* - */
+  INS_UNOP_NOT,    /* not */
   INS_UNOP_BITNOT, /* ~ */
   INS_UNOP_NULL,
 } vmIns_UnOp;

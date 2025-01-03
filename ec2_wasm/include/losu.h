@@ -129,6 +129,11 @@ typedef struct __losuvmJmp
   jmp_buf jmpflag;
   struct LosuObj *func; /* catch function */
 } __losuvmJmp;
+typedef struct __losuvmSTA
+{
+  struct LosuObj *top;
+  struct __losuvmSTA *pre;
+} __losuvmSTA;
 typedef struct LosuVm
 {
   struct LosuObj *top, *stack, *stackmax, *base, *mstack, *mtop, *mstackmax;
@@ -156,8 +161,14 @@ typedef struct LosuVm
   uint32_t callhook; // 调用计次器
   uint32_t aluhook;  // 算术计次器
   uint32_t deephook;
+  struct __losuvmSTA *stacksta;
 
-  struct LosuObj *main;
+  struct main
+  {
+    const char *funcname;
+    const char *funcargs[32];
+    struct LosuObj *main;
+  } main;
 
 #ifndef __config_losucore_vm_vmbuff
 #define __config_losucore_vm_vmbuff 128

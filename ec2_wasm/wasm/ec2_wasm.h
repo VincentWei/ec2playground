@@ -10,3 +10,4 @@ extern wasmLibApi wasmLibList[];
 // libs
 
 void wasm_libcore__init__ (LosuVm *vm);
+void wasm_libmath__init__ (LosuVm *vm);

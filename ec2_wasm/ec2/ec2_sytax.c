@@ -112,10 +112,11 @@ static void __losuSyntaxParLeavebreak (_syntaxFunc *func, _syntaxBreak *br);
 static void __losuSyntaxParStatForNum (_syntaxLex *lex, _inlineString *vname);
 static void __losuSyntaxParStatForObj (_syntaxLex *lex, _inlineString *vname);
 static void __losuSyntaxParStatForBody (_syntaxLex *lex, _l_bool isO);
-static _l_bool __losuSyntaxParStatFuncName (_syntaxLex *lex, _syntaxExp *v);
+static _l_bool __losuSyntaxParStatFuncName (_syntaxLex *lex, _syntaxExp *v,
+                                            _l_bool isMain);
 static void __losuSyntaxParStatFuncBody (_syntaxLex *lex, _l_bool nself,
                                          int32_t line, _l_bool isSub);
-static void __losuSyntaxParStatFuncParlist (_syntaxLex *lex);
+static void __losuSyntaxParStatFuncParlist (_syntaxLex *lex, _l_bool isMain);
 static int32_t __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v,
                                                int32_t nvar);
 static int32_t __losuSyntaxParExplist (_syntaxLex *lex);
@@ -343,7 +344,7 @@ struct
   { "非", TOKEN_NOT },
 
   { "若始", TOKEN_IF },       { "若否", TOKEN_ELSE },
-  { "若又", TOKEN_ELSEIF },   { "若终", TOKEN_ENDIF },
+  { "若另", TOKEN_ELSEIF },   { "若终", TOKEN_ENDIF },
 
   { "函始", TOKEN_FUNC },     { "...", TOKEN_ARG },
   { "返回", TOKEN_RETURN },   { "函终", TOKEN_ENDFUNC },
@@ -784,17 +785,20 @@ lex_start:
               return '.';
           }
 
-        case '\\':
+        case '\'':
           {
             next (lex);
             int32_t len = __utf8CheckLen ((uint8_t)lex->current);
-            uint32_t i = 0;
+            _l_unicode i = 0;
             for (int j = 0; j < len; j++)
               {
                 i = (i << 8) + (uint8_t)lex->current;
                 next (lex);
               }
-            //   i = i * 256 + (uint8_t)lex->current;
+            if (lex->current != '\'')
+              __losuSyntaxError (lex, "字符缺少 `'`", lex->current);
+            else
+              next (lex);
             tkv->unicode = i;
             return TOKEN_UNICODE;
           }
@@ -1277,12 +1281,14 @@ __losuSyntaxParStatWith (_syntaxLex *lex, int32_t line)
 
   _syntaxFunc *func = lex->fs;
   _syntaxExp v;
+  __losuSyntaxCgenCodearg0 (func, EC2INS_PUSHSTA);
   int32_t with = __losuSyntaxCgenGetL (func);
   _syntaxBreak br;
   int32_t *oldloop = lex->fs->loopStart;
   lex->fs->loopStart = &with;
   __losuSyntaxParEnterbreak (func, &br);
   __losuSyntaxParNext (lex);
+  __losuSyntaxCgenCodearg0 (func, EC2INS_SETSTA);
   condition (lex, &v);
   // __losuSyntaxParCheck (lex, ':');
   __losuSyntaxParBlock (lex);
@@ -1291,6 +1297,7 @@ __losuSyntaxParStatWith (_syntaxLex *lex, int32_t line)
   __losuSyntaxCgenPalist (func, v.value._bool.f, __losuSyntaxCgenGetL (func));
   __losuSyntaxParCheckMatch (lex, TOKEN_WHILE, TOKEN_ENDWHILE, line);
   __losuSyntaxParLeavebreak (func, &br);
+  __losuSyntaxCgenCodearg0 (func, EC2INS_POPSTA);
 
 #undef condition
 }
@@ -1311,8 +1318,8 @@ __losuSyntaxParStatFunc (_syntaxLex *lex, int32_t line, _l_bool isMain)
 {
   _syntaxExp v;
   __losuSyntaxParNext (lex);
-  __losuSyntaxParStatFuncBody (lex, __losuSyntaxParStatFuncName (lex, &v),
-                               line, isMain);
+  __losuSyntaxParStatFuncBody (
+      lex, __losuSyntaxParStatFuncName (lex, &v, isMain), line, isMain);
   __losuSyntaxCgenSetVar (lex, &v);
 }
 static void
@@ -1401,10 +1408,14 @@ __losuSyntaxParLeavebreak (_syntaxFunc *func, _syntaxBreak *br)
 }
 
 static _l_bool
-__losuSyntaxParStatFuncName (_syntaxLex *lex, _syntaxExp *v)
+__losuSyntaxParStatFuncName (_syntaxLex *lex, _syntaxExp *v, _l_bool isMain)
 {
   _l_bool i = 0;
-  __losuSyntaxParSvar (lex, __losuSyntaxParCheckName (lex), v);
+  _inlineString *ins = __losuSyntaxParCheckName (lex);
+  __losuSyntaxParSvar (lex, ins, v);
+  if (isMain)
+    lex->vm->main.funcname
+        = __losu_objString_newconst (lex->vm, (const char *)ins->str)->str;
   while (lex->tk.token == '.')
     {
       __losuSyntaxParNext (lex);
@@ -1427,15 +1438,26 @@ __losuSyntaxParStatFuncBody (_syntaxLex *lex, _l_bool nself, int32_t line,
   __losuSyntaxParNewfunc (lex, &nfs);
   nfs.fcode->defedline = line;
   nfs.fcode->isMain = isMain;
-  __losuSyntaxParCheck (lex, '(');
+  if (lex->tk.token == '(')
+    __losuSyntaxParCheck (lex, '(');
+  else
+    {
+      int32_t np = 0;
+      __losuSyntaxParAdLcvar (lex, np);
+      nfs.fcode->narg = nfs.naloc;
+      nfs.fcode->isVarg = 0;
+      __losuSyntaxCgenDtStack (&nfs, nfs.naloc);
+      goto funcarg;
+    }
   if (nself)
     {
       __losuSyntaxParNewlcvar (lex,
                                __losu_objString_newconst (lex->vm, "self"), 0);
       __losuSyntaxParAdLcvar (lex, 1);
     }
-  __losuSyntaxParStatFuncParlist (lex);
+  __losuSyntaxParStatFuncParlist (lex, isMain);
   __losuSyntaxParCheck (lex, ')');
+funcarg:
   // __losuSyntaxParCheck (lex, ':');
 
   while (!__losuSyntaxParCheckBlock (lex->tk.token))
@@ -1461,11 +1483,11 @@ __losuSyntaxParStatFuncBody (_syntaxLex *lex, _l_bool nself, int32_t line,
                             nfs.nclosure);
 }
 static void
-__losuSyntaxParStatFuncParlist (_syntaxLex *lex)
+__losuSyntaxParStatFuncParlist (_syntaxLex *lex, _l_bool isMain)
 {
 #define option(lex)                                                           \
   ((lex->tk.token == ',') ? (__losuSyntaxParNext (lex), 1) : 0)
-
+  int32_t i = 0;
   _l_bool isV = 0;
   int32_t np = 0;
   _syntaxFunc *func = lex->fs;
@@ -1483,8 +1505,12 @@ __losuSyntaxParStatFuncParlist (_syntaxLex *lex)
               }
             case TOKEN_NAME:
               {
-                __losuSyntaxParNewlcvar (lex, __losuSyntaxParCheckName (lex),
-                                         np++);
+                _inlineString *Istr = __losuSyntaxParCheckName (lex);
+                if (isMain)
+                    lex->vm->main.funcargs[i++]
+                        = __losu_objString_newconst (lex->vm, Istr->str)->str;
+                  
+                __losuSyntaxParNewlcvar (lex, Istr, np++);
                 break;
               }
             default:
@@ -2279,6 +2305,10 @@ static const struct
   { iO, 1, 2 }, /* EC2INS_BITXOR */
   { iO, 1, 2 }, /* EC2INS_BITLSH */
   { iO, 1, 2 }, /* EC2INS_BITRSH */
+
+  { iO, 0, 0 }, /* EC2INS_PUSHSTA */
+  { iO, 0, 0 }, /* EC2INS_POPSTA */
+  { iO, 0, 0 }, /* EC2INS_SETSTA */
 
 };
 

@@ -12,8 +12,13 @@ LosuExtern const char *unit2str (LosuVm *vm, LosuObj *obj);
 int32_t
 wasm_libcore_io_print (LosuVm *vm)
 {
-  LosuObj *o = arg_get (vm, 1);
-  printf ("%s\n", obj_tostr (vm, o));
+  int32_t n = arg_num (vm);
+  for (int32_t i = 0; i < n; i++)
+    {
+      LosuObj *o = arg_get (vm, i + 1);
+      printf ("%s", obj_tostr (vm, o));
+    }
+  printf ("\n");
   return 0;
 }
 // 输出(提示)
@@ -288,6 +293,16 @@ wasm_libcore_copy (LosuVm *vm)
   return 1;
 }
 
+int32_t
+wasm_libcore_assert (LosuVm *vm)
+{
+  _l_bool b = obj_tobool (vm, arg_get (vm, 1));
+  const char *s = obj_tostr (vm, arg_get (vm, 2));
+  if (!b)
+    vm_error (vm, "%s", s);
+  return 0;
+}
+
 static struct
 {
   const char *name;
@@ -309,7 +324,9 @@ static struct
   { "解析", wasm_libcore_type_unit_tounit },
   { "长度", wasm_libcore_type_any_len },
   { "类型", wasm_libcore_type_type },
-  { "拷贝", wasm_libcore_copy },
+  // { "拷贝", wasm_libcore_copy },
+  { "断言", wasm_libcore_assert },
+
 };
 
 void

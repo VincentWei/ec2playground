@@ -415,6 +415,22 @@ __losuVmcoreFunction (LosuVm *vm, int32_t niss)
   return f;
 }
 
+static void
+checktype (LosuVm *vm, LosuObj *o1, LosuObj *o2)
+{
+  if (strcmp (obj_typeStr (vm, o1), obj_typeStr (vm, o2)))
+    vm_error (vm, " '%s' 与 '%s' 不可进行关系运算", obj_typeStr (vm, o1),
+              obj_typeStr (vm, o2));
+}
+static void
+checktype1 (LosuVm *vm, LosuObj *o1, LosuObj *o2)
+{
+  if ((ovtype (o1) != ovtype (o2))
+      && (ovtype (o1) != LosuTypeDefine_bool
+          && ovtype (o2) != LosuTypeDefine_bool))
+    vm_error (vm, " '%s' 与 '%s' 不可进行关系运算", obj_typeStr (vm, o1),
+              obj_typeStr (vm, o2));
+}
 LosuObj *
 __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
 {
@@ -477,16 +493,25 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
       cinfo->pc = fcode->code;
     }
   top = vm->top;
+  // vmInstruction *pc = cinfo->pc;
+  // while (cgIns_GetOp (*pc) != INS_END)
+  //   {
+  //     switch (cgIns_GetOp (*pc))
+  //       {
+  //       case INS_JMP:
+  //         printf ("%ld:jmp %d\n", pc - cinfo->pc, cgIns_GetS (*pc));
+  //         break;
+  //       default:
+  //         printf ("%ld:%d\n", pc - cinfo->pc, cgIns_GetOp (*pc));
+  //       }
+  //     pc++;
+  //   }
+  // printf ("--------\n");
 
   while (1)
     {
       vmInstruction i = *(cinfo->pc++);
-      if (vm->callhook > 65535 || vm->loophook > 65535)
-        {
-          vm_error (vm, "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
-                    vm->callhook > 65535 ? "❗️" : "",
-                    vm->loophook > 65535 ? "❗️" : "");
-        }
+
       // printf ("@:%d\n", cgIns_GetOp (i));
       switch (cgIns_GetOp (i))
         {
@@ -502,6 +527,12 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           }
         case INS_CALL:
           {
+            if (vm->callhook > 65535 || vm->loophook > 65535)
+              {
+                vm_error (vm, "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
+                          vm->callhook > 65535 ? "❗️" : "",
+                          vm->loophook > 65535 ? "❗️" : "");
+              }
             vm->top = top; // update top
 
             int16_t nres = cgIns_GetB (i);
@@ -619,12 +650,73 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
         case INS_SETLOCAL:
           {
             vm->aluhook++;
-            *(base + cgIns_GetU (i)) = *(--top);
+            if (ovtype (top - 1) == LosuTypeDefine_unit)
+              {
+                // copy index
+                LosuObj new = obj_newunit (vm, 0);
+                LosuObj obj = *(--top);
+                if (ovhash (&obj)->isMap) // map
+                  {
+                    ovhash (&new)->isMap = 1;
+                    LosuNode *n = obj_unit_first (vm, obj);
+                    while (n)
+                      {
+                        obj_setunit (vm, new, n->key, n->value);
+                        n = obj_unit_next (vm, obj, n);
+                      }
+                  }
+                else // list
+                  {
+                    ovhash (&new)->isMap = 0;
+                    int i = 0;
+                    while (1)
+                      {
+                        LosuObj *v = obj_indexunitbynum (vm, obj, i);
+                        if (ovtype (v) == LosuTypeDefine_null)
+                          break;
+                        obj_setunitbynum (vm, new, i, *v);
+                        i++;
+                      }
+                  }
+                *(base + cgIns_GetU (i)) = new;
+              }
+            else
+              *(base + cgIns_GetU (i)) = *(--top);
             break;
           }
         case INS_SETGLOBAL:
           {
             vm->aluhook++;
+            if (ovtype (top - 1) == LosuTypeDefine_unit)
+              {
+                // copy index
+                LosuObj new = obj_newunit (vm, 0);
+                LosuObj obj = *(top - 1);
+                if (ovhash (&obj)->isMap) // map
+                  {
+                    ovhash (&new)->isMap = 1;
+                    LosuNode *n = obj_unit_first (vm, obj);
+                    while (n)
+                      {
+                        obj_setunit (vm, new, n->key, n->value);
+                        n = obj_unit_next (vm, obj, n);
+                      }
+                  }
+                else // list
+                  {
+                    ovhash (&new)->isMap = 0;
+                    int i = 0;
+                    while (1)
+                      {
+                        LosuObj *v = obj_indexunitbynum (vm, obj, i);
+                        if (ovtype (v) == LosuTypeDefine_null)
+                          break;
+                        obj_setunitbynum (vm, new, i, *v);
+                        i++;
+                      }
+                  }
+                *(top - 1) = new;
+              }
             vm->top = top;
             __losuVmcoreSetglobal (vm, (_inlineString *)lcstr[cgIns_GetU (i)]);
             top--;
@@ -1121,6 +1213,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
             // printf ("debug\n");
             vm->aluhook++;
             top -= 2;
+            checktype1 (vm, top, top + 1);
             if (!__losu_object_isObjEqual (top, top + 1))
               dojmp (cinfo->pc, i);
             break;
@@ -1129,6 +1222,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             top -= 2;
+            checktype1 (vm, top, top + 1);
             if (__losu_object_isObjEqual (top, top + 1))
               {
                 // printf
@@ -1141,6 +1235,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             top -= 2;
+            checktype (vm, top, top + 1);
             if (__losu_object_isObjLess (top, top + 1))
               dojmp (cinfo->pc, i);
             break;
@@ -1149,6 +1244,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             top -= 2;
+            checktype (vm, top, top + 1);
             if (!__losu_object_isObjLess (top + 1, top))
               dojmp (cinfo->pc, i);
             break;
@@ -1157,6 +1253,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             top -= 2;
+            checktype (vm, top, top + 1);
             if (__losu_object_isObjLess (top + 1, top))
               dojmp (cinfo->pc, i);
             break;
@@ -1165,6 +1262,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             top -= 2;
+            checktype (vm, top, top + 1);
             if (!__losu_object_isObjLess (top, top + 1))
               dojmp (cinfo->pc, i);
             break;
@@ -1213,7 +1311,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           }
         case INS_JMP:
           {
-            vm->loophook++;
+
             dojmp (cinfo->pc, i);
             break;
           }
@@ -1301,13 +1399,13 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
               if (func->func.sdef->isMain)
                 {
                   func->isMain = 1;
-                  if (vm->main)
+                  if (vm->main.main)
                     vm_error (vm, "重复定义 '算始' ");
-                  vm->main
+                  vm->main.main
                       = (LosuObj *)__losu_mem_malloc (vm, sizeof (LosuObj));
-                  memset (vm->main, 0, sizeof (LosuObj));
-                  ovtype (vm->main) = LosuTypeDefine_function;
-                  ovfunc (vm->main) = func;
+                  memset (vm->main.main, 0, sizeof (LosuObj));
+                  ovtype (vm->main.main) = LosuTypeDefine_function;
+                  ovfunc (vm->main.main) = func;
                 }
             }
             top = vm->top;
@@ -1573,6 +1671,33 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
                   }
                 };
             top--;
+            break;
+          }
+        case EC2INS_PUSHSTA:
+          {
+            __losuvmSTA *newsta = __losu_mem_malloc (vm, sizeof (*newsta));
+            newsta->top = top;
+            newsta->pre = vm->stacksta;
+            vm->stacksta = newsta;
+            break;
+          }
+        case EC2INS_POPSTA:
+          {
+            __losuvmSTA *sta = vm->stacksta;
+            vm->stacksta = sta->pre;
+            __losu_mem_free (vm, sta);
+            break;
+          }
+        case EC2INS_SETSTA:
+          {
+            if (vm->callhook > 65535 || vm->loophook > 65535)
+              {
+                vm_error (vm, "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
+                          vm->callhook > 65535 ? "❗️" : "",
+                          vm->loophook > 65535 ? "❗️" : "");
+              }
+            vm->loophook++;
+            top = vm->stacksta->top;
             break;
           }
         default:

@@ -102,7 +102,12 @@ vm_create (int32_t size)
     // .deephook = 0,
 
     .name = NULL, 
-    .main = NULL,
+    .main = {
+      .funcargs = { NULL },
+      .funcname = NULL,
+      .main = NULL,
+    },
+
   };
 
   int32_t jsta = setjmp (lj.jmpflag);
@@ -289,8 +294,8 @@ vm_close (LosuVm *vm)
       __losu_mem_free (vm, vm->bufftmp);
       vm->nblocks -= vm->nbufftmp * sizeof (char);
     }
-  if (vm->main)
-    __losu_mem_free (vm, vm->main);
+  if (vm->main.main)
+    __losu_mem_free (vm, vm->main.main);
   __losu_mem_free (vm, vm);
 }
 LosuExtern void
@@ -361,7 +366,7 @@ obj_typeStr (LosuVm *vm, LosuObj *obj)
 {
   const char *typeStr[15] = {
     "未定义", "浮点数", "整数", "字符", "字符串", "函数",
-    "unit",   "空",   "布尔", "携程", "调用",   "未知",
+    "unit",   "空",     "布尔", "携程", "调用",   "未知",
   };
   int32_t t = ovtype (obj);
   switch (t)
@@ -588,22 +593,23 @@ unit2str (LosuVm *vm, LosuObj *obj)
             {
             case LosuTypeDefine_string:
               {
-                sprintf (tmp, "%s\"%s\", ", tmp, obj_tostr (vm, value));
+                sprintf (tmp, "%s\"%s\"", tmp, obj_tostr (vm, value));
                 break;
               }
             case LosuTypeDefine_unicode:
               {
-                sprintf (tmp, "%s\\%s, ", tmp, obj_tostr (vm, value));
+                sprintf (tmp, "%s'%s'", tmp, obj_tostr (vm, value));
                 break;
               }
             default:
               {
-                sprintf (tmp, "%s%s, ", tmp, obj_tostr (vm, value));
+                sprintf (tmp, "%s%s", tmp, obj_tostr (vm, value));
                 break;
               }
             }
-
           n = obj_unit_next (vm, *obj, n);
+          if (n)
+            sprintf (tmp, "%s, ", tmp);
         }
       sprintf (tmp, "%s}", tmp);
       return (const char *)__losu_objString_new (vm, tmp)->str;
@@ -612,29 +618,32 @@ unit2str (LosuVm *vm, LosuObj *obj)
     {
       int i = 0;
       sprintf (tmp, "[");
+      LosuObj *n = obj_indexunitbynum (vm, *obj, i++);
       while (1)
         {
-          LosuObj *n = obj_indexunitbynum (vm, *obj, i++);
           if (ovtype (n) == LosuTypeDefine_null)
             break;
           switch (ovtype (n))
             {
             case LosuTypeDefine_string:
               {
-                sprintf (tmp, "%s\"%s\", ", tmp, obj_tostr (vm, n));
+                sprintf (tmp, "%s\"%s\"", tmp, obj_tostr (vm, n));
                 break;
               }
             case LosuTypeDefine_unicode:
               {
-                sprintf (tmp, "%s\\%s, ", tmp, obj_tostr (vm, n));
+                sprintf (tmp, "%s'%s'", tmp, obj_tostr (vm, n));
                 break;
               }
             default:
               {
-                sprintf (tmp, "%s%s, ", tmp, obj_tostr (vm, n));
+                sprintf (tmp, "%s%s", tmp, obj_tostr (vm, n));
                 break;
               }
             }
+          n = obj_indexunitbynum (vm, *obj, i++);
+          if (ovtype (n) != LosuTypeDefine_null)
+            sprintf (tmp, "%s, ", tmp);
         }
       sprintf (tmp, "%s]", tmp);
       return (const char *)__losu_objString_new (vm, tmp)->str;
