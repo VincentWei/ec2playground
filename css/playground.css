@@ -50,6 +50,7 @@ body {
   color: rgba(0, 0, 0, .65);
   background-color: transparent;
 }
+
 .btn-toggle:hover,
 .btn-toggle:focus {
   color: rgba(0, 0, 0, .85);
@@ -67,6 +68,7 @@ body {
 .btn-toggle[aria-expanded="true"] {
   color: rgba(0, 0, 0, .85);
 }
+
 .btn-toggle[aria-expanded="true"]::before {
   transform: rotate(90deg);
 }
@@ -76,14 +78,12 @@ body {
   margin-top: .125rem;
   margin-left: 1.25rem;
 }
+
 .btn-toggle-nav a:hover,
 .btn-toggle-nav a:focus {
   background-color: #d2f4ea;
 }
 
-.scrollarea {
-  overflow-y: auto;
-}
 .contents {
     display: block;
     position: absolute;
@@ -164,19 +164,5 @@ body {
     width: 80%;
     max-width: 500px;
     text-align: center;
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
 }
 
