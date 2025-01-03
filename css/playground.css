@@ -41,7 +41,7 @@ main {
   z-index: 100;
   left: 0px;
   height: 100%;
-  transition: left 0.1s ease-in-out .5s;
+  transition: left 0.5s ease-in-out .1s;
 }
 
 .dropdown-toggle { outline: 0; }
