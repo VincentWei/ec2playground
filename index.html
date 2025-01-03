@@ -104,15 +104,9 @@
               </a>
             </li>
             <li>
-              <a href="#" class="nav-link text-primary" onclick="runCode()">
+              <a href="#" class="nav-link text-primary" onclick="getElementById('output-area').style.setProperty('right', '50%'); runCode()">
                 <i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>
                 运行
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link text-white" onclick="downloadCode()">
-                <i class="bi bi-download d-block mx-auto mb-1 cmd-icon"></i>
-                下载
               </a>
             </li>
             <li>
@@ -128,6 +122,12 @@
           <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
             <li>
               <a href="#" class="nav-link text-white" onclick="downloadCode()">
+                <i class="bi bi-download d-block mx-auto mb-1 cmd-icon"></i>
+                下载
+              </a>
+            </li>
+            <li>
+              <a href="#" class="nav-link text-white" onclick="shareCode()">
                 <i class="bi bi-cloud-upload d-block mx-auto mb-1 cmd-icon"></i>
                 分享
               </a>

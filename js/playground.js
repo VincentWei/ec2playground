@@ -29,7 +29,7 @@ function downloadCode() {
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
     link.href = url;
-    link.download = "code.txt"; // 设置下载文件的名称
+    link.download = "code.ec2"; // 设置下载文件的名称
     link.click();
     setTimeout(function () {
         URL.revokeObjectURL(url); // 释放 URL 对象
