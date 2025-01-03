@@ -147,7 +147,7 @@ body {
 .clapping-modal {
     display: none; /* 默认隐藏 */
     position: fixed;
-    z-index: 1;
+    z-index: 105;
     left: 0;
     top: 0;
     width: 100%;
