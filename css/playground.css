@@ -36,6 +36,13 @@ main {
   overflow-y: hidden;
 }
 
+#program-list {
+  position: fixed;
+  z-index: 100;
+  left: 0px;
+  height: 100%
+}
+
 .dropdown-toggle { outline: 0; }
 
 .btn-toggle {
