@@ -10,11 +10,13 @@
 
 ## 开发者
 
-本项目编码工作由编程语言[洛书](https://losu.tech)开发团队完成：
+本项目主要编码工作由编程语言[洛书](https://losu.tech)开发团队完成：
 
-- [CHEN Chaocheng](https://gitee.com/cthree2004)
+- [CHEN Chaochen](https://gitee.com/cthree2004)
 - [CHENG Tianyu](https://gitee.com/matriller)
 - [HUANG Dongqiao](https://gitee.com/lulihaha)
+
+本项目前端及后端功能开发由<a href="https://github.com/VincentWei" target="_blank" rel="nofollow noreferrer noopener">WEI Yongming</a>完成。
 
 ## 赞助人
 
