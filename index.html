@@ -19,7 +19,25 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <h5>工具栏功能</h5>
+            <h5 class="my-3">主要界面</h5>
+            <p>可执行考鼎码练习场主要包括如下界面：</p>
+            <dl class="row">
+              <dt class="col-sm-3">编辑区</dt>
+              <dd class="col-sm-9">用于编写程序；按 Tab 键将显示常见关键词或者全局函数的快捷输入菜单，连续按两次 Tab 键将隐藏。</dd>
+              <dt class="col-sm-3">工具栏</dt>
+              <dd class="col-sm-9">位于编辑区上侧，点击相应的工具图标将执行相应功能；具体描述见下。</dd>
+              <dt class="col-sm-3">输出面板</dt>
+              <dd class="col-sm-9">点击”运行“图标后从右侧推出，用于展示程序的执行结果。</dd>
+              <dt class="col-sm-3">仓库面板</dt>
+              <dd class="col-sm-9">点击”导入“图标后从左侧推出，可选择社区代码仓库中的程序插入到编辑区的当前编辑位置。</dd>
+            </dl>
+
+            <ul>
+                <li><a href="https://courses.fmsoft.cn/plzs/enlightenment-spec-of-executable-coding-code.html" target="_blank">EC2 规范</a></li>
+                <li><a href="https://gitlab.fmsoft.cn/EC2Bot/snippets" target="_blank">社区分享</a></li>
+            </ul>
+
+            <h5 class="my-3">工具栏功能</h5>
             <div class="d-flex flex-column bg-secondary-subtle">
                 <div class="d-flex m-2 p-2 align-items-center justify-content-between border border-primary-subtle bg-secondary-subtle">
                   <div class="text-bg-dark px-3" style="min-width:64px">
@@ -27,7 +45,7 @@
                     导入
                   </div>
                   <div class="mx-3">
-                    <p>从已有代码仓库中导入代码到编辑区。</p>
+                    <p>从已有代码仓库中导入程序到编辑区；将推出”仓库“面板，请在该面板中选择某个程序导入。</p>
                   </div>
                 </div>
 
@@ -37,7 +55,7 @@
                     运行
                   </div>
                   <div class="mx-3">
-                    <p>执行当前编辑区中的代码，同时会从右侧推出输出区。</p>
+                    <p>执行当前编辑区中的代码，同时会从右侧推出输出区；请在输出区查看程序中的错误或者执行的结果。</p>
                   </div>
                 </div>
 
@@ -47,7 +65,7 @@
                     清空
                   </div>
                   <div class="mx-3">
-                    <p>清空当前编辑器中的所有内容。若意外删除，可在编辑区中输入 Ctrl+Z 或 Cmd+Z 组合键恢复。</p>
+                    <p>清空当前编辑器中的所有内容。若意外清空，可在编辑区中立即输入 Ctrl+Z 或 Cmd+Z 组合键恢复。</p>
                   </div>
                 </div>
 
@@ -57,7 +75,7 @@
                     保存
                   </div>
                   <div class="mx-3">
-                    <p>将当前编辑区中的代码保存到本地文件系统；默认使用 <code>ec2</code> 后缀名。</p>
+                    <p>将当前编辑区中的程序保存到本地文件系统；默认使用 <code>ec2</code> 后缀名。</p>
                   </div>
                 </div>
 
@@ -92,7 +110,7 @@
                 </div>
             </div>
 
-            <h5>参考链接</h5>
+            <h5 class="my-3">参考链接</h5>
             <ul>
                 <li><a href="https://courses.fmsoft.cn/plzs/enlightenment-spec-of-executable-coding-code.html" target="_blank">EC2 规范</a></li>
                 <li><a href="https://gitlab.fmsoft.cn/EC2Bot/snippets" target="_blank">社区分享</a></li>
