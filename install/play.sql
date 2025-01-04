@@ -30,7 +30,7 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `passwd` varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastSignIn` datetime NOT NULL ,
+  `lastSignIn` datetime NOT NULL
 ) ENGINE=InnoDB;
 
 ALTER TABLE `users`
@@ -47,7 +47,7 @@ CREATE TABLE `snippets` (
   `userId` int(4) UNSIGNED NOT NULL,
   `section` varchar(32) NOT NULL,
   `title` varchar(32) NOT NULL,
-  `gitlabId` int(4) UNSIGNED NOT NULL,
+  `gitlabId` int(4) UNSIGNED NOT NULL
 ) ENGINE=InnoDB;
 
 ALTER TABLE `snippets`
