@@ -41,8 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $pass_hash = $db->escape_value(password_hash(
                             $_POST('teacherpasswd'), PASSWORD_BCRYPT, ["cost"=>10]));
-                $action = $db->query("INSERT INTO users (name, passwd)
-                    VALUES ('老师', '$pass_hash')");
+                $action = $db->query("INSERT INTO users (name, passwd, lastSignIn)
+                    VALUES ('老师', '$pass_hash', NOW())");
 
                 $db->close_connection();
             };

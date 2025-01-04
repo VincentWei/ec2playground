@@ -30,7 +30,7 @@ CREATE TABLE `users` (
   `name` varchar(255) NOT NULL,
   `passwd` varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `lastSignIn` datetime
+  `lastSignIn` datetime NOT NULL ,
 ) ENGINE=InnoDB DEFAULT;
 
 ALTER TABLE `users`
