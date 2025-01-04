@@ -11,6 +11,38 @@
 
 <body>
 
+  <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">帮助</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5>界面功能</h5>
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <i class="bi bi-box-seam d-block mx-auto mb-1 cmd-icon"></i>
+                导入
+              </div>
+              <div>
+                <p>从已有代码仓库中导入代码到编辑器。</p>
+              </div>
+            </div>
+
+            <h5>参考链接</h5>
+            <ul>
+                <li><a href="https://courses.fmsoft.cn/plzs/enlightenment-spec-of-executable-coding-code.html" target="_blank">EC2 规范</a></li>
+                <li><a href="https://gitlab.fmsoft.cn/EC2Bot/snippets" target="_blank">社区分享</a></li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          </div>
+        </div>
+      </div>
+  </div>
+
   <div class="modal fade" id="aboutModal" tabindex="-1" aria-labelledby="aboutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -186,7 +218,7 @@
               </a>
             </li>
             <li>
-              <a href="https://courses.fmsoft.cn/plzs/enlightenment-spec-of-executable-coding-code.html" target="_blank" class="nav-link text-white">
+              <a data-bs-toggle="modal" href="#helpModal" class="nav-link text-white">
                 <i class="bi bi-question-circle d-block mx-auto mb-1 cmd-icon"></i>
                 帮助
               </a>
