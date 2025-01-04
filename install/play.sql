@@ -26,7 +26,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `users` (
-  `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` int(4) UNSIGNED NOT NULL,
   `name` varchar(255) NOT NULL,
   `passwd` varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -42,7 +42,7 @@ ALTER TABLE `users`
 --
 
 CREATE TABLE `snippets` (
-  `id` bigint(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `id` bigint(8) UNSIGNED NOT NULL,
   `digest` varchar(32) NOT NULL,
   `userId` int(4) UNSIGNED NOT NULL,
   `section` varchar(32) NOT NULL,
@@ -55,3 +55,11 @@ ALTER TABLE `snippets`
   ADD UNIQUE KEY `digest` (`digest`),
   ADD KEY `userId` (`userId`);
 
+--
+-- AUTO_INCREMENT for tables
+--
+ALTER TABLE `users`
+  MODIFY `id` int(4) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+ALTER TABLE `snippets`
+  MODIFY `id` bigint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
