@@ -31,7 +31,7 @@ CREATE TABLE `users` (
   `passwd` varchar(255) NOT NULL,
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lastSignIn` datetime NOT NULL ,
-) ENGINE=InnoDB DEFAULT;
+) ENGINE=InnoDB;
 
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
@@ -48,7 +48,7 @@ CREATE TABLE `snippets` (
   `section` varchar(32) NOT NULL,
   `title` varchar(32) NOT NULL,
   `gitlabId` int(4) UNSIGNED NOT NULL,
-) ENGINE=InnoDB DEFAULT;
+) ENGINE=InnoDB;
 
 ALTER TABLE `snippets`
   ADD PRIMARY KEY (`id`),
