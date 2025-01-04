@@ -15,6 +15,9 @@ PlaygroundWeb:
     - cp css/*.css /var/www/play.fmsoft.cn/ec2/css -f
     - echo "copy JS files..."
     - cp js/*.js js/*.wasm /var/www/play.fmsoft.cn/ec2/js -f
+    - echo "copy PHP files..."
+    - cp install/* /var/www/play.fmsoft.cn/ec2/install -f
+    - cp tools/* /var/www/play.fmsoft.cn/ec2/tools -f
     - echo "done"
   only:
     refs:
@@ -24,6 +27,8 @@ PlaygroundWeb:
       - assets/*
       - css/*
       - js/*
+      - install/*
+      - tools/*
       - codemirror-5.65.18/lib/*
       - codemirror-5.65.18/theme/*
       - codemirror-5.65.18/mode/*
