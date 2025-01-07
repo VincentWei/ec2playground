@@ -15,20 +15,32 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["username"])
     goto error;
 }
 
-$username = $_POST['username'];
+$username = $db->escape_string($_POST['username']);
 $password = $_POST['password'];
-$rows = $db->query("SELECT id, passwd FROM users WHERE name = '$username'");
-$record = $db->fetch_array($rows);
-$userId = $record["id"];
-$hashed = $record["passwd"];
+$db_result = $db->query("SELECT id, passwd FROM users WHERE name = '$username'");
+if (!$db_result) {
+    $result = new Result(100, $db->last_error());
+    goto error;
+}
+
+if ($db->num_rows($db_result) == 0) {
+    $result = new Result(100, "No such user.");
+    goto error;
+}
+
+$row = $db->fetch_one($db_result);
+$userId = $row["id"];
+$hashed = $row["passwd"];
+$db->free_result($db_result);
+
 if (!password_verify($password, $hashed)) {
-    $result = new Result (100, "Bad password or no such user.");
+    $result = new Result(100, "Bad password or no such user.");
     goto error;
 }
 
 if (empty($_POST['section']) || empty($_POST['title'])
         || empty($_POST['snippet'])) {
-    $result = new Result (100, "Bad contents.");
+    $result = new Result(100, "Bad contents.");
     goto error;
 }
 
@@ -46,13 +58,19 @@ if (!is_array($res)) {
 $digest = $res['_digest'];
 $gitlabId = $res['id'];
 
-$action = $db->query("INSERT INTO snippets (digest, userId, section, title, gitlabId)
+$section = $db->escape_string($section);
+$title = $db->escape_string($title);
+$db_result =
+    $db->query("INSERT INTO snippets (digest, userId, section, title, gitlabId)
         VALUES ('$digest', $userId, '$section', '$title', $gitlabId)");
 
-if (!$action) {
-    $result = new Result (100, "Failed to insert new record for the snippet.");
+if (!$db_result) {
+    $result = new Result(100,
+            "Failed to insert new record for the snippet." . $db->last_error());
     goto error;
 }
+
+$db->free_result($db_result);
 
 $result = new Result(0, 'Success');
 $result->extrMsg = $digest;

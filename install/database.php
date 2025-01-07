@@ -46,30 +46,32 @@ class MySQLDatabase {
     }
 
     public function query($sql) {
-        $result = mysqli_query($this->connection, $sql);
-        $this->confirm_query($result);
-        return $result;
+        return mysqli_query($this->connection, $sql);
     }
 
-    private function confirm_query($result) {
-        if (!$result) {
-            die(mysqli_error($this->connection));
-        }
+    public function last_error() {
+        return mysqli_error($this->connection);
     }
 
-    public function escape_value($string) {
+    public function escape_string($string) {
         $escaped_string = mysqli_real_escape_string($this->connection, $string);
         return $escaped_string;
     }
 
-    // "database neutral" functions
-
-    public function fetch_array($result_set) {
+    public function fetch_one($result_set) {
         return mysqli_fetch_assoc($result_set);
+    }
+
+    public function fetch_all($result_set) {
+        return mysqli_fetch_all($result_set, MYSQLI_ASSOC);
     }
 
     public function num_rows($result_set) {
         return mysqli_num_rows($result_set);
+    }
+
+    public function free_result($result_set) {
+        return mysqli_free_result($result_set);
     }
 
     public function insert_id() {
