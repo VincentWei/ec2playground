@@ -264,5 +264,37 @@ class HttpUtils {
         curl_close($ch);
         return $res;
     }
+
+    public static function httpsGitLabSnippetContents($server, $access_token, $snippet_id) {
+        $url = $server . "/api/v4/snippets/$snippet_id/raw";
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("PRIVATE-TOKEN: $access_token"));
+
+        $start_time = microtime(true);
+        $res = curl_exec($ch);
+        $end_time = microtime(true);
+        if (($end_time - $start_time) > 3.0) {
+            my_log("HttpUtils::httpsGitLabSnippetNew takes " . ($end_time - $start_time) . " seconds ($url)");
+        }
+
+        if ($res === false) {
+            my_log("HttpUtils::httpsGitLabSnippetNew: Fatal error when fetching snippet contents from the GitLab server ($url).");
+        }
+        else {
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if ($http_code != '200') {
+                my_log("HttpUtils::httpsGitLabSnippetNew: error when fetching snippet contents from backend server ($url): $http_code");
+                $res = false;
+            }
+        }
+
+        curl_close($ch);
+        return $res;
+    }
 }
 
