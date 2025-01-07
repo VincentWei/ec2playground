@@ -9,14 +9,14 @@ if (!(include "../config/database.php")) {
     goto error;
 }
 
-$username = $_POST['username'];
-$password = $_POST['password'];
 if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["username"])
         || empty($_POST["password"])) {
     $result = new Result (100, 'Bad request.');
     goto error;
 }
 
+$username = $_POST['username'];
+$password = $_POST['password'];
 $rows = $db->query("SELECT id, passwd FROM users WHERE name = '$username'");
 $record = $db->fetch_array($rows);
 $userId = $record["id"];
@@ -26,14 +26,15 @@ if (!password_verify($password, $hashed)) {
     goto error;
 }
 
-$section = $_POST['section'];
-$title = $_POST['title'];
-$snippet = $_POST['snippet'];
-if (empty($section) || empty($title) || empty($snippet)) {
+if (empty($_POST['section']) || empty($_POST['title'])
+        || empty($_POST['snippet'])) {
     $result = new Result (100, "Bad contents.");
     goto error;
 }
 
+$section = $_POST['section'];
+$title = $_POST['title'];
+$snippet = $_POST['snippet'];
 $res = HttpUtils::httpsGitLabSnippetNew($db->gitlab_host(),
         $db->gitlab_token(), $username, $section, $title, $snippet);
 
