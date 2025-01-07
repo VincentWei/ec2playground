@@ -8,8 +8,7 @@ if (!(include "../config/database.php")) {
     goto error;
 }
 
-$db_result = $db->query("SELECT snippets.id, snippets.userId, snippets.section, snippets.title, snippets.gitlabId "
-       "FROM snippets, selectedSnippets WHERE selectedSnippets.snippetId = snippets.id");
+$db_result = $db->query("SELECT snippets.id, snippets.userId, snippets.section, snippets.title, snippets.gitlabId FROM snippets, selectedSnippets WHERE selectedSnippets.snippetId = snippets.id");
 if (!$db_result) {
     $result = new Result(100, $db->last_error());
     goto error;
