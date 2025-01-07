@@ -54,8 +54,8 @@ if (!$action) {
 }
 
 $result = new Result(0, 'Success');
-$result.extrMsg = $digest;
-$result.data = $gitlabId;
+$result->extrMsg = $digest;
+$result->data = $gitlabId;
 
 error:
 header('content-type:application/json;charset=utf8');
