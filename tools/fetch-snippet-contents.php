@@ -14,8 +14,8 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["snippetDigest"])) {
     goto error;
 }
 
-$snippetDigest = $_POST["snippetDigest"];
-$db_result = $db->query("SELECT id, gitlabId FROM snippets WHERE digest = $snippetDigest");
+$snippetDigest = $db->escape_string($_POST["snippetDigest"]);
+$db_result = $db->query("SELECT id, gitlabId FROM snippets WHERE digest = '$snippetDigest'");
 if (!$db_result) {
     $result = new Result(100, $db->last_error());
     goto error;
