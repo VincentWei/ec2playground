@@ -19,7 +19,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
           </div>
           <div class="modal-body">
-            <form class="contianer">
+            <form>
               <div id="shareModalNewUserFields">
                 <div class="mb-3">
                   <label class="form-label" id="forShareModalStudentName">学生姓名</label>
@@ -40,12 +40,16 @@
                 <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
                 <input type="text" class="form-control" name="title" placeholder="欧几里得算法" maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
               </div>
-              <div class="input-group mb-3">
+              <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
                 <input type="text" class="form-control" name="description" placeholder="本程序是欧几里得算法的迭代实现" maxlength="256" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
               </div>
-              <button type="submit" class="btn btn-primary" id="shareModalSubmit">提交</button>
             </form>
+          </div>    <!-- modal-body -->
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="shareModalSubmit">提交</button>
           </div>
         </div>
       </div>
