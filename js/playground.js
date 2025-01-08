@@ -27,7 +27,7 @@ function shareProgram(formElem) {
         return;
     }
 
-    var formData = new FormData(formElem);
+    var formData = new FormData(document.getElementById("shareModalForm"));
     formData.append("snippet", code);
     console.log(formData);
 
