@@ -32,6 +32,7 @@ if ($db->num_rows($db_result) == 0) {
         $result = new Result(100, "数据库错误：". $db->last_error());
         goto error;
     }
+    $userId = $db->insert_id();
 }
 else {
     $row = $db->fetch_one($db_result);
