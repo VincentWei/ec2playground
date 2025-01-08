@@ -32,7 +32,7 @@ function shareProgram(formElem) {
     console.log(formData);
 
     var request = new XMLHttpRequest();
-    request.open("POST", "/tools/push-new-snippet.php");
+    request.open("POST", "/ec2/tools/push-new-snippet.php");
     request.onload = function (oEvent) {
         console.log(request.response);
         if (request.status == 200) {
