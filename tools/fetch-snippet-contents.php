@@ -9,13 +9,13 @@ if (!(include "../config/database.php")) {
     goto error;
 }
 
-if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["snippetId"])) {
+if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["snippetDigest"])) {
     $result = new Result(100, 'Bad request.');
     goto error;
 }
 
-$snippetId = (int)$_POST["snippetId"];
-$db_result = $db->query("SELECT id, gitlabId FROM snippets WHERE id = $snippetId");
+$snippetDigest = $_POST["snippetDigest"];
+$db_result = $db->query("SELECT id, gitlabId FROM snippets WHERE digest = $snippetDigest");
 if (!$db_result) {
     $result = new Result(100, $db->last_error());
     goto error;
