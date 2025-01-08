@@ -61,10 +61,13 @@ function shareProgram() {
         let response = JSON.parse(request.response);
         console.log(response);
         if (request.status == 200 && response.retCode == 0) {
-            const elem = document.getElementById("shareModalStudentName");
+            const elem;
+
+            elem = document.getElementById("shareModalStudentName");
             let username = elem.getAttribute("value");
-            const elem = document.getElementById("shareModalParentName");
+            elem = document.getElementById("shareModalParentName");
             let password = elem.getAttribute("value");
+
             saveUserInfo(username, password);
             updateUserFields();
             errElem.textContent = "已成功分享！";
