@@ -48,8 +48,8 @@ function shareProgram() {
     var request = new XMLHttpRequest();
     request.open("POST", "/ec2/tools/push-new-snippet.php");
     request.onload = function (oEvent) {
-        console.log(typeof request.response);
-        if (request.status == 200 || request.response.retCode == 0) {
+        let response = JSON.parse(request.response);
+        if (request.status == 200 || response.retCode == 0) {
             let username = document.getElementById("shareModalStudentName").value;
             let password = document.getElementById("shareModalParentName").value;
             saveUserInfo(username, password);
@@ -57,7 +57,7 @@ function shareProgram() {
             errElem.textContent = "已成功分享！";
         }
         else {
-            errElem.textContent = request.response.errorMsg;
+            errElem.textContent = response.errorMsg;
         }
 
         errElem.style.display = "block";
