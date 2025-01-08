@@ -1,5 +1,15 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
-window.onload = function() {
+function saveUserInfo(username, password) {
+    let username_saved = window.localStorage.getItem("username");
+    let password_saved = window.localStorage.getItem("password");
+
+    if (username_saved === null || password_saved === null) {
+        window.localStorage.setItem("username", username);
+        window.localStorage.setItem("password", password);
+    }
+}
+
+function updateUserFields() {
     let username = window.localStorage.getItem("username");
     let password = window.localStorage.getItem("password");
 
@@ -18,7 +28,11 @@ window.onload = function() {
     }
 }
 
-function shareProgram(formElem) {
+window.onload = function() {
+    updateUserFields();
+}
+
+function shareProgram() {
     let code = editor.getValue().trim();
     const errElem = document.getElementById("shareModalErrorMsg");
     if (code.length < 10) {
@@ -27,20 +41,31 @@ function shareProgram(formElem) {
         return;
     }
 
-    var formData = new FormData(document.getElementById("shareModalForm"));
+    const formElem = document.getElementById("shareModalForm");
+    var formData = new FormData(formElem);
     formData.append("snippet", code);
     console.log(formData);
 
     var request = new XMLHttpRequest();
     request.open("POST", "/ec2/tools/push-new-snippet.php");
     request.onload = function (oEvent) {
-        console.log(request.response);
-        if (request.status == 200) {
-            errElem.textContent = "已分享！";
+        console.log(typeof request.response);
+        if (request.status == 200 || request.response.retCode == 0) {
+            let username = document.getElementById("shareModalStudentName").value;
+            let password = document.getElementById("shareModalParentName").value;
+            saveUserInfo(username, password);
+            errElem.textContent = "已成功分享！";
         }
         else {
-            errElem.textContent = "";
+            errElem.textContent = request.response.errorMsg;
         }
+
+        errElem.style.display = "block";
+
+        window.setTimeout(() => {
+            errElem.style.display = "none";
+        }, 1000);
+
     };
 
     request.send(formData);
