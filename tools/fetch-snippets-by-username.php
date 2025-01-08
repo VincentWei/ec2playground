@@ -27,7 +27,7 @@ if ($db->num_rows($db_result) == 0) {
 }
 
 $row = $db->fetch_one($db_result);
-$userId = $row["id"];
+$userId = $row['id'];
 $db->free_result($db_result);
 
 $db_result = $db->query(
@@ -41,7 +41,6 @@ $rows = $db->fetch_all($db_result);
 $db->free_result($db_result);
 
 $result = new Result(0, 'Success');
-$result->extraMsg = $userId;
 $result->data = $rows;
 
 error:
