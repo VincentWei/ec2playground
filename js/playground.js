@@ -29,6 +29,7 @@ function shareProgram(formElem) {
 
     var formData = new FormData(formElem);
     formData.append("snippet", code);
+    console.log(formData);
 
     var request = new XMLHttpRequest();
     request.open("POST", "/tools/push-new-snippet.php");
