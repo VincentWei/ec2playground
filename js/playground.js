@@ -43,12 +43,12 @@ function shareProgram() {
     const formElem = document.getElementById("shareModalForm");
     var formData = new FormData(formElem);
     formData.append("snippet", code);
-    console.log(formData);
 
     var request = new XMLHttpRequest();
     request.open("POST", "/ec2/tools/push-new-snippet.php");
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
+        console.log(response);
         if (request.status == 200 || response.retCode == 0) {
             let username = document.getElementById("shareModalStudentName").value;
             let password = document.getElementById("shareModalParentName").value;
@@ -57,12 +57,13 @@ function shareProgram() {
             errElem.textContent = "已成功分享！";
         }
         else {
-            errElem.textContent = response.errorMsg;
+            errElem.textContent = response.retMsg;
         }
 
         errElem.style.display = "block";
 
         window.setTimeout(() => {
+            const errElem = document.getElementById("shareModalErrorMsg");
             errElem.style.display = "none";
             const closeBtn = document.getElementById("shareModalClose");
             closeBtn.click();

@@ -80,7 +80,7 @@ if (!$db_result) {
 }
 
 $result = new Result(0, '成功');
-$result->extrMsg = $digest;
+$result->extraMsg = $digest;
 $result->data = $gitlabId;
 
 error:
