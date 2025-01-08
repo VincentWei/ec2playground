@@ -19,26 +19,26 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
           </div>
           <div class="modal-body">
-            <form>
+            <form id="shareModalForm" action="javascript:shareProgram(this)">
               <div id="shareModalNewUserFields">
                 <div class="mb-3">
                   <label class="form-label" id="forShareModalStudentName">学生姓名</label>
-                  <input type="text" class="form-control" id="shareModalStudentName" name="username" maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
+                  <input type="text" class="form-control" id="shareModalStudentName" name="username" required maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
                 </div>
                 <div class="mb-3">
                   <span class="form-label" id="forShareModalParentName">家长姓名（兼做密码）</span>
-                  <input type="text" class="form-control" id="shareModalParentName" name="password" maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
+                  <input type="text" class="form-control" id="shareModalParentName" name="password" required maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
                   <div class="form-text">以上信息在首次分享时填写；若更换浏览器，请务必输入相同内容。</div>
                 </div>
               </div>
 
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramSection">程序分类</label>
-                <input type="text" class="form-control" name="section" placeholder="如：数论基础" maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
+                <input type="text" class="form-control" name="section" placeholder="如：数论基础" required maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
-                <input type="text" class="form-control" name="title" placeholder="如：欧几里得算法" maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
+                <input type="text" class="form-control" name="title" placeholder="如：欧几里得算法" required maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
@@ -51,7 +51,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-primary" id="shareModalSubmit">提交</button>
+            <button type="button" class="btn btn-primary" form="shareModalForm">提交</button>
           </div>
         </div>
       </div>

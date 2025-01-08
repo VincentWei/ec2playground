@@ -18,11 +18,39 @@ window.onload = function() {
     }
 }
 
+function shareProgram(formElem) {
+    let code = editor.getValue().trim();
+    const errElem = document.getElementById("shareModalErrorMsg");
+    if (code.length < 10) {
+        errElem.textContent = "至少写一个完整程序才能分享哦。";
+        errElem.style.display = "block";
+        return;
+    }
+
+    var formData = new FormData(formElem);
+    formData.append("snippet", code);
+
+    var request = new XMLHttpRequest();
+    request.open("POST", "/tools/push-new-snippet.php");
+    request.onload = function (oEvent) {
+        console.log(request.response);
+        if (request.status == 200) {
+            errElem.textContent = "已分享！";
+        }
+        else {
+            errElem.textContent = "";
+        }
+    };
+
+    request.send(formData);
+}
+
 window.onerror = function (message) {
     var errorMessage = `页面崩溃: ${message}\n需要刷新`;
     wasmIOprinterr(errorMessage);
     return true; // 阻止默认的错误处理
 };
+
 function runCode() {
     // 清除上一次的运行结果
     if (wasmLock == 1)
@@ -32,6 +60,7 @@ function runCode() {
     Module._wasmIOrunCode();
     // 结束。输出当前时间，年月日，时分秒
 }
+
 function clearCode() {
     // 弹出一个选择框，进行操作确认
     var result = confirm("确定要清空代码吗？");
@@ -42,6 +71,7 @@ function clearCode() {
         document.getElementById('output').innerHTML = "";
     }
 }
+
 function downloadCode() {
     var code = editor.getValue();
     var blob = new Blob([code], { type: "text/plain;charset=utf-8" });
@@ -54,6 +84,7 @@ function downloadCode() {
         URL.revokeObjectURL(url); // 释放 URL 对象
     }, 0);
 }
+
 function editorShowHint(cm, func) {
     var hint = CodeMirror.showHint(cm, func, {
         completeSingle: false // 当只有一个匹配项时不自动完成
