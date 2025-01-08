@@ -54,6 +54,7 @@ function shareProgram() {
             let username = document.getElementById("shareModalStudentName").value;
             let password = document.getElementById("shareModalParentName").value;
             saveUserInfo(username, password);
+            updateUserFields();
             errElem.textContent = "已成功分享！";
         }
         else {
@@ -64,6 +65,8 @@ function shareProgram() {
 
         window.setTimeout(() => {
             errElem.style.display = "none";
+            const closeBtn = document.getElementById("shareModalClose");
+            closeBtn.click();
         }, 1000);
 
     };
