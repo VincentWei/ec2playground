@@ -19,15 +19,17 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="关闭"></button>
           </div>
           <div class="modal-body">
-            <form>
+            <form class="contianer">
               <div id="shareModalNewUserFields">
                 <div class="input-group mb-3">
                   <span class="input-group-text" id="forShareModalStudentName">学生姓名</span>
                   <input type="text" class="form-control" id="shareModalStudentName" name="username" maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
                 </div>
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="forShareModalParentName">家长姓名</span>
-                  <input type="text" class="form-control" id="shareModalParentName" name="password" maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
+                <div class="mb-3">
+                  <div class="input-group">
+                    <span class="input-group-text" id="forShareModalParentName">家长姓名</span>
+                    <input type="text" class="form-control" id="shareModalParentName" name="password" maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
+                  </div>
                   <div class="form-text">以上信息在首次分享时填写。</div>
                 </div>
               </div>
