@@ -21,29 +21,27 @@
           <div class="modal-body">
             <form class="contianer">
               <div id="shareModalNewUserFields">
-                <div class="input-group mb-3">
-                  <span class="input-group-text" id="forShareModalStudentName">学生姓名</span>
+                <div class="mb-3">
+                  <label class="form-label" id="forShareModalStudentName">学生姓名</label>
                   <input type="text" class="form-control" id="shareModalStudentName" name="username" maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
                 </div>
                 <div class="mb-3">
-                  <div class="input-group">
-                    <span class="input-group-text" id="forShareModalParentName">家长姓名</span>
-                    <input type="text" class="form-control" id="shareModalParentName" name="password" maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
-                  </div>
-                  <div class="form-text">以上信息在首次分享时填写。</div>
+                  <span class="form-label" id="forShareModalParentName">家长姓名</span>
+                  <input type="text" class="form-control" id="shareModalParentName" name="password" maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
+                  <div class="form-text">以上信息在首次分享时填写；若更换浏览器，请务必输入相同内容。</div>
                 </div>
               </div>
 
-              <div class="input-group mb-3">
-                <span class="input-group-text" id="forShareModalProgramSection">程序分类</span>
+              <div class="mb-3">
+                <label class="form-label" id="forShareModalProgramSection">程序分类</label>
                 <input type="text" class="form-control" name="section" placeholder="数论基础" maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
               </div>
-              <div class="input-group mb-3">
-                <span class="input-group-text" id="forShareModalProgramTitle">程序标题</span>
+              <div class="mb-3">
+                <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
                 <input type="text" class="form-control" name="title" placeholder="欧几里得算法" maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
               </div>
               <div class="input-group mb-3">
-                <span class="input-group-text" id="forShareModalProgramDesc">程序描述</span>
+                <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
                 <input type="text" class="form-control" name="description" placeholder="本程序是欧几里得算法的迭代实现" maxlength="256" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
               </div>
               <button type="submit" class="btn btn-primary" id="shareModalSubmit">提交</button>
