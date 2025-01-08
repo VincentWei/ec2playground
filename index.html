@@ -34,20 +34,21 @@
 
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramSection">程序分类</label>
-                <input type="text" class="form-control" name="section" placeholder="数论基础" maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
+                <input type="text" class="form-control" name="section" placeholder="如：数论基础" maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
-                <input type="text" class="form-control" name="title" placeholder="欧几里得算法" maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
+                <input type="text" class="form-control" name="title" placeholder="如：欧几里得算法" maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
-                <input type="text" class="form-control" name="description" placeholder="本程序是欧几里得算法的迭代实现" maxlength="256" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
+                <input type="text" class="form-control" name="description" placeholder="如：本程序是欧几里得算法的迭代实现；可留空" maxlength="256" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
               </div>
             </form>
           </div>    <!-- modal-body -->
 
           <div class="modal-footer">
+            <p class="lead mb-3 text-warning">错误信息</p>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             <button type="button" class="btn btn-primary" id="shareModalSubmit">提交</button>
           </div>
