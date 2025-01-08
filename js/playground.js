@@ -49,7 +49,7 @@ function shareProgram() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         console.log(response);
-        if (request.status == 200 || response.retCode == 0) {
+        if (request.status == 200 && response.retCode == 0) {
             let username = document.getElementById("shareModalStudentName").value;
             let password = document.getElementById("shareModalParentName").value;
             saveUserInfo(username, password);
