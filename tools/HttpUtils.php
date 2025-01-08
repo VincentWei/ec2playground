@@ -209,7 +209,7 @@ class HttpUtils {
     }
 
     public static function httpsGitLabSnippetNew($server, $access_token, $username, $section, $title, $snippet) {
-        $url = $server . '/api/v4/snippets';
+        $url = 'https://' . $server . '/api/v4/snippets';
 
         $title = "$username-$section-$title";
         $filename = hash_hmac('md5', $title, $server . time());
@@ -266,7 +266,7 @@ class HttpUtils {
     }
 
     public static function httpsGitLabSnippetContents($server, $access_token, $snippet_id) {
-        $url = $server . "/api/v4/snippets/$snippet_id/raw";
+        $url = 'https://' .  $server . "/api/v4/snippets/$snippet_id/raw";
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 100);
