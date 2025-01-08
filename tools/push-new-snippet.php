@@ -46,9 +46,10 @@ if (empty($_POST['section']) || empty($_POST['title'])
 
 $section = $_POST['section'];
 $title = $_POST['title'];
+$description = $_POST['description'];
 $snippet = $_POST['snippet'];
 $res = HttpUtils::httpsGitLabSnippetNew($db->gitlab_host(),
-        $db->gitlab_token(), $username, $section, $title, $snippet);
+        $db->gitlab_token(), $username, $section, $title, $description, $snippet);
 
 if (!is_array($res)) {
     $result = new Result (100, "Failed to push snipeet to GitLab server.");

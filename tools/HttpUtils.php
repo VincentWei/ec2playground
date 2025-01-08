@@ -208,14 +208,15 @@ class HttpUtils {
         return $res;
     }
 
-    public static function httpsGitLabSnippetNew($server, $access_token, $username, $section, $title, $snippet) {
+    public static function httpsGitLabSnippetNew($server, $access_token,
+            $username, $section, $title, $description, $snippet) {
         $url = 'https://' . $server . '/api/v4/snippets';
 
         $title = "$username-$section-$title";
         $filename = hash_hmac('md5', $title, $server . time());
         $array = array(
-                'title' => "$username-$section-$title",
-                'description' => $title,
+                'title' => "$title",
+                'description' => $description,
                 'visibility' => 'public',
                 'files' => array (
                     array (
@@ -251,7 +252,7 @@ class HttpUtils {
         }
         else {
             $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if ($http_code != '200') {
+            if ($http_code != '201' && $http_code != '200') {
                 my_log("HttpUtils::httpsGitLabSnippetNew: error when creating new snippet on backend server ($url): $http_code");
                 $res = false;
             }
