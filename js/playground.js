@@ -47,6 +47,7 @@ function shareProgram() {
     var request = new XMLHttpRequest();
     request.open("POST", "/ec2/tools/push-new-snippet.php");
     request.onload = function (oEvent) {
+        const errElem = document.getElementById("shareModalErrorMsg");
         let response = JSON.parse(request.response);
         console.log(response);
         if (request.status == 200 && response.retCode == 0) {
@@ -67,7 +68,7 @@ function shareProgram() {
             errElem.style.display = "none";
             const closeBtn = document.getElementById("shareModalClose");
             closeBtn.click();
-        }, 1000);
+        }, 3000);
 
     };
 
