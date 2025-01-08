@@ -17,14 +17,13 @@ function updateUserFields() {
         console.log("not signed in.");
     }
     else {
+        elem = document.getElementById("shareModalStudentName");
+        elem.setAttribute("value", username);
+        elem = document.getElementById("shareModalParentName");
+        elem.setAttribute("value", password);
+
         const elem = document.getElementById("shareModalNewUserFields");
         elem.style.display = "none";
-
-        elem = document.getElementById("shareModalStudentName");
-        elem.value = username;
-
-        elem = document.getElementById("shareModalParentName");
-        elem.value = password;
     }
 }
 
