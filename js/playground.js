@@ -1,4 +1,23 @@
-// index.js: 初始化编辑器、基本操作按钮与页面控制
+// playground.js: 初始化编辑器、基本操作按钮与页面控制等
+window.onload = function() {
+    let username = window.localStorage.getItem("username");
+    let password = window.localStorage.getItem("password");
+
+    if (username === null || password === null) {
+        console.log("not signed in.");
+    }
+    else {
+        const elem = document.getElementById("shareModalNewUserFields");
+        elem.style.display = "none";
+
+        elem = document.getElementById("shareModalStudentName");
+        elem.value = username;
+
+        elem = document.getElementById("shareModalParentName");
+        elem.value = password;
+    }
+}
+
 window.onerror = function (message) {
     var errorMessage = `页面崩溃: ${message}\n需要刷新`;
     wasmIOprinterr(errorMessage);
