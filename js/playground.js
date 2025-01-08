@@ -31,12 +31,22 @@ window.onload = function() {
     updateUserFields();
 }
 
+function dismissShareModal() {
+    window.setTimeout(() => {
+            const errElem = document.getElementById("shareModalErrorMsg");
+            errElem.style.display = "none";
+            const closeBtn = document.getElementById("shareModalClose");
+            closeBtn.click();
+        }, 3000);
+}
+
 function shareProgram() {
     let code = editor.getValue().trim();
     const errElem = document.getElementById("shareModalErrorMsg");
     if (code.length < 10) {
         errElem.textContent = "至少写一个完整程序才能分享哦。";
         errElem.style.display = "block";
+        dismissShareModal();
         return;
     }
 
@@ -51,8 +61,10 @@ function shareProgram() {
         let response = JSON.parse(request.response);
         console.log(response);
         if (request.status == 200 && response.retCode == 0) {
-            let username = document.getElementById("shareModalStudentName").value;
-            let password = document.getElementById("shareModalParentName").value;
+            const elem = document.getElementById("shareModalStudentName");
+            let username = elem.getAttribute("value");
+            const elem = document.getElementById("shareModalParentName");
+            let password = elem.getAttribute("value");
             saveUserInfo(username, password);
             updateUserFields();
             errElem.textContent = "已成功分享！";
@@ -62,14 +74,7 @@ function shareProgram() {
         }
 
         errElem.style.display = "block";
-
-        window.setTimeout(() => {
-            const errElem = document.getElementById("shareModalErrorMsg");
-            errElem.style.display = "none";
-            const closeBtn = document.getElementById("shareModalClose");
-            closeBtn.click();
-        }, 3000);
-
+        dismissShareModal();
     };
 
     request.send(formData);
