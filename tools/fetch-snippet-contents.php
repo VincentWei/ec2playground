@@ -37,7 +37,7 @@ if (!$res) {
 }
 
 $result = new Result(0, 'Success');
-$result->extrMsg = $row['gitlabId'];
+$result->extraMsg = $row['gitlabId'];
 $result->data = $res;
 
 error:
