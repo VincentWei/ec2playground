@@ -8,7 +8,11 @@ if (!(include "../config/database.php")) {
     goto error;
 }
 
-$db_result = $db->query("SELECT snippets.id, snippets.userId, snippets.section, snippets.title, snippets.gitlabId FROM snippets, selectedSnippets WHERE selectedSnippets.snippetId = snippets.id");
+$db_result = $db->query("SELECT users.name, snippets.digest, snippets.section, snippets.title, snippets.gitlabId
+        FROM users, snippets
+        WHERE users.id = snippets.userId
+        ORDER BY snippets.rankValue DESC
+        LIMIT 10");
 if (!$db_result) {
     $result = new Result(100, $db->last_error());
     goto error;

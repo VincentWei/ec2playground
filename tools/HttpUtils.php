@@ -265,6 +265,44 @@ class HttpUtils {
         return $res;
     }
 
+    public static function httpsGitLabSnippetDelete($server, $access_token,
+            $gitlabId) {
+        $url = "https://$server/api/v4/snippets/$gitlabId";
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array (
+            "PRIVATE-TOKEN: $access_token")
+        );
+
+        $start_time = microtime(true);
+        $res = curl_exec($ch);
+        $end_time = microtime(true);
+        if (($end_time - $start_time) > 3.0) {
+            my_log("HttpUtils::httpsGitLabSnippetNew takes " . ($end_time - $start_time) . " seconds ($url)");
+        }
+
+        if ($res === false) {
+            my_log("HttpUtils::httpsGitLabSnippetNew: Fatal error when deleting snippet to the GitLab server ($url).");
+        }
+        else {
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if ($http_code != '204' && $http_code != '200') {
+                my_log("HttpUtils::httpsGitLabSnippetNew: error when deleting snippet on backend server ($url): $http_code");
+                $res = false;
+            }
+            else {
+                $res = true;
+            }
+        }
+
+        curl_close($ch);
+        return $res;
+    }
+
     public static function httpsGitLabSnippetContents($server, $access_token, $snippet_id) {
         $url = 'https://' .  $server . "/api/v4/snippets/$snippet_id/raw";
 
