@@ -49,7 +49,8 @@ body {
     background: transparent var(--bs-btn-refresh-bg) center/1em auto no-repeat;
     border: 0;
     border-radius: .375rem;
-    opacity: var(--bs-btn-refresh-opacity)
+    opacity: var(--bs-btn-refresh-opacity);
+    font-size: 20px;
 }
 
 .btn-refresh:hover {
