@@ -33,6 +33,37 @@ body {
     z-index: 3
 }
 
+.btn-refresh {
+    --bs-btn-refresh-color: #000;
+    --bs-btn-refresh-opacity: 0.5;
+    --bs-btn-refresh-hover-opacity: 0.75;
+    --bs-btn-refresh-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    --bs-btn-refresh-focus-opacity: 1;
+    --bs-btn-refresh-disabled-opacity: 0.25;
+    --bs-btn-refresh-white-filter: invert(1) grayscale(100%) brightness(200%);
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: .25em .25em;
+    color: var(--bs-btn-refresh-color);
+    background: transparent var(--bs-btn-refresh-bg) center/1em auto no-repeat;
+    border: 0;
+    border-radius: .375rem;
+    opacity: var(--bs-btn-refresh-opacity)
+}
+
+.btn-refresh:hover {
+    color: var(--bs-btn-refresh-color);
+    text-decoration: none;
+    opacity: var(--bs-btn-refresh-hover-opacity)
+}
+
+.btn-refresh:focus {
+    outline: 0;
+    box-shadow: var(--bs-btn-refresh-focus-shadow);
+    opacity: var(--bs-btn-refresh-focus-opacity)
+}
+
 #program-list {
   position: fixed;
   z-index: 100;
