@@ -100,7 +100,7 @@
               <dt class="col-sm-3">输出面板</dt>
               <dd class="col-sm-9">点击”运行“图标后从右侧推出，用于展示程序的执行结果。</dd>
               <dt class="col-sm-3">仓库面板</dt>
-              <dd class="col-sm-9">点击”导入“图标后从左侧推出，可选择社区代码仓库中的程序插入到编辑区的当前编辑位置。</dd>
+              <dd class="col-sm-9">点击”仓库“图标后从左侧推出，可选择社区代码仓库中的程序插入到编辑区的当前编辑位置，亦可删除自己的程序。</dd>
             </dl>
 
             <h5 class="my-3">工具栏功能</h5>
@@ -256,104 +256,65 @@
       </div>
     </div>
 
+    <template id="snippetSectionTemplate">
+      <li class="mb-1">
+        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse"
+                data-bs-target="#USERNAME-SECTIONNAME-collapse" aria-expanded="false">
+          SECTIONAME
+        </button>
+        <div class="collapse" id="USERNAME-SECTIONNAME-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+          </ul>
+        </div>
+        </li>
+    </template>
+
+    <template id="mySnippetTemplate">
+        <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
+          <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
+                title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+          <div class="d-flex ms-auto">
+            <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
+              <i class="bi bi-arrow-down-right"></i>
+            </button>
+            <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
+              <i class="bi bi-link"></i>
+            </button>
+            <button type="button" class="btn-icon btn-delete-program mt-0 me-0" aria-label="删除此程序" title="删除此程序">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </li>
+    </template>
+
+    <template id="othersSnippetTemplate">
+        <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
+          <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
+                title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+          <div class="d-flex ms-auto">
+            <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
+              <i class="bi bi-arrow-down-right"></i>
+            </button>
+            <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
+              <i class="bi bi-link"></i>
+            </button>
+            <button type="button" class="btn-icon btn-star mt-0 me-0" aria-label="点亮星星" title="点亮星星">
+              <i class="bi bi-star"></i>
+            </button>
+          </div>
+        </li>
+    </template>
+
     <div class="h-100 overflow-y-auto">
-    <h4>老师</h4>
-    <ul class="list-unstyled ps-0">
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#老师-第二单元-collapse" aria-expanded="false">
-          第二单元
-        </button>
-        <div class="collapse" id="老师-第二单元-collapse" style="">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li class="d-flex align-items-center ps-3 pe-2 py-1">
-              <a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数乘法</a>
-              <div class="d-flex ms-auto">
-                <button type="button" class="btn-icon btn-import-program text-nowrap" aria-label="导入代码到编辑区" title="导入代码到编辑区">
-                  <i class="bi bi-arrow-down-right"></i>
-                </button>
-                <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接到剪贴板" title="复制分享链接到剪贴板">
-                  <i class="bi bi-link"></i>
-                </button>
-                <button type="button" class="btn-icon btn-delete-program mt-0 me-0" aria-label="删除此程序" title="删除此程序">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-            <li class="d-flex align-items-center ps-3 pe-2 py-1">
-              <a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数次幂</a>
-              <div class="d-flex ms-auto">
-                <button type="button" class="btn-icon btn-import-program text-nowrap" aria-label="导入代码到编辑区" title="导入代码到编辑区">
-                  <i class="bi bi-arrow-down-right"></i>
-                </button>
-                <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接到剪贴板" title="复制分享链接到剪贴板">
-                  <i class="bi bi-link"></i>
-                </button>
-                <button type="button" class="btn-icon btn-delete-program mt-0 me-0" aria-label="删除此程序" title="删除此程序">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数除法</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">自然数取模</a></li>
-          </ul>
-        </div>
-      </li>
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#老师-第三单元-collapse" aria-expanded="false">
-          第三单元
-        </button>
-        <div class="collapse" id="老师-第三单元-collapse" style="">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Overview</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Weekly</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Monthly</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Annually</a></li>
-          </ul>
-        </div>
-      </li>
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse" data-bs-target="#老师-第四单元-collapse" aria-expanded="false">
-          第四单元
-        </button>
-        <div class="collapse" id="老师-第四单元-collapse" style="">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Processed</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Shipped</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Returned</a></li>
-          </ul>
-        </div>
-      </li>
-    </ul>
-    <h4 class="border-top pt-3 my-3">我的</h4>
-    <ul class="list-unstyled ps-0">
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#我的-算法-collapse" aria-expanded="false">
-          算法
-        </button>
-        <div class="collapse" id="我的-算法-collapse" style="">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Profile</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>
-          </ul>
-        </div>
-      </li>
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#我的-数据类型-collapse" aria-expanded="false">
-          数据类型
-        </button>
-        <div class="collapse" id="我的-数据类型-collapse" style="">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">New...</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Profile</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Settings</a></li>
-            <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Sign out</a></li>
-          </ul>
-        </div>
-      </li>
-    </ul>
+      <h4>老师</h4>
+      <ul class="list-unstyled ps-0" id="teachersSnippets">
+      </ul>
+      <h4 class="border-top pt-3 my-3">我的</h4>
+      <ul class="list-unstyled ps-0" id="mySnippets">
+      </ul>
+      <h4 class="border-top pt-3 my-3">精选</h4>
+      <ul class="list-unstyled ps-0" id="selectedSnippets">
+      </ul>
     </div>
   </div>
  </aside>
@@ -367,7 +328,7 @@
               <a href="#" class="nav-link text-white"
                     onclick="getElementById('program-list').style.setProperty('left', '0px')">
                 <i class="bi bi-box-seam d-block mx-auto mb-1 cmd-icon"></i>
-                导入
+                仓库
               </a>
             </li>
             <!-- li>
