@@ -181,18 +181,34 @@ function runCode() {
 }
 
 function clearCode() {
-    // 弹出一个选择框，进行操作确认
+    var code = editor.getValue();
+    if (code.length < 10) {
+        const msgElem = document.getElementById("promptModalMsg");
+        msgElem.textContent = "编辑区空空如也，清楚啥呢？";
+        const promptModal = new bootstrap.Modal('#promptModal',
+                { dropback: true, focus: true, keyboard: true });
+        promptModal.show();
+        return;
+    }
+
     var result = confirm("确定要清空代码吗？");
     if (result) {
-        // 清除代码编辑器
         editor.setValue("");
-        // 清除运行结果
         document.getElementById('output').innerHTML = "";
     }
 }
 
 function downloadCode() {
     var code = editor.getValue();
+    if (code.length < 10) {
+        const msgElem = document.getElementById("promptModalMsg");
+        msgElem.textContent = "至少写点东西再下载嘛。";
+        const promptModal = new bootstrap.Modal('#promptModal',
+                { dropback: true, focus: true, keyboard: true });
+        promptModal.show();
+        return;
+    }
+
     var blob = new Blob([code], { type: "text/plain;charset=utf-8" });
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
