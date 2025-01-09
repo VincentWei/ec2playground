@@ -1,5 +1,3 @@
-import * as globals from "../config/globals.js"
-
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
 const groupBy = (array, key) => {
         return array.reduce((result, currentValue) => {
