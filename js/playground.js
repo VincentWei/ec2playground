@@ -33,7 +33,21 @@ function refreshSelectedSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            let snippets = groupBy(response.data, "section");
+            let snippets = groupBy(response.data, "username");
+            console.log(snippets);
+        }
+    };
+
+    request.send();
+}
+
+function refreshLatestSnippets() {
+    var request = new XMLHttpRequest();
+    request.open("GET", globals.pathPrefix + "tools/fetch-latest-snippets.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        if (response.retCode == 0) {
+            let snippets = groupBy(response.data, "username");
             console.log(snippets);
         }
     };
@@ -54,7 +68,8 @@ function getUsername() {
 
 function refreshRepository() {
     refreshSnippetsByUsername('老师');
-    refreshSelectedSnippets();
+    // refreshSelectedSnippets();
+    refreshLatestSnippets();
 
     username = getUsername();
     if (username !== null && username != '老师') {
@@ -96,7 +111,8 @@ window.onload = function() {
     username = updateUserFields();
 
     refreshSnippetsByUsername('老师');
-    refreshSelectedSnippets();
+    //refreshSelectedSnippets();
+    refreshLatestSnippets();
     if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
     }
