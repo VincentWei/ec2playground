@@ -19,8 +19,8 @@ function refreshSnippetsByUsername(username) {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         console.log(response);
-        if (response->retCode == 0) {
-            let snippets = groupBy(response->data, "section");
+        if (response.retCode == 0) {
+            let snippets = groupBy(response.data, "section");
             console.log(snippets);
         }
     };
@@ -34,8 +34,8 @@ function refreshSelectedSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         console.log(response);
-        if (response->retCode == 0) {
-            let snippets = groupBy(response->data, "section");
+        if (response.retCode == 0) {
+            let snippets = groupBy(response.data, "section");
             console.log(snippets);
         }
     };
