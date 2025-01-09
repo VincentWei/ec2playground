@@ -209,11 +209,10 @@ class HttpUtils {
     }
 
     public static function httpsGitLabSnippetNew($server, $access_token,
-            $username, $section, $title, $description, $snippet) {
+            $username, $section, $title, $description, $snippet, $digest) {
         $url = 'https://' . $server . '/api/v4/snippets';
 
         $title = "$username-$section-$title";
-        $filename = hash_hmac('md5', $title, $server . time());
         $array = array(
                 'title' => "$title",
                 'description' => $description,
@@ -221,7 +220,7 @@ class HttpUtils {
                 'files' => array (
                     array (
                         'content' => $snippet,
-                        'file_path' => "$filename.ec2",
+                        'file_path' => "$digest.ec2",
                         ),
                     ),
                 );
@@ -258,7 +257,7 @@ class HttpUtils {
             }
             else {
                 $res = json_decode($res, true);
-                $res['_digest'] = $filename;
+                $res['_digest'] = $digest;
             }
         }
 

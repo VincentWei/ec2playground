@@ -24,12 +24,22 @@ if (!$db_result) {
 }
 
 if ($db->num_rows($db_result) == 0) {
+    $username = trim($username);
+    if (strlen($username) < 2) {
+        $result = new Result(100, '用户名太短；需要至少两个字符');
+        goto error;
+    }
+    if (strlen($password) < 8) {
+        $result = new Result(100, '密码太短；需要至少八个字符');
+        goto error;
+    }
+
     $hashed_passwd = $db->escape_string(password_hash(
                 $password, PASSWORD_BCRYPT, ["cost"=>10]));
     $db_result = $db->query("INSERT INTO users (name, passwd, lastSignIn)
             VALUES ('$username', '$hashed_passwd', NOW())");
     if (!$db_result) {
-        $result = new Result(100, "数据库错误：". $db->last_error());
+        $result = new Result(100, '数据库错误：'. $db->last_error());
         goto error;
     }
     $userId = $db->insert_id();
@@ -56,8 +66,27 @@ $section = $_POST['section'];
 $title = $_POST['title'];
 $description = empty($_POST['description']) ? "" : $_POST['description'];
 $snippet = $_POST['snippet'];
-$res = HttpUtils::httpsGitLabSnippetNew($db->gitlab_host(),
-        $db->gitlab_token(), $username, $section, $title, $description, $snippet);
+$digest = hash_hmac('md5', "$username-$section-$title-$description-$snippet",
+        $db->gitlab_host());
+
+$db_result =
+    $db->query("SELECT id FROM snippets WHERE digest='$digest'");
+if (!$db_result) {
+    $result = new Result(100, '数据库错误：' . $db->last_error());
+    goto error;
+}
+
+if ($db->num_rows($db_result) > 0) {
+    $db->free_result($db_result);
+    $result = new Result(100, '您分享过一模一样的程序');
+    goto error;
+}
+else {
+    $db->free_result($db_result);
+}
+
+$res = HttpUtils::httpsGitLabSnippetNew($db->gitlab_host(), $db->gitlab_token(),
+        $username, $section, $title, $description, $snippet, $digest);
 
 if (!is_array($res)) {
     $result = new Result (100, "将程序发布到 GitLab 服务器时出现错误。");
