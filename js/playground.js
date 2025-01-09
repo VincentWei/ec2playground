@@ -1,3 +1,5 @@
+import * as globals from "../config/globals.js"
+
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
 const groupBy = (array, key) => {
         return array.reduce((result, currentValue) => {
@@ -15,7 +17,7 @@ function refreshSnippetsByUsername(username) {
     formData.append("username", username);
 
     var request = new XMLHttpRequest();
-    request.open("POST", "/ec2/tools/fetch-snippets-by-username.php");
+    request.open("POST", globals.pathPrefix + "tools/fetch-snippets-by-username.php");
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
@@ -29,7 +31,7 @@ function refreshSnippetsByUsername(username) {
 
 function refreshSelectedSnippets() {
     var request = new XMLHttpRequest();
-    request.open("GET", "/ec2/tools/fetch-selected-snippets.php");
+    request.open("GET", globals.pathPrefix + "tools/fetch-selected-snippets.php");
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
@@ -119,7 +121,7 @@ function shareProgram() {
     submitElem.setAttribute("disabled", "disabled");
 
     var request = new XMLHttpRequest();
-    request.open("POST", "/ec2/tools/push-new-snippet.php");
+    request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
     request.onload = function (oEvent) {
         const errElem = document.getElementById("shareModalErrorMsg");
         let response = JSON.parse(request.response);
