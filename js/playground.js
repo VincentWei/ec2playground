@@ -33,7 +33,7 @@ function refreshSelectedSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            let snippets = groupBy(response.data, "username");
+            let snippets = groupBy(response.data, "name");
             console.log(snippets);
         }
     };
@@ -47,7 +47,7 @@ function refreshLatestSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            let snippets = groupBy(response.data, "username");
+            let snippets = groupBy(response.data, "name");
             console.log(snippets);
         }
     };
