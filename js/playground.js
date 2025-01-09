@@ -184,7 +184,7 @@ function clearCode() {
     var code = editor.getValue();
     if (code.length < 10) {
         const msgElem = document.getElementById("promptModalMsg");
-        msgElem.textContent = "编辑区空空如也，清楚啥呢？";
+        msgElem.textContent = "编辑区空空如也，清除啥呢？";
         const promptModal = new bootstrap.Modal('#promptModal',
                 { dropback: true, focus: true, keyboard: true });
         promptModal.show();
@@ -202,7 +202,7 @@ function downloadCode() {
     var code = editor.getValue();
     if (code.length < 10) {
         const msgElem = document.getElementById("promptModalMsg");
-        msgElem.textContent = "至少写点东西再下载嘛。";
+        msgElem.textContent = "至少写点东西再保存嘛。";
         const promptModal = new bootstrap.Modal('#promptModal',
                 { dropback: true, focus: true, keyboard: true });
         promptModal.show();
@@ -213,7 +213,7 @@ function downloadCode() {
     var url = URL.createObjectURL(blob);
     var link = document.createElement('a');
     link.href = url;
-    link.download = "code.ec2"; // 设置下载文件的名称
+    link.download = "my-executable-coding-code.ec2"; // 设置下载文件的名称
     link.click();
     setTimeout(function () {
         URL.revokeObjectURL(url); // 释放 URL 对象
