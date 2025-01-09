@@ -52,6 +52,7 @@ CREATE TABLE `snippets` (
   `score` TINYINT UNSIGNED NOT NULL DEFAULT 0,
   `nrStars` BIGINT UNSIGNED NOT NULL DEFAULT 0,
   `nrComments` BIGINT UNSIGNED NOT NULL DEFAULT 0,
+  `rankValue` BIGINT UNSIGNED NOT NULL DEFAULT 0,
   `state` VARCHAR(32) NOT NULL DEFAULT '',
   `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -62,23 +63,23 @@ ALTER TABLE `snippets`
   ADD UNIQUE KEY `digest` (`digest`),
   ADD KEY `userId` (`userId`),
   ADD KEY `createdAt` (`createdAt`),
-  ADD KEY `updatedAt` (`updatedAt`);
+  ADD KEY `updatedAt` (`updatedAt`),
+  ADD KEY `rankValue` (`rankValue`);
 
 --
 -- Table structure for table `selectedSnippets`
 --
+-- CREATE TABLE `selectedSnippets` (
+--  `id` BIGINT UNSIGNED NOT NULL,
+--  `snippetId` BIGINT UNSIGNED NOT NULL,
+--  `userId` BIGINT UNSIGNED NOT NULL,
+--  `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+--) ENGINE=InnoDB;
 
-CREATE TABLE `selectedSnippets` (
-  `id` BIGINT UNSIGNED NOT NULL,
-  `snippetId` BIGINT UNSIGNED NOT NULL,
-  `userId` BIGINT UNSIGNED NOT NULL,
-  `createdAt` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
-ALTER TABLE `selectedSnippets`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `snippetId` (`snippetId`),
-  ADD KEY `createdAt` (`createdAt`);
+--ALTER TABLE `selectedSnippets`
+--  ADD PRIMARY KEY (`id`),
+--  ADD UNIQUE KEY `snippetId` (`snippetId`),
+--  ADD KEY `createdAt` (`createdAt`);
 
 --
 -- AUTO_INCREMENT for tables
@@ -89,5 +90,31 @@ ALTER TABLE `users`
 ALTER TABLE `snippets`
   MODIFY `id` bigint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
-ALTER TABLE `selectedSnippets`
-  MODIFY `id` bigint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+--ALTER TABLE `selectedSnippets`
+--  MODIFY `id` bigint(8) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- Triggers for tables
+--
+
+DELIMITER $
+
+-- 1. BEFORE INSERT ON snippets
+
+DROP TRIGGER IF EXISTS tbi_snippets;
+CREATE TRIGGER tbi_snippets BEFORE INSERT ON snippets
+FOR EACH ROW
+BEGIN
+    SET NEW.rankValue = FLOOR(RAND() * 65535);
+END$
+
+-- 1. BEFORE UPDATE ON snippets
+DROP TRIGGER IF EXISTS tbu_snippets;
+CREATE TRIGGER tbu_snippets BEFORE UPDATE ON snippets
+FOR EACH ROW
+BEGIN
+    SET NEW.rankValue = (NEW.nrStars << 32 + NEW.nrComments << 16) | (UTC_TIMESTAMP() & 65535);
+END$
+
+DELIMITER ;
+
