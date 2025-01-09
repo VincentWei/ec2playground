@@ -45,7 +45,7 @@ function shareProgram() {
     formData.append("snippet", code);
 
     const submitElem = document.getElementById("shareModalSubmit");
-    submitElemt.setAttribute('disabled', 'disabled');
+    submitElem.setAttribute("disabled", "disabled");
 
     var request = new XMLHttpRequest();
     request.open("POST", "/ec2/tools/push-new-snippet.php");
@@ -62,7 +62,8 @@ function shareProgram() {
         }
         else {
             errElem.textContent = response.retMsg;
-            submitElemt.removeAttribute('disabled');
+            const submitElem = document.getElementById("shareModalSubmit");
+            submitElem.removeAttribute("disabled");
         }
 
         errElem.style.display = "block";
@@ -83,8 +84,8 @@ function tryToShareCode() {
     else {
         const errElem = document.getElementById("shareModalErrorMsg");
         errElem.style.display = "none";
-        const submitElemt = document.getElementById("shareModalSubmit");
-        submitElemt.removeAttribute('disabled');
+        const submitElem = document.getElementById("shareModalSubmit");
+        submitElem.removeAttribute("disabled");
 
         const shareModal = new bootstrap.Modal('#shareModal',
                 { dropback: true, focus: true, keyboard: true });
