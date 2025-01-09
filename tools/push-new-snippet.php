@@ -5,13 +5,13 @@ require_once("Result.php");
 require_once("HttpUtils.php");
 
 if (!(include "../config/database.php")) {
-    $result = new Result(100, "Bad installation.");
+    $result = new Result(100, "初始化数据库失败；请检查安装。");
     goto error;
 }
 
 if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["username"])
         || empty($_POST["password"])) {
-    $result = new Result(100, '缺少必要请求参数。');
+    $result = new Result(100, '缺少必要的请求参数。');
     goto error;
 }
 
@@ -26,11 +26,11 @@ if (!$db_result) {
 if ($db->num_rows($db_result) == 0) {
     $username = trim($username);
     if (strlen($username) < 2) {
-        $result = new Result(100, '用户名太短；需要至少两个字符');
+        $result = new Result(100, '用户名太短；需要至少两个字符。');
         goto error;
     }
     if (strlen($password) < 8) {
-        $result = new Result(100, '密码太短；需要至少八个字符');
+        $result = new Result(100, '密码太短；需要至少八个字符。');
         goto error;
     }
 
@@ -56,14 +56,14 @@ else {
     }
 }
 
-if (empty($_POST['section']) || empty($_POST['title'])
+if (empty($_POST['section']) || empty($_POST['subject'])
         || empty($_POST['snippet'])) {
-    $result = new Result(100, '类名、标题或者程序为空。');
+    $result = new Result(100, '程序分类、标题或者代码为空。');
     goto error;
 }
 
 $section = $_POST['section'];
-$title = $_POST['title'];
+$title = $_POST['subject'];
 $description = empty($_POST['description']) ? "" : $_POST['description'];
 $snippet = $_POST['snippet'];
 $digest = hash_hmac('md5', "$username-$section-$title-$description-$snippet",
@@ -78,7 +78,7 @@ if (!$db_result) {
 
 if ($db->num_rows($db_result) > 0) {
     $db->free_result($db_result);
-    $result = new Result(100, '您分享过一模一样的程序');
+    $result = new Result(100, '您分享过一模一样的程序。');
     goto error;
 }
 else {
@@ -118,3 +118,4 @@ echo json_encode($result);
 
 exit (0);
 ?>
+
