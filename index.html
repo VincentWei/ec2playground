@@ -15,11 +15,11 @@
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5">提醒一下哦</h1>
+            <h1 class="modal-title fs-5">提醒一下</h1>
             <button type="button" class="btn-close" id="promptModalClose" data-bs-dismiss="modal" aria-label="关闭"></button>
           </div>
           <div class="modal-body">
-            <p class="lead text-danger" id="promptModalMsg">起码写几行代码再分享嘛！</p>
+            <p class="lead text-danger" id="promptModalMsg">提醒信息</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">知道啦</button>
@@ -40,26 +40,32 @@
               <div id="shareModalNewUserFields">
                 <div class="mb-3">
                   <label class="form-label" id="forShareModalStudentName">学生姓名</label>
-                  <input type="text" class="form-control" id="shareModalStudentName" name="username" required maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
+                  <input type="text" class="form-control" id="shareModalStudentName" name="username"
+                        placeholder="如：任盈盈"
+                        required minlength="2" maxlength="64" aria-label="学生姓名" aria-describedby="forShareModalStudentName">
                 </div>
                 <div class="mb-3">
                   <span class="form-label" id="forShareModalParentName">家长姓名（兼做密码）</span>
-                  <input type="text" class="form-control" id="shareModalParentName" name="password" required maxlength="64" aria-label="家长姓名" aria-describedby="forShareModalParentName">
+                  <input type="text" class="form-control" id="shareModalParentName" name="password" required minlength="8" maxlength="64"
+                        placeholder="如：任我行8888" aria-label="家长姓名" aria-describedby="forShareModalParentName">
                   <div class="form-text">以上信息在首次分享时填写；若更换浏览器，请务必输入相同内容。</div>
                 </div>
               </div>
 
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramSection">程序分类</label>
-                <input type="text" class="form-control" name="section" placeholder="如：数论基础" required maxlength="128" aria-label="程序分类"aria-describedby="forShareModalProgramSection">
+                <input type="text" class="form-control" name="section" required minlength="4" maxlength="128"
+                    placeholder="如：数论基础" aria-label="程序分类" aria-describedby="forShareModalProgramSection">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
-                <input type="text" class="form-control" name="title" placeholder="如：欧几里得算法" required maxlength="128" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
+                <input type="text" class="form-control" name="title" required minlength="4" maxlength="128"
+                    placeholder="如：欧几里得算法" aria-label="程序标题" aria-describedby="forShareModalProgramTitle">
               </div>
               <div class="mb-3">
                 <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
-                <input type="text" class="form-control" name="description" placeholder="如：本程序是欧几里得算法的迭代实现；可留空" maxlength="256" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
+                <input type="text" class="form-control" name="description" maxlength="256"
+                    placeholder="如：本程序是欧几里得算法的迭代实现；可留空" aria-label="程序描述" aria-describedby="forShareModalProgramDesc">
               </div>
             </form>
 
