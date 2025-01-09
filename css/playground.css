@@ -15,6 +15,24 @@ body {
   outline: 0;
 }
 
+.btn-icon {
+    display: block;
+    padding: .5em;
+    line-height: 1;
+    color: var(--bs-body-color);
+    background-color: var(--bs-tertiary-bg);
+    border: 0;
+    border-radius: .25rem
+}
+
+.btn-icon:hover {
+    color: var(--bs-link-color)
+}
+
+.btn-icon:focus {
+    z-index: 3
+}
+
 #program-list {
   position: fixed;
   z-index: 100;
