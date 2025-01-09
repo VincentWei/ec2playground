@@ -119,13 +119,15 @@ window.onload = function() {
 
     const searchParams = new URLSearchParams(window.location.search);
     const snippetDigest = searchParams.get('snippet');
+    console.log(snippetDigest);
     if (snippetDigest && snippetDigest.length == 32) {
         var formData = new FormData();
-        formData.append("snippetDigest", usernamsnippetDigest);
+        formData.append("snippetDigest", snippetDigest);
 
         var request = new XMLHttpRequest();
         request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
         request.onload = function (oEvent) {
+            console.log(request.response);
             let response = JSON.parse(request.response);
             if (response.retCode == 0) {
                 editor.setValue(response.data);
