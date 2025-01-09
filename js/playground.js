@@ -18,7 +18,6 @@ function refreshSnippetsByUsername(username) {
     request.open("POST", "/ec2/tools/fetch-snippets-by-username.php");
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
-        console.log(response);
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
@@ -33,7 +32,6 @@ function refreshSelectedSnippets() {
     request.open("GET", "/ec2/tools/fetch-selected-snippets.php");
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
-        console.log(response);
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
@@ -57,10 +55,11 @@ function getUsername() {
 function refreshRepository() {
     refreshSnippetsByUsername('老师');
     refreshSelectedSnippets();
-    username = getUsername();
 
-    if (username !== null)
+    username = getUsername();
+    if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
+    }
 }
 
 function saveUserInfo(username, password) {
@@ -98,7 +97,7 @@ window.onload = function() {
 
     refreshSnippetsByUsername('老师');
     refreshSelectedSnippets();
-    if (username !== null) {
+    if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
     }
 }
