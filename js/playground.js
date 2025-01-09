@@ -33,23 +33,12 @@ window.onload = function() {
 
 function dismissShareModal() {
     window.setTimeout(() => {
-            const errElem = document.getElementById("shareModalErrorMsg");
-            errElem.style.display = "none";
             const closeBtn = document.getElementById("shareModalClose");
             closeBtn.click();
         }, 3000);
 }
 
 function shareProgram() {
-    let code = editor.getValue().trim();
-    const errElem = document.getElementById("shareModalErrorMsg");
-    if (code.length < 10) {
-        errElem.textContent = "至少写一个完整程序才能分享哦。";
-        errElem.style.display = "block";
-        dismissShareModal();
-        return;
-    }
-
     const formElem = document.getElementById("shareModalForm");
     var formData = new FormData(formElem);
     formData.append("snippet", code);
@@ -74,10 +63,26 @@ function shareProgram() {
         }
 
         errElem.style.display = "block";
-        dismissShareModal();
     };
 
     request.send(formData);
+}
+
+function tryToShareCode() {
+    let code = editor.getValue().trim();
+    if (code.length < 10) {
+        const msgElem = document.getElementById("promptModalMsg");
+        msgElem.textContent = "至少写一个完整程序才能分享哦。";
+        const promptModal = new bootstrap.Modal('#promptModal',
+                { dropback: true, focus: true, keyboard: true });
+    }
+    else {
+        const errElem = document.getElementById("shareModalErrorMsg");
+        errElem.style.display = "none";
+
+        const shareModal = new bootstrap.Modal('#shareModal',
+                { dropback: true, focus: true, keyboard: true });
+    }
 }
 
 window.onerror = function (message) {

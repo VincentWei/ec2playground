@@ -11,6 +11,23 @@
 
 <body>
 
+  <div class="modal fade" id="promptModal" tabindex="-1" aria-labelledby="promptModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">提醒一下哦</h1>
+            <button type="button" class="btn-close" id="promptModalClose" data-bs-dismiss="modal" aria-label="关闭"></button>
+          </div>
+          <div class="modal-body">
+            <p class="lead text-danger" id="promptModalMsg">起码写几行代码再分享嘛！</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">知道啦</button>
+          </div>
+        </div>
+      </div>
+  </div>
+
   <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -349,7 +366,7 @@
               </a>
             </li>
             <li>
-              <a data-bs-toggle="modal" href="#shareModal" class="nav-link text-white">
+              <a href="#" class="nav-link text-white" onclick="tryToShareCode()">
                 <i class="bi bi-cloud-upload d-block mx-auto mb-1 cmd-icon"></i>
                 分享
               </a>
