@@ -56,14 +56,14 @@ else {
     }
 }
 
-if (empty($_POST['section']) || empty($_POST['subject'])
+if (empty($_POST['section']) || empty($_POST['title'])
         || empty($_POST['snippet'])) {
     $result = new Result(100, '程序分类、标题或者代码为空。');
     goto error;
 }
 
 $section = $_POST['section'];
-$title = $_POST['subject'];
+$title = $_POST['title'];
 $description = empty($_POST['description']) ? "" : $_POST['description'];
 $snippet = $_POST['snippet'];
 $digest = hash_hmac('md5', "$username-$section-$title-$description-$snippet",
