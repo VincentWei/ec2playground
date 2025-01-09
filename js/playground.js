@@ -1,4 +1,64 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
+const groupBy = (array, key) => {
+        return array.reduce((result, currentValue) => {
+        const groupKey = currentValue[key];
+        if (!result[groupKey]) {
+            result[groupKey] = [];
+        }
+        result[groupKey].push(currentValue);
+        return result;
+    }, {});
+};
+
+function refreshSnippetsByUsername(username) {
+    var formData = new FormData();
+    formData.append("username", username);
+
+    var request = new XMLHttpRequest();
+    request.open("POST", "/ec2/tools/fetch-snippets-by-username.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        console.log(response);
+        let snippets = groupBy(response, "section");
+        console.log(snippets);
+    };
+
+    request.send(formData);
+}
+
+function refreshSelectedSnippets() {
+    var request = new XMLHttpRequest();
+    request.open("GET", "/ec2/tools/fetch-selected-snippets.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        console.log(response);
+        let snippets = groupBy(response, "section");
+        console.log(snippets);
+    };
+
+    request.send();
+}
+
+function getUsername() {
+    let username = window.localStorage.getItem("username");
+    let password = window.localStorage.getItem("password");
+
+    if (username !== null && password !== null) {
+        return null;
+    }
+
+    return username;
+}
+
+function refreshRepository() {
+    refreshSnippetsByUsername('老师');
+    refreshSelectedSnippets();
+    username = getUsername();
+
+    if (username !== null)
+        refreshSnippetsByUsername(username);
+}
+
 function saveUserInfo(username, password) {
     let username_saved = window.localStorage.getItem("username");
     let password_saved = window.localStorage.getItem("password");
@@ -15,6 +75,7 @@ function updateUserFields() {
 
     if (username === null || password === null) {
         console.log("not signed in.");
+        return null;
     }
     else {
         let elemName = document.getElementById("shareModalStudentName");
@@ -24,11 +85,18 @@ function updateUserFields() {
 
         let elemWrap = document.getElementById("shareModalNewUserFields");
         elemWrap.style.display = "none";
+        return username;
     }
 }
 
 window.onload = function() {
-    updateUserFields();
+    username = updateUserFields();
+
+    refreshSnippetsByUsername('老师');
+    refreshSelectedSnippets();
+    if (username !== null) {
+        refreshSnippetsByUsername(username);
+    }
 }
 
 function dismissShareModal() {

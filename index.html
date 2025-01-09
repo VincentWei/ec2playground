@@ -242,6 +242,55 @@
       </div>
   </div>
 
+<template id="snippetSectionTemplate">
+  <li class="mb-1">
+    <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse"
+            data-bs-target="#USERNAME-SECTIONNAME-collapse" aria-expanded="false">
+      SECTIONAME
+    </button>
+    <div class="collapse" id="USERNAME-SECTIONNAME-collapse">
+      <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+      </ul>
+    </div>
+    </li>
+</template>
+
+<template id="mySnippetTemplate">
+    <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
+      <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
+            title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+      <div class="d-flex ms-auto">
+        <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
+          <i class="bi bi-arrow-down-right"></i>
+        </button>
+        <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
+          <i class="bi bi-link"></i>
+        </button>
+        <button type="button" class="btn-icon btn-delete-program mt-0 me-0" aria-label="删除此程序" title="删除此程序">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </li>
+</template>
+
+<template id="othersSnippetTemplate">
+    <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
+      <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
+            title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+      <div class="d-flex ms-auto">
+        <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
+          <i class="bi bi-arrow-down-right"></i>
+        </button>
+        <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
+          <i class="bi bi-link"></i>
+        </button>
+        <button type="button" class="btn-icon btn-star mt-0 me-0" aria-label="点亮星星" title="点亮星星">
+          <i class="bi bi-star"></i>
+        </button>
+      </div>
+    </li>
+</template>
+
  <aside id="program-list" class="d-flex flex-nowrap shadow">
 
   <div class="flex-shrink-0 w-100 p-3 bg-white">
@@ -260,64 +309,15 @@
       </div>
     </div>
 
-    <template id="snippetSectionTemplate">
-      <li class="mb-1">
-        <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0" data-bs-toggle="collapse"
-                data-bs-target="#USERNAME-SECTIONNAME-collapse" aria-expanded="false">
-          SECTIONAME
-        </button>
-        <div class="collapse" id="USERNAME-SECTIONNAME-collapse">
-          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-          </ul>
-        </div>
-        </li>
-    </template>
-
-    <template id="mySnippetTemplate">
-        <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
-          <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
-                title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
-          <div class="d-flex ms-auto">
-            <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
-              <i class="bi bi-arrow-down-right"></i>
-            </button>
-            <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
-              <i class="bi bi-link"></i>
-            </button>
-            <button type="button" class="btn-icon btn-delete-program mt-0 me-0" aria-label="删除此程序" title="删除此程序">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </li>
-    </template>
-
-    <template id="othersSnippetTemplate">
-        <li class="d-flex align-items-center ps-3 pe-2 py-1" data-snippet-digest="SNIPPET-DIGEST">
-          <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark d-inline-flex text-decoration-none rounded"
-                title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
-          <div class="d-flex ms-auto">
-            <button type="button" class="btn-icon btn-import-program mt-0 me-0" aria-label="导入代码" title="导入代码到编辑区">
-              <i class="bi bi-arrow-down-right"></i>
-            </button>
-            <button type="button" class="btn-icon btn-copy-link mt-0 me-0" aria-label="复制分享链接" title="复制分享链接到剪贴板">
-              <i class="bi bi-link"></i>
-            </button>
-            <button type="button" class="btn-icon btn-star mt-0 me-0" aria-label="点亮星星" title="点亮星星">
-              <i class="bi bi-star"></i>
-            </button>
-          </div>
-        </li>
-    </template>
-
     <div class="h-100 overflow-y-auto">
       <h4>老师</h4>
       <ul class="list-unstyled ps-0" id="teachersSnippets">
       </ul>
+      <h4 class="border-top pt-3 my-3">热门</h4>
+      <ul class="list-unstyled ps-0" id="selectedSnippets">
+      </ul>
       <h4 class="border-top pt-3 my-3">我的</h4>
       <ul class="list-unstyled ps-0" id="mySnippets">
-      </ul>
-      <h4 class="border-top pt-3 my-3">精选</h4>
-      <ul class="list-unstyled ps-0" id="selectedSnippets">
       </ul>
     </div>
   </div>
