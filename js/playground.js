@@ -70,6 +70,7 @@ function shareProgram() {
 
 function tryToShareCode() {
     let code = editor.getValue().trim();
+    console.log(code);
     if (code.length < 10) {
         const msgElem = document.getElementById("promptModalMsg");
         msgElem.textContent = "至少写一个完整程序才能分享哦。";
