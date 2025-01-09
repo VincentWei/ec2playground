@@ -16,6 +16,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 mysqli_close($con);
                 echo 0;
+
+                $change = file_get_contents("globals.js");
+                $change = str_replace("POOP1", $_POST['pathprefix'], $change);
+                file_put_contents("../config/globals.js", $change);
+
                 $change = file_get_contents("database.php");
                 $change = str_replace("poop1", $dbhost, $change);
                 $change = str_replace("poop2", $dbuser, $change);

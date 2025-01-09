@@ -154,6 +154,7 @@
                 <div><input disabled required name="" placeholder="GitLab 账户名" type="text"></div>
                 <div><input disabled required name="" placeholder="GitLab 访问令牌" type="text"></div>
                 <div><input disabled required name="" placeholder="老师姓名/密码" type="text"></div>
+                <div><input disabled required name="" placeholder="安装路径前缀" type="text"></div>
                 <div><button>提交</button><span></span></div>
             </form>
         </main>
@@ -189,6 +190,7 @@
                 gitlabuser: form[5].value,
                 gitlabtoken: form[6].value,
                 teacherpasswd: form[7].value,
+                pathprefix: form[8].value,
                 option: option
             };
             let headers = new Headers();
