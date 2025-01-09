@@ -76,6 +76,7 @@ function tryToShareCode() {
         msgElem.textContent = "至少写一个完整程序才能分享哦。";
         const promptModal = new bootstrap.Modal('#promptModal',
                 { dropback: true, focus: true, keyboard: true });
+        promptModal.show();
     }
     else {
         const errElem = document.getElementById("shareModalErrorMsg");
@@ -83,6 +84,7 @@ function tryToShareCode() {
 
         const shareModal = new bootstrap.Modal('#shareModal',
                 { dropback: true, focus: true, keyboard: true });
+        shareModal.show();
     }
 }
 
