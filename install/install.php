@@ -18,7 +18,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo 0;
 
                 $change = file_get_contents("globals.js");
-                $change = str_replace("POOP1", $_POST['pathprefix'], $change);
+                $change = str_replace("POOP1", $_POST['gitlabhost'], $change);
+                $change = str_replace("POOP2", $_POST['pathprefix'], $change);
                 file_put_contents("../config/globals.js", $change);
 
                 $change = file_get_contents("database.php");

@@ -10,7 +10,7 @@ function importProgram(btnElem) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
             editor.replaceSelection(response.data);
-            dismissRepoPanel() {
+            dismissRepoPanel();
         }
     };
 
@@ -18,21 +18,15 @@ function importProgram(btnElem) {
 }
 
 function copyProgramLink(btnElem) {
-    var formData = new FormData();
-    formData.append("snippetDigest",
-          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
+    let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
 
-    var request = new XMLHttpRequest();
-    request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
-    request.onload = function (oEvent) {
-        let response = JSON.parse(request.response);
-        if (response.retCode == 0) {
-            editor.replaceSelection(response.data);
-            dismissRepoPanel() {
-        }
-    };
-
-    request.send(formData);
+    try {
+        await navigator.clipboard.writeText(
+                window.location.origin + window.location.pathname + '?snippet=' + digest);
+    }
+    catch (error) {
+        console.error(error.message);
+    }
 }
 
 function deleteProgram(btnElem) {

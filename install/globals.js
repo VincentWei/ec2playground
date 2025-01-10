@@ -1,3 +1,4 @@
 const globals = {
-    pathPrefix: "POOP1",
+    gitlabHost: "POOP1",
+    pathPrefix: "POOP2",
 };
