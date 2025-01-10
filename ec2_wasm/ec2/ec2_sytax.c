@@ -104,7 +104,7 @@ static void __losuSyntaxParStatUntil (_syntaxLex *lex, int32_t line);
 static void __losuSyntaxParStatFunc (_syntaxLex *lex, int32_t line,
                                      _l_bool isMain);
 static void __losuSyntaxParStatVar (_syntaxLex *lex);
-static void __losuSyntaxParStatName (_syntaxLex *lex);
+static void __losuSyntaxParStatName (_syntaxLex *lex, _l_bool onlyDec);
 static void __losuSyntaxParStatReturn (_syntaxLex *lex);
 static void __losuSyntaxParStatBreak (_syntaxLex *lex);
 static void __losuSyntaxParEnterbreak (_syntaxFunc *func, _syntaxBreak *br);
@@ -118,7 +118,7 @@ static void __losuSyntaxParStatFuncBody (_syntaxLex *lex, _l_bool nself,
                                          int32_t line, _l_bool isSub);
 static void __losuSyntaxParStatFuncParlist (_syntaxLex *lex, _l_bool isMain);
 static int32_t __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v,
-                                               int32_t nvar);
+                                               int32_t nvar, _l_bool onlyDec);
 static int32_t __losuSyntaxParExplist (_syntaxLex *lex);
 static void __losuSyntaxParAdStack (_syntaxLex *lex, int32_t nv, int32_t ne);
 static void __losuSyntaxParAdLcvar (_syntaxLex *lex, int32_t nv);
@@ -1197,7 +1197,7 @@ __losuSyntaxParStat (_syntaxLex *lex)
       }
     case TOKEN_NAME:
       {
-        __losuSyntaxParStatName (lex);
+        __losuSyntaxParStatName (lex, lex->linenumber);
         return 0;
       }
     case TOKEN_RETURN:
@@ -1331,7 +1331,7 @@ __losuSyntaxParStatVar (_syntaxLex *lex)
   if (lex->deepth == 0) /* global */
     {
       __losuSyntaxParNext (lex);
-      __losuSyntaxParStatName (lex);
+      __losuSyntaxParStatName (lex, 0);
       return;
     }
   int32_t nv = 0, ne = 0;
@@ -1351,7 +1351,7 @@ __losuSyntaxParStatVar (_syntaxLex *lex)
 #undef isSet
 }
 static void
-__losuSyntaxParStatName (_syntaxLex *lex)
+__losuSyntaxParStatName (_syntaxLex *lex, _l_bool onlyDec)
 {
   _syntaxFunc *func = lex->fs;
   _syntaxExp v;
@@ -1363,8 +1363,8 @@ __losuSyntaxParStatName (_syntaxLex *lex)
       __losuSyntaxCgenSetNcallr (func, 0);
     }
   else
-    __losuSyntaxCgenAdStack (func,
-                             __losuSyntaxParStatNameAssment (lex, &v, 1));
+    __losuSyntaxCgenAdStack (
+        func, __losuSyntaxParStatNameAssment (lex, &v, 1, onlyDec));
 }
 static void
 __losuSyntaxParStatReturn (_syntaxLex *lex)
@@ -1507,9 +1507,9 @@ __losuSyntaxParStatFuncParlist (_syntaxLex *lex, _l_bool isMain)
               {
                 _inlineString *Istr = __losuSyntaxParCheckName (lex);
                 if (isMain)
-                    lex->vm->main.funcargs[i++]
-                        = __losu_objString_newconst (lex->vm, Istr->str)->str;
-                  
+                  lex->vm->main.funcargs[i++]
+                      = __losu_objString_newconst (lex->vm, Istr->str)->str;
+
                 __losuSyntaxParNewlcvar (lex, Istr, np++);
                 break;
               }
@@ -1536,7 +1536,8 @@ __losuSyntaxParStatFuncParlist (_syntaxLex *lex, _l_bool isMain)
 }
 
 static int32_t
-__losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar)
+__losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar,
+                                _l_bool onlyDec)
 {
   int32_t left = 0;
   if (lex->tk.token == ',')
@@ -1546,7 +1547,7 @@ __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar)
       __losuSyntaxParVarFunc (lex, &nv);
       __losuSyntaxParCheckCondtion (lex, (nv.type != VE),
                                     __config_losucore_errmsg_msgInvalidExp);
-      left = __losuSyntaxParStatNameAssment (lex, &nv, nvar + 1);
+      left = __losuSyntaxParStatNameAssment (lex, &nv, nvar + 1, onlyDec);
     }
   else
     {
@@ -1556,6 +1557,8 @@ __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar)
           __losuSyntaxParNext (lex);
           nexp = __losuSyntaxParExplist (lex);
         }
+      else if (onlyDec)
+        __losuSyntaxError (lex, "未知的关键词，起始于 %d 行", onlyDec);
       __losuSyntaxParAdStack (lex, nvar, nexp);
     }
   if (v->type != VI)

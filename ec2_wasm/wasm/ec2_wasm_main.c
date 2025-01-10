@@ -66,15 +66,15 @@ wasmIOrunCode ()
                      vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
                      vm->callhook - 2 > 0 ? vm->callhook - 2 : 0,
                      vm->loophook);
-            fprintf (stdout, "CPU时间:\t%.5gs\n", cpu_time_used);
+            fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
             if (gc_getmemMax (vm) > 1024 * 1024 * 1024)
-              fprintf (stdout, "最大内存占用:\t %.5g GB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f GB\n",
                        (double)gc_getmemMax (vm) / 1024 / 1024 / 1024);
             else if (gc_getmemMax (vm) > 1024 * 1024) // output xxM
-              fprintf (stdout, "最大内存占用:\t %.5g MB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f MB\n",
                        (double)gc_getmemMax (vm) / 1024 / 1024);
             else
-              fprintf (stdout, "最大内存占用:\t %.5g KB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f KB\n",
                        (double)gc_getmemMax (vm) / 1024);
             fprintf (stdout, "--------------------------------\n");
             break;
@@ -90,15 +90,15 @@ wasmIOrunCode ()
                      vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
                      vm->callhook - 2 > 0 ? vm->callhook - 2 : 0,
                      vm->loophook);
-            fprintf (stdout, "CPU时间:\t%.5gs\n", cpu_time_used);
+            fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
             if (gc_getmemMax (vm) > 1024 * 1024 * 1024)
-              fprintf (stdout, "最大内存占用:\t %.5g GB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f GB\n",
                        (double)gc_getmemMax (vm) / 1024 / 1024 / 1024);
             else if (gc_getmemMax (vm) > 1024 * 1024) // output xxM
-              fprintf (stdout, "最大内存占用:\t %.5g MB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f MB\n",
                        (double)gc_getmemMax (vm) / 1024 / 1024);
             else
-              fprintf (stdout, "最大内存占用:\t %.5g KB\n",
+              fprintf (stdout, "最大内存占用:\t %.5f KB\n",
                        (double)gc_getmemMax (vm) / 1024);
             fprintf (stdout, "--------------------------------\n");
             break;
@@ -112,15 +112,15 @@ wasmIOrunCode ()
           fprintf (stdout, "统计\n\t运算:\t%d\n\t调用:\t%d\n\t循环:\t%d\n",
                    vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
                    vm->callhook - 2 > 0 ? vm->callhook - 2 : 0, vm->loophook);
-          fprintf (stdout, "CPU时间:\t%.5gs\n", cpu_time_used);
+          fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
           if (gc_getmemMax (vm) > 1024 * 1024 * 1024)
-            fprintf (stdout, "最大内存占用:\t %.5g GB\n",
+            fprintf (stdout, "最大内存占用:\t %.5f GB\n",
                      (double)gc_getmemMax (vm) / 1024 / 1024 / 1024);
           else if (gc_getmemMax (vm) > 1024 * 1024) // output xxM
-            fprintf (stdout, "最大内存占用:\t %.5g MB\n",
+            fprintf (stdout, "最大内存占用:\t %.5f MB\n",
                      (double)gc_getmemMax (vm) / 1024 / 1024);
           else
-            fprintf (stdout, "最大内存占用:\t %.5g KB\n",
+            fprintf (stdout, "最大内存占用:\t %.5f KB\n",
                      (double)gc_getmemMax (vm) / 1024);
           fprintf (stdout, "--------------------------------\n");
           break;

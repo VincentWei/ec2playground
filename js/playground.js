@@ -17,14 +17,15 @@ function importProgram(btnElem) {
     request.send(formData);
 }
 
+function assemblyShareLink(digest) {
+    return window.location.origin + window.location.pathname + '?snippet=' + digest;
+}
+
 function copyProgramLink(btnElem) {
     let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest');
 
     try {
-        console.log(digest);
-
-        let link = window.location.origin + window.location.pathname + '?snippet=' + digest;
-        console.log(link);
+        let link = assemblyShareLink(digest);
 
         navigator.clipboard.writeText(link);
     }
@@ -329,7 +330,7 @@ function shareProgram() {
             const passElem = document.getElementById("shareModalParentName");
             saveUserInfo(nameElem.value, passElem.value);
             updateUserFields();
-            errElem.textContent = "已成功分享！";
+            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}" target="_blank">链接</a> 打开。`;
         }
         else {
             errElem.textContent = response.retMsg;
