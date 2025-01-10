@@ -73,7 +73,11 @@ function deleteProgram(btnElem) {
             }
         }
         else {
-            console.log(`${response.retCode}: ${response.retMsg}`);
+            const msgElem = document.getElementById("promptModalMsg");
+            msgElem.textContent = `删除错误：${response.retMsg}`;
+            const promptModal = new bootstrap.Modal('#promptModal',
+                    { dropback: true, focus: true, keyboard: true });
+            promptModal.show();
         }
     };
 
