@@ -28,19 +28,18 @@ if ($db->num_rows($db_result) == 0) {
     $result = new Result(100, '没有指定的用户。');
     goto error;
 }
-else {
-    $row = $db->fetch_one($db_result);
-    $userId = $row["id"];
-    $hashed = $row["passwd"];
-    $db->free_result($db_result);
 
-    if (!password_verify($password, $hashed)) {
-        $result = new Result(100, '密码错误。');
-        goto error;
-    }
+$row = $db->fetch_one($db_result);
+$userId = $row["id"];
+$hashed = $row["passwd"];
+$db->free_result($db_result);
+
+if (!password_verify($password, $hashed)) {
+    $result = new Result(100, '密码错误。');
+    goto error;
 }
 
-$db_result = $db->query("SELECT gitlabId FROM snippets WHERE digest = '$digest'");
+$db_result = $db->query("SELECT userId, gitlabId FROM snippets WHERE digest = '$digest'");
 if (!$db_result) {
     $result = new Result(100, '数据库错误：' . $db->last_error());
     goto error;
@@ -55,6 +54,11 @@ else {
     $row = $db->fetch_one($db_result);
     $gitlabId = $row["gitlabId"];
     $db->free_result($db_result);
+}
+
+if ($userId != $row["userId"] && $userId != 1) {
+    $result = new Result(100, '您没有权限删除该程序。');
+    goto error;
 }
 
 $res = HttpUtils::httpsGitLabSnippetDelete($db->gitlab_host(), $db->gitlab_token(),
