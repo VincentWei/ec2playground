@@ -22,6 +22,43 @@ function refreshSnippetsByUsername(username) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
             console.log(username);
+
+            if (username == '老师') {
+                let sectionList = document.getElementById('teachersSnippets');
+            }
+            else {
+                let sectionList = document.getElementById('mySnippets');
+            }
+
+            let templateSection = document.getElementById('snippetSectionTemplate');
+            let sectionContent = templateSection.content;
+            let templateSnippet = document.getElementById('mySnippetTemplate');
+            let snippetContent = templateSnippet.content;
+
+            for (const section in snippets) {
+                let newSectionNode = sectionContent.cloneNode(true);
+
+                let eleBtn = newSectionNode.querySelector('button');
+                eleBtn.setAttribute('data-bs-target', `#${username}-${section}-collapse`);
+                let eleDiv = newSectionNode.querySelector('div');
+                eleBtn.setAttribute('id', `${username}-${section}-collapse`);
+
+                for (const snippet of snippets[section]) {
+                    let newSnippetNode = snippetContent.cloneNode(true);
+                    let eleLi = newSnippetNode.querySelector('li');
+                    eleLi.setAttribute('data-snippet-digest', snippet.digest);
+
+                    let eleA = newSnippetNode.querySelector('a');
+                    eleA.setAttribute('href', `?snippet=${snippet.digest}`);
+                    eleA.setAttribute('title', snippet.title);
+                    eleA.textContent(snippet.title);
+
+                    newSectionNode.insertAfter(newSnippetNode, newSectionNode.lastChild);
+                }
+
+                let snippetList = newSectionNode.querySelector('ul');
+                sectionList.insertAfter(newSectionNode, sectionList.lastChild);
+            }
         }
     };
 
