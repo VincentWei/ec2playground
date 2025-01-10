@@ -21,7 +21,7 @@ function refreshSnippetsByUsername(username) {
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
 
-            let sectionLisst = null;
+            let sectionList = null;
             if (username == '老师') {
                 sectionList = document.getElementById('teachersSnippets');
             }
@@ -91,7 +91,7 @@ function refreshLatestSnippets() {
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "name");
 
-            let sectionLisst = document.getElementById('latestSnippets');
+            let sectionList = document.getElementById('latestSnippets');
             sectionList.replaceChildren();
 
             if (Object.keys(snippets).length == 0)
