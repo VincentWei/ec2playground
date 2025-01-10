@@ -53,7 +53,7 @@ function refreshSnippetsByUsername(username) {
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
                     eleA.setAttribute('title', snippet.title);
-                    eleA.textContent(snippet.title);
+                    eleA.textContent = snippet.title;
                     console.log(snippet.title);
 
                     newSectionNode.appendChild(newSnippetNode);
