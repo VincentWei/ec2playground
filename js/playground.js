@@ -1,7 +1,6 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
 function importProgram(btnElem) {
     let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest');
-    console.log(digest);
 
     formData.append("snippetDigest", digest);
 
@@ -10,6 +9,7 @@ function importProgram(btnElem) {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
+            console.log(response.data);
             editor.replaceSelection(response.data);
         }
     };
