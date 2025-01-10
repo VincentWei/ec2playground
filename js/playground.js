@@ -66,6 +66,9 @@ function deleteProgram(btnElem) {
                     break;
             }
         }
+        else {
+            console.log(`${response.retCode}: ${response.retMsg}`);
+        }
     };
 
     request.send(formData);
