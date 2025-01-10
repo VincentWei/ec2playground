@@ -54,11 +54,10 @@ function refreshSnippetsByUsername(username) {
                     eleA.setAttribute('title', snippet.title);
                     eleA.textContent(snippet.title);
 
-                    newSectionNode.insertAfter(newSnippetNode, newSectionNode.lastChild);
+                    newSectionNode.appendChild(newSnippetNode);
                 }
 
-                let snippetList = newSectionNode.querySelector('ul');
-                sectionList.insertAfter(newSectionNode, sectionList.lastChild);
+                sectionList.appendChild(newSectionNode);
             }
         }
     };
