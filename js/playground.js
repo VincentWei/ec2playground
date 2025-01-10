@@ -20,7 +20,6 @@ function refreshSnippetsByUsername(username) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
-            console.log(snippets);
 
             let sectionLisst = null;
             if (username == '老师') {
@@ -91,7 +90,43 @@ function refreshLatestSnippets() {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "name");
-            console.log(snippets);
+
+            let sectionLisst = document.getElementById('latestSnippets');
+            sectionList.replaceChildren();
+
+            if (Object.keys(snippets).length == 0)
+                return;
+
+            let templateSection = document.getElementById('snippetSectionTemplate');
+            let sectionContent = templateSection.content;
+            let templateSnippet = document.getElementById('mySnippetTemplate');
+            let snippetContent = templateSnippet.content;
+
+            for (const username in snippets) {
+                let newSectionNode = sectionContent.cloneNode(true);
+
+                let eleBtn = newSectionNode.querySelector('button');
+                eleBtn.setAttribute('data-bs-target', `#${username}-LATEST-collapse`);
+                eleBtn.textContent = username;
+                let eleDiv = newSectionNode.querySelector('div');
+                eleDiv.setAttribute('id', `${username}-LATEST-collapse`);
+
+                let eleUl = newSectionNode.querySelector('ul');
+                for (const snippet of snippets[username]) {
+                    let newSnippetNode = snippetContent.cloneNode(true);
+                    let eleLi = newSnippetNode.querySelector('li');
+                    eleLi.setAttribute('data-snippet-digest', snippet.digest);
+
+                    let eleA = newSnippetNode.querySelector('a');
+                    eleA.setAttribute('href', `?snippet=${snippet.digest}`);
+                    eleA.setAttribute('title', snippet.title);
+                    eleA.textContent = snippet.title;
+
+                    eleUl.appendChild(newSnippetNode);
+                }
+
+                sectionList.appendChild(newSectionNode);
+            }
         }
     };
 
