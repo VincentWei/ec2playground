@@ -44,6 +44,7 @@ function refreshSnippetsByUsername(username) {
                 let eleDiv = newSectionNode.querySelector('div');
                 eleDiv.setAttribute('id', `${username}-${section}-collapse`);
 
+                let eleUl = newSectionNode.querySelector('ul');
                 for (const snippet of snippets[section]) {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
@@ -53,9 +54,8 @@ function refreshSnippetsByUsername(username) {
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
                     eleA.setAttribute('title', snippet.title);
                     eleA.textContent = snippet.title;
-                    console.log(snippet.title);
 
-                    newSectionNode.appendChild(newSnippetNode);
+                    eleUl.appendChild(newSnippetNode);
                 }
 
                 sectionList.appendChild(newSectionNode);
