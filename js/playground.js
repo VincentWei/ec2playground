@@ -30,6 +30,8 @@ function refreshSnippetsByUsername(username) {
                 sectionList = document.getElementById('mySnippets');
             }
 
+            sectionList.replaceChildren();
+
             let templateSection = document.getElementById('snippetSectionTemplate');
             let sectionContent = templateSection.content;
             let templateSnippet = document.getElementById('mySnippetTemplate');
