@@ -1,7 +1,7 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
 function importProgram(btnElem) {
     var formData = new FormData();
-    formData.append("snippetDigest",
+    formData.append("digest",
           btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
 
     var request = new XMLHttpRequest();
@@ -42,7 +42,7 @@ function deleteProgram(btnElem) {
     }
 
     var formData = new FormData();
-    formData.append("snippetDigest",
+    formData.append("digest",
           btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
     formData.append("username", username);
     formData.append("password", password);
@@ -276,7 +276,7 @@ window.onload = function() {
     const snippetDigest = searchParams.get('snippet');
     if (snippetDigest && snippetDigest.length == 32) {
         var formData = new FormData();
-        formData.append("snippetDigest", snippetDigest);
+        formData.append("digest", snippetDigest);
 
         var request = new XMLHttpRequest();
         request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
