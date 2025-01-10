@@ -36,17 +36,15 @@ function refreshSnippetsByUsername(username) {
             let snippetContent = templateSnippet.content;
 
             for (const section in snippets) {
-                console.log(section);
                 let newSectionNode = sectionContent.cloneNode(true);
 
                 let eleBtn = newSectionNode.querySelector('button');
                 eleBtn.setAttribute('data-bs-target', `#${username}-${section}-collapse`);
+                eleBtn.textContent = section;
                 let eleDiv = newSectionNode.querySelector('div');
                 eleDiv.setAttribute('id', `${username}-${section}-collapse`);
-                console.log(eleDiv.getAttribute('id'));
 
                 for (const snippet of snippets[section]) {
-                    console.log(snippet.title);
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
