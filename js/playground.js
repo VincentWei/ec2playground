@@ -46,6 +46,7 @@ function deleteProgram(btnElem) {
           btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
     formData.append("username", username);
     formData.append("password", password);
+    console.log(formData);
 
     var request = new XMLHttpRequest();
     request.open("POST", globals.pathPrefix + "tools/delete-snippet.php");
