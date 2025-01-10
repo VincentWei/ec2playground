@@ -21,8 +21,12 @@ function copyProgramLink(btnElem) {
     let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest');
 
     try {
-        navigator.clipboard.writeText(
-                window.location.origin + window.location.pathname + '?snippet=' + digest);
+        console.log(digest);
+
+        let link = window.location.origin + window.location.pathname + '?snippet=' + digest;
+        console.log(link);
+
+        navigator.clipboard.writeText(link);
     }
     catch (error) {
         console.error(error.message);
