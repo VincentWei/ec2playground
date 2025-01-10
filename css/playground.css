@@ -68,9 +68,9 @@ body {
 #program-list {
   position: fixed;
   z-index: 100;
-  width: 280px;
+  width: 380px;
   height: 100%;
-  left: -280px;
+  left: -380px;
   transition: left 0.5s ease-in-out .1s;
 }
 
@@ -126,7 +126,9 @@ body {
 .btn-toggle-nav a {
   padding: .1875rem .5rem;
   margin-top: .125rem;
-  margin-left: 1.25rem;
+  max-width: 200px;
+  text-overflow: ellipsis;
+  text-wrap-mode: nowrap;
 }
 
 .btn-toggle-nav a:hover,
