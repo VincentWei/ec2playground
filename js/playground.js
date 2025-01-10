@@ -9,8 +9,63 @@ function importProgram(btnElem) {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            console.log(response.data);
             editor.replaceSelection(response.data);
+            dismissRepoPanel() {
+        }
+    };
+
+    request.send(formData);
+}
+
+function copyProgramLink(btnElem) {
+    var formData = new FormData();
+    formData.append("snippetDigest",
+          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
+
+    var request = new XMLHttpRequest();
+    request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        if (response.retCode == 0) {
+            editor.replaceSelection(response.data);
+            dismissRepoPanel() {
+        }
+    };
+
+    request.send(formData);
+}
+
+function deleteProgram(btnElem) {
+    let username = window.localStorage.getItem("username");
+    let password = window.localStorage.getItem("password");
+    if (username === null || password === null) {
+        console.log("不应该发生的事情发生了！");
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append("snippetDigest",
+          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
+    formData.append("username", username);
+    formData.append("password", password);
+
+    var request = new XMLHttpRequest();
+    request.open("POST", globals.pathPrefix + "tools/delete-snippet.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        if (response.retCode == 0) {
+            let digest = response.extraMsg;
+            console.log("deleted: " + digest);
+
+            let eleProgramList = document.getElementById('program-list');
+            while (true) {
+                let eleLi = eleProgramList.querySelector(`li.snippet-${digest}`);
+                if (eleLi) {
+                    eleLi.remove();
+                }
+                else
+                    break;
+            }
         }
     };
 
@@ -69,6 +124,7 @@ function refreshSnippetsByUsername(username) {
                 for (const snippet of snippets[section]) {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
+                    eleLi.classList.add(`snippet-${snippet.digest}`);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
                     let eleA = newSnippetNode.querySelector('a');
@@ -133,6 +189,7 @@ function refreshLatestSnippets() {
                 for (const snippet of snippets[username]) {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
+                    eleLi.classList.add(`snippet-${snippet.digest}`);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
                     let eleA = newSnippetNode.querySelector('a');
@@ -156,10 +213,10 @@ function getUsername() {
     let password = window.localStorage.getItem("password");
 
     if (username !== null && password !== null) {
-        return null;
+        return username;
     }
 
-    return username;
+    return null;
 }
 
 function refreshRepository() {
@@ -230,6 +287,10 @@ window.onload = function() {
 
         request.send(formData);
     }
+}
+
+function dismissRepoPanel() {
+    document.getElementById('program-list').style.setProperty('left', '-400px');
 }
 
 function dismissShareModal() {
