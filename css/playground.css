@@ -127,8 +127,9 @@ body {
   padding: .1875rem .5rem;
   margin-top: .125rem;
   max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
-  text-wrap-mode: nowrap;
 }
 
 .btn-toggle-nav a:hover,
