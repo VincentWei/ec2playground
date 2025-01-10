@@ -41,7 +41,8 @@ function refreshSnippetsByUsername(username) {
                 let eleBtn = newSectionNode.querySelector('button');
                 eleBtn.setAttribute('data-bs-target', `#${username}-${section}-collapse`);
                 let eleDiv = newSectionNode.querySelector('div');
-                eleBtn.setAttribute('id', `${username}-${section}-collapse`);
+                eleDiv.setAttribute('id', `${username}-${section}-collapse`);
+                console.log(eleDiv.getAttribute('id'));
 
                 for (const snippet of snippets[section]) {
                     console.log(snippet.title);
@@ -53,6 +54,7 @@ function refreshSnippetsByUsername(username) {
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
                     eleA.setAttribute('title', snippet.title);
                     eleA.textContent(snippet.title);
+                    console.log(snippet.title);
 
                     newSectionNode.appendChild(newSnippetNode);
                 }
