@@ -21,7 +21,6 @@ function refreshSnippetsByUsername(username) {
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
-            console.log(username);
 
             if (username == '老师') {
                 let sectionList = document.getElementById('teachersSnippets');
@@ -36,6 +35,7 @@ function refreshSnippetsByUsername(username) {
             let snippetContent = templateSnippet.content;
 
             for (const section in snippets) {
+                console.log(section);
                 let newSectionNode = sectionContent.cloneNode(true);
 
                 let eleBtn = newSectionNode.querySelector('button');
@@ -44,6 +44,7 @@ function refreshSnippetsByUsername(username) {
                 eleBtn.setAttribute('id', `${username}-${section}-collapse`);
 
                 for (const snippet of snippets[section]) {
+                    console.log(snippet.title);
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
