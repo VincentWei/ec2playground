@@ -59,8 +59,7 @@ else {
 
 $res = HttpUtils::httpsGitLabSnippetDelete($db->gitlab_host(), $db->gitlab_token(),
         $gitlabId);
-
-if (!is_array($res)) {
+if (!$res) {
     $result = new Result (100, "将程序从 GitLab 服务器删除时出现错误。");
     goto error;
 }
