@@ -41,7 +41,7 @@ function deleteProgram(btnElem) {
         return;
     }
 
-    let title = btnElem.parentElement.parentElement.getAttribute('data-snippet-title'));
+    let title = btnElem.parentElement.parentElement.getAttribute('data-snippet-title');
     if (!window.confirm(`程序被删除后不可恢复，请谨慎操作！\n请再次确认是否删除 '${title}' 程序？`)) {
         return;
     }
