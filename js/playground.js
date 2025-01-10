@@ -1,8 +1,8 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
 function importProgram(btnElem) {
-    let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest');
-
-    formData.append("snippetDigest", digest);
+    var formData = new FormData();
+    formData.append("snippetDigest",
+          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
 
     var request = new XMLHttpRequest();
     request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
