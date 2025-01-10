@@ -22,11 +22,12 @@ function refreshSnippetsByUsername(username) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
 
+            let sectionLisst = null;
             if (username == '老师') {
-                let sectionList = document.getElementById('teachersSnippets');
+                sectionList = document.getElementById('teachersSnippets');
             }
             else {
-                let sectionList = document.getElementById('mySnippets');
+                sectionList = document.getElementById('mySnippets');
             }
 
             let templateSection = document.getElementById('snippetSectionTemplate');
