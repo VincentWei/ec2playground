@@ -21,6 +21,7 @@ function refreshSnippetsByUsername(username) {
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "section");
             console.log(snippets);
+            console.log(username);
         }
     };
 
