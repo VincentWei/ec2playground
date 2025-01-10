@@ -29,8 +29,10 @@ function refreshSnippetsByUsername(username) {
             else {
                 sectionList = document.getElementById('mySnippets');
             }
-
             sectionList.replaceChildren();
+
+            if (Object.keys(snippets).length == 0)
+                return;
 
             let templateSection = document.getElementById('snippetSectionTemplate');
             let sectionContent = templateSection.content;
