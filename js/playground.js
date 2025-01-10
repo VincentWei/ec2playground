@@ -1,4 +1,22 @@
 // playground.js: 初始化编辑器、基本操作按钮与页面控制等
+function importProgram(btnElem) {
+    let digest = btnElem.parentElement.parentElement.getAttribute('data-snippet-digest');
+    console.log(digest);
+
+    formData.append("snippetDigest", digest);
+
+    var request = new XMLHttpRequest();
+    request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
+    request.onload = function (oEvent) {
+        let response = JSON.parse(request.response);
+        if (response.retCode == 0) {
+            editor.replaceSelection(response.data);
+        }
+    };
+
+    request.send(formData);
+}
+
 const groupBy = (array, key) => {
         return array.reduce((result, currentValue) => {
         const groupKey = currentValue[key];
