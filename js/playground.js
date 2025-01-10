@@ -41,6 +41,11 @@ function deleteProgram(btnElem) {
         return;
     }
 
+    let title = btnElem.parentElement.parentElement.getAttribute('data-snippet-title'));
+    if (!window.confirm(`程序被删除后不可恢复，请谨慎操作！\n请再次确认是否删除 '${title}' 程序？`)) {
+        return;
+    }
+
     var formData = new FormData();
     formData.append("digest",
           btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
@@ -127,6 +132,7 @@ function refreshSnippetsByUsername(username) {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.classList.add(`snippet-${snippet.digest}`);
+                    eleLi.setAttribute('data-snippet-title', snippet.title);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
                     let eleA = newSnippetNode.querySelector('a');
@@ -192,6 +198,7 @@ function refreshLatestSnippets() {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.classList.add(`snippet-${snippet.digest}`);
+                    eleLi.setAttribute('data-snippet-title', snippet.title);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
                     let eleA = newSnippetNode.querySelector('a');
