@@ -73,6 +73,8 @@ else {
     $db->free_result($db_result);
 }
 
+my_log("Calling HttpUtils::httpsGitLabSnippetUpdate");
+
 $res = HttpUtils::httpsGitLabSnippetUpdate($db->gitlab_host(), $db->gitlab_token(),
         $gitlabId, $username, $section, $title, $description, $snippet, $digest);
 
