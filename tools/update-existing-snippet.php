@@ -23,7 +23,6 @@ if (!$db_result) {
     goto error;
 }
 
-my_log("Check user");
 if ($db->num_rows($db_result) == 0) {
     $result = new Result(100, '不存在的用户。');
     goto error;
@@ -40,7 +39,6 @@ else {
     }
 }
 
-my_log("Check snippet");
 if (empty($_POST['section']) || empty($_POST['title'])
         || empty($_POST['snippet'])) {
     $result = new Result(100, '程序分类、标题或者代码为空。');
@@ -52,7 +50,6 @@ $title = $_POST['title'];
 $description = empty($_POST['description']) ? "" : $_POST['description'];
 $snippet = $_POST['snippet'];
 
-my_log("Check snippet for user");
 $digest = $db->escape_string($_POST['digest']);
 $db_result =
     $db->query("SELECT userId, gitlabId FROM snippets WHERE digest='$digest'");
@@ -76,8 +73,6 @@ else {
     $gitlabId = $row["gitlabId"];
     $db->free_result($db_result);
 }
-
-my_log("Calling HttpUtils::httpsGitLabSnippetUpdate");
 
 $res = HttpUtils::httpsGitLabSnippetUpdate($db->gitlab_host(), $db->gitlab_token(),
         $gitlabId, $username, $section, $title, $description, $snippet, $digest);

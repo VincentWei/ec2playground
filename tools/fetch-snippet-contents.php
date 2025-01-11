@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["digest"])) {
 }
 
 $digest = $db->escape_string($_POST["digest"]);
-$db_result = $db->query("SELECT userId, gitlabId FROM snippets WHERE digest = '$digest'");
+$db_result = $db->query("SELECT description, gitlabId FROM snippets WHERE digest = '$digest'");
 if (!$db_result) {
     $result = new Result(100, '数据库错误：' . $db->last_error());
     goto error;
@@ -37,7 +37,7 @@ if (!$res) {
 }
 
 $result = new Result(0, '成功');
-$result->extraMsg = $row['userId'];
+$result->extraMsg = $row['description'];
 $result->data = $res;
 
 error:

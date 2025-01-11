@@ -34,6 +34,14 @@ function copyProgramLink(btnElem) {
     }
 }
 
+function showPromptModal(message) {
+    const msgElem = document.getElementById("promptModalMsg");
+    msgElem.textContent = message;
+    const promptModal = new bootstrap.Modal('#promptModal',
+            { dropback: true, focus: true, keyboard: true });
+    promptModal.show();
+}
+
 function deleteProgram(btnElem) {
     let username = window.localStorage.getItem("username");
     let password = window.localStorage.getItem("password");
@@ -71,11 +79,7 @@ function deleteProgram(btnElem) {
             }
         }
         else {
-            const msgElem = document.getElementById("promptModalMsg");
-            msgElem.textContent = `删除错误：${response.retMsg}`;
-            const promptModal = new bootstrap.Modal('#promptModal',
-                    { dropback: true, focus: true, keyboard: true });
-            promptModal.show();
+            showPromptModal(`删除错误：${response.retMsg}`);
         }
     };
 
@@ -293,6 +297,7 @@ window.onload = function() {
             let response = JSON.parse(request.response);
             if (response.retCode == 0) {
                 editor.setValue(response.data);
+                showPromptModal(response.extraMsg);
             }
         };
 
@@ -397,11 +402,7 @@ function showShareModal(snippetHeaders) {
 function tryToShareCode() {
     let code = editor.getValue().trim();
     if (code.length < 10) {
-        const msgElem = document.getElementById("promptModalMsg");
-        msgElem.textContent = "至少写一个完整程序才能分享哦。";
-        const promptModal = new bootstrap.Modal('#promptModal',
-                { dropback: true, focus: true, keyboard: true });
-        promptModal.show();
+        showPromptModal("至少写一个完整程序才能分享哦。");
     }
     else {
         const searchParams = new URLSearchParams(window.location.search);
@@ -450,11 +451,7 @@ function runCode() {
 function clearCode() {
     var code = editor.getValue();
     if (code.length < 10) {
-        const msgElem = document.getElementById("promptModalMsg");
-        msgElem.textContent = "编辑区空空如也，清除啥呢？";
-        const promptModal = new bootstrap.Modal('#promptModal',
-                { dropback: true, focus: true, keyboard: true });
-        promptModal.show();
+        showPromptModal("编辑区空空如也，清除啥呢？");
         return;
     }
 
@@ -468,11 +465,7 @@ function clearCode() {
 function downloadCode() {
     var code = editor.getValue();
     if (code.length < 10) {
-        const msgElem = document.getElementById("promptModalMsg");
-        msgElem.textContent = "至少写点东西再保存嘛。";
-        const promptModal = new bootstrap.Modal('#promptModal',
-                { dropback: true, focus: true, keyboard: true });
-        promptModal.show();
+        showPromptModal("至少写点东西再保存嘛。");
         return;
     }
 
