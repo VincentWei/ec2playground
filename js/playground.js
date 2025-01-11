@@ -334,7 +334,8 @@ function shareProgram() {
             const passElem = document.getElementById("shareModalParentName");
             saveUserInfo(nameElem.value, passElem.value);
             updateUserFields();
-            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}" target="_blank">链接</a> 打开。`;
+            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 打开。`;
+            refreshSnippetsByUsername(nameElem.value);
         }
         else {
             errElem.textContent = response.retMsg;
