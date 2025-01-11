@@ -412,8 +412,8 @@ function tryToShareCode() {
                 let response = JSON.parse(request.response);
                 let username = window.localStorage.getItem("username");
                 console.log(response);
-                if (response.retCode == 0 && response.username == username) {
-                    showShareModal(response);
+                if (response.retCode == 0 && response.data.username == username) {
+                    showShareModal(response.data);
                 }
                 else {
                     showShareModal(null);
