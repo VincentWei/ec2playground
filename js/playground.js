@@ -337,6 +337,9 @@ function shareProgram() {
         formData.append("digest", snippetDigest);
         request.open("POST", globals.pathPrefix + "tools/update-existing-snippet.php");
     }
+    request.onerror = function (oEvent) {
+        console.log(oEvent);
+    };
     request.onload = function (oEvent) {
         const errElem = document.getElementById("shareModalErrorMsg");
         let response = JSON.parse(request.response);
