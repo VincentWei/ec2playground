@@ -28,7 +28,7 @@
       </div>
   </div>
 
-  <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+  <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
@@ -55,18 +55,18 @@
               </div>
 
               <div class="mb-3">
-                <label class="form-label" id="forShareModalProgramSection">程序分类</label>
-                <input type="text" class="form-control" name="section" required minlength="4" maxlength="128"
+                <label class="form-label" id="forShareModalProgramSection" for="shareModalProgramSection">程序分类</label>
+                <input type="text" class="form-control" name="section" id="shareModalProgramSection" required minlength="4" maxlength="128"
                     placeholder="至少四个字符；如：数论基础" aria-label="程序分类" aria-describedby="forShareModalProgramSection" />
               </div>
               <div class="mb-3">
-                <label class="form-label" id="forShareModalProgramTitle">程序标题</label>
-                <input type="text" class="form-control" name="title" required minlength="4" maxlength="128"
+                <label class="form-label" id="forShareModalProgramTitle" for="shareModalProgramTitle">程序标题</label>
+                <input type="text" class="form-control" name="title"  id="shareModalProgramTitle" required minlength="4" maxlength="128"
                     placeholder="至少四个字符；如：欧几里得算法" aria-label="程序标题" aria-describedby="forShareModalProgramTitle" />
               </div>
               <div class="mb-3">
-                <label class="form-label" id="forShareModalProgramDesc">程序描述</label>
-                <input type="text" class="form-control" name="description" maxlength="256"
+                <label class="form-label" id="forShareModalProgramDesc" for="shareModalProgramDesc">程序描述</label>
+                <input type="text" class="form-control" name="description" id="shareModalProgramDesc" maxlength="256"
                     placeholder="可不填；如：本程序是欧几里得算法的迭代实现" aria-label="程序描述" aria-describedby="forShareModalProgramDesc" />
               </div>
             </form>
