@@ -330,6 +330,9 @@ function shareProgram() {
         request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
     }
     else {
+        const searchParams = new URLSearchParams(window.location.search);
+        const snippetDigest = searchParams.get('snippet');
+        formData.append("digest", snippetDigest);
         request.open("POST", globals.pathPrefix + "tools/update-existing-snippet.php");
     }
     request.onload = function (oEvent) {
