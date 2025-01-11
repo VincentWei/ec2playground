@@ -357,7 +357,7 @@ function shareProgram() {
 }
 
 function showShareModal(snippetHeaders) {
-    const elem = document.getElementById("shareModalPromptUpdate");
+    var elem = document.getElementById("shareModalPromptUpdate");
     if (snippetHeaders) {
         elem.style.display = "block";
 
@@ -379,6 +379,7 @@ function showShareModal(snippetHeaders) {
         elem.value = '';
     }
 
+    console.log("about to show share modal");
     const errElem = document.getElementById("shareModalErrorMsg");
     errElem.style.display = "none";
     const submitElem = document.getElementById("shareModalSubmit");
@@ -411,7 +412,7 @@ function tryToShareCode() {
                 let response = JSON.parse(request.response);
                 let username = window.localStorage.getItem("username");
                 console.log(response);
-                if (response.retCode == 0 && response.username == 'username') {
+                if (response.retCode == 0 && response.username == username) {
                     showShareModal(response);
                 }
                 else {
