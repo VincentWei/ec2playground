@@ -297,7 +297,8 @@ window.onload = function() {
             let response = JSON.parse(request.response);
             if (response.retCode == 0) {
                 editor.setValue(response.data);
-                showPromptModal(response.extraMsg);
+                if (response.extraMsg.length > 0)
+                    showPromptModal(response.extraMsg);
             }
         };
 
