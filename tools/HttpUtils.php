@@ -315,6 +315,7 @@ class HttpUtils {
                 $res = false;
             }
             else {
+                my_log("HttpUtils::httpsGitLabSnippetUpdate: Ok: $http_code");
                 $res = json_decode($res, true);
                 $res['_digest'] = $digest;
             }
