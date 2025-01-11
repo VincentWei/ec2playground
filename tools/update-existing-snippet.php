@@ -91,7 +91,7 @@ $section = $db->escape_string($section);
 $title = $db->escape_string($title);
 $description = $db->escape_string($description);
 $db_result =
-    $db->query("UPDATE snippets SET section='$section', title='$title', description='$description' WHERE digest=$digest");
+    $db->query("UPDATE snippets SET section='$section', title='$title', description='$description' WHERE digest='$digest'");
 if (!$db_result) {
     $result = new Result(100, '数据库错误：' . $db->last_error());
     goto error;
