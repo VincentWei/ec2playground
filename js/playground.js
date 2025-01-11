@@ -324,7 +324,14 @@ function shareProgram() {
     submitElem.setAttribute("disabled", "disabled");
 
     var request = new XMLHttpRequest();
-    request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
+
+    const promptElem = document.getElementById("shareModalPromptUpdate");
+    if (promptElem.style.display == 'none') {
+        request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
+    }
+    else {
+        request.open("POST", globals.pathPrefix + "tools/update-existing-snippet.php");
+    }
     request.onload = function (oEvent) {
         const errElem = document.getElementById("shareModalErrorMsg");
         let response = JSON.parse(request.response);
@@ -334,7 +341,7 @@ function shareProgram() {
             const passElem = document.getElementById("shareModalParentName");
             saveUserInfo(nameElem.value, passElem.value);
             updateUserFields();
-            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 打开。`;
+            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 访问。`;
             refreshSnippetsByUsername(nameElem.value);
         }
         else {
@@ -349,6 +356,39 @@ function shareProgram() {
     request.send(formData);
 }
 
+function showShareModal(snippetHeaders) {
+    const elem = document.getElementById("shareModalPromptUpdate");
+    if (snippetHeaders) {
+        elem.style.display = "block";
+
+        elem = document.getElementById("shareModalProgramSection");
+        elem.value = snippetHeaders.section;
+        elem = document.getElementById("shareModalProgramTitle");
+        elem.value = snippetHeaders.title;
+        elem = document.getElementById("shareModalProgramDesc");
+        elem.value = snippetHeaders.description;
+    }
+    else {
+        elem.style.display = "none";
+
+        elem = document.getElementById("shareModalProgramSection");
+        elem.value = '';
+        elem = document.getElementById("shareModalProgramTitle");
+        elem.value = '';
+        elem = document.getElementById("shareModalProgramDesc");
+        elem.value = '';
+    }
+
+    const errElem = document.getElementById("shareModalErrorMsg");
+    errElem.style.display = "none";
+    const submitElem = document.getElementById("shareModalSubmit");
+    submitElem.removeAttribute("disabled");
+
+    const shareModal = new bootstrap.Modal('#shareModal',
+            { dropback: true, focus: true, keyboard: true });
+    shareModal.show();
+}
+
 function tryToShareCode() {
     let code = editor.getValue().trim();
     if (code.length < 10) {
@@ -359,14 +399,30 @@ function tryToShareCode() {
         promptModal.show();
     }
     else {
-        const errElem = document.getElementById("shareModalErrorMsg");
-        errElem.style.display = "none";
-        const submitElem = document.getElementById("shareModalSubmit");
-        submitElem.removeAttribute("disabled");
+        const searchParams = new URLSearchParams(window.location.search);
+        const snippetDigest = searchParams.get('snippet');
+        if (snippetDigest && snippetDigest.length == 32) {
+            var formData = new FormData();
+            formData.append("digest", snippetDigest);
 
-        const shareModal = new bootstrap.Modal('#shareModal',
-                { dropback: true, focus: true, keyboard: true });
-        shareModal.show();
+            var request = new XMLHttpRequest();
+            request.open("POST", globals.pathPrefix + "tools/fetch-snippet-headers.php");
+            request.onload = function (oEvent) {
+                let response = JSON.parse(request.response);
+                let username = window.localStorage.getItem("username");
+                if (response.retCode == 0 && response.username == 'username') {
+                    showShareModal(response);
+                }
+                else {
+                    showShareModal(null);
+                }
+            };
+
+            request.send(formData);
+        }
+        else {
+            showShareModal(null);
+        }
     }
 }
 
