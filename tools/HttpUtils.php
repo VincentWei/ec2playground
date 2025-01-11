@@ -265,6 +265,65 @@ class HttpUtils {
         return $res;
     }
 
+    public static function httpsGitLabSnippetUpdate($server, $access_token,
+            $gitlabId, $username, $section, $title, $description, $snippet, $digest) {
+        $url = "https://$server/api/v4/snippets/$gitlabId";
+
+        $title = "$username-$section-$title";
+        $array = array(
+                'title' => "$title",
+                'description' => $description,
+                'visibility' => 'public',
+                'files' => array (
+                    array (
+                        'action' => 'update',
+                        'content' => $snippet,
+                        'previous_path' => "$digest.ec2",
+                        'file_path' => "$digest.ec2",
+                        ),
+                    ),
+                );
+
+        $contents = json_encode($array);
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 100);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $contents);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array (
+            "PRIVATE-TOKEN: $access_token",
+            "Content-Type: application/json")
+        );
+
+        $start_time = microtime(true);
+        $res = curl_exec($ch);
+        $end_time = microtime(true);
+        if (($end_time - $start_time) > 3.0) {
+            my_log("HttpUtils::httpsGitLabSnippetUpdate takes " . ($end_time - $start_time) . " seconds ($url)");
+        }
+
+        if ($res === false) {
+            my_log("HttpUtils::httpsGitLabSnippetUpdate: Fatal error when updating snippet on the GitLab server ($url).");
+        }
+        else {
+            $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if ($http_code != '201' && $http_code != '200') {
+                my_log("HttpUtils::httpsGitLabSnippetUpdate: error when updating snippet on the GitLab server ($url): $http_code");
+                $res = false;
+            }
+            else {
+                $res = json_decode($res, true);
+                $res['_digest'] = $digest;
+            }
+        }
+
+        curl_close($ch);
+        return $res;
+    }
+
     public static function httpsGitLabSnippetDelete($server, $access_token,
             $gitlabId) {
         $url = "https://$server/api/v4/snippets/$gitlabId";

@@ -10,7 +10,7 @@ if (!(include "../config/database.php")) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] != 'POST' || empty($_POST['username'])
-        || empty($_POST['password']) || empty($_POST['digest']) {
+        || empty($_POST['password']) || empty($_POST['digest'])) {
     $result = new Result(100, '缺少必要的请求参数。');
     goto error;
 }
@@ -74,7 +74,7 @@ else {
 }
 
 $res = HttpUtils::httpsGitLabSnippetUpdate($db->gitlab_host(), $db->gitlab_token(),
-        $username, $gitlabId, $section, $title, $description, $snippet, $digest);
+        $gitlabId, $username, $section, $title, $description, $snippet, $digest);
 
 if (!is_array($res)) {
     $result = new Result(100, "将程序发布到 GitLab 服务器时出现错误。");
