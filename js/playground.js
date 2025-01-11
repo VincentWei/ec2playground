@@ -186,7 +186,7 @@ function refreshLatestSnippets() {
 
             let templateSection = document.getElementById('snippetSectionTemplate');
             let sectionContent = templateSection.content;
-            let templateSnippet = document.getElementById('othersSnippetTemplate');
+            let templateSnippet = document.getElementById('mySnippetTemplate');
             let snippetContent = templateSnippet.content;
 
             for (const username in snippets) {
