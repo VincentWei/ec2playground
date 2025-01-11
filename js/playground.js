@@ -331,10 +331,11 @@ function shareProgram() {
         request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
     }
     else {
-        console.log("update an existing snippet");
         const searchParams = new URLSearchParams(window.location.search);
         const snippetDigest = searchParams.get('snippet');
         formData.append("digest", snippetDigest);
+
+        console.log("about to update an existing snippet");
         request.open("POST", globals.pathPrefix + "tools/update-existing-snippet.php");
     }
     request.onerror = function (oEvent) {
