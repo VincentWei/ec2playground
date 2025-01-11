@@ -23,6 +23,7 @@ if (!$db_result) {
     goto error;
 }
 
+my_log("Check user");
 if ($db->num_rows($db_result) == 0) {
     $result = new Result(100, '不存在的用户。');
     goto error;
@@ -39,6 +40,7 @@ else {
     }
 }
 
+my_log("Check snippet");
 if (empty($_POST['section']) || empty($_POST['title'])
         || empty($_POST['snippet'])) {
     $result = new Result(100, '程序分类、标题或者代码为空。');
