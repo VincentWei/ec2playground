@@ -52,6 +52,7 @@ $title = $_POST['title'];
 $description = empty($_POST['description']) ? "" : $_POST['description'];
 $snippet = $_POST['snippet'];
 
+my_log("Check snippet for user");
 $digest = $db->escape_string($_POST['digest']);
 $db_result =
     $db->query("SELECT userId, gitlabId FROM snippets WHERE digest='$digest'");
