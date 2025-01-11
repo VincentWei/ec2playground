@@ -15,30 +15,27 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["digest"])) {
 }
 
 $digest = $db->escape_string($_POST["digest"]);
-$db_result = $db->query("SELECT userId, gitlabId FROM snippets WHERE digest = '$digest'");
+$db_result = $db->query( "SELECT
+        users.name AS username, snippets.title, snippets.section, snippets.description, snippets.gitlabId
+        FROM users, snippets
+        WHERE users.id = snippets.userId AND snippets.digest = '$digest'");
 if (!$db_result) {
     $result = new Result(100, '数据库错误：' . $db->last_error());
     goto error;
 }
 
 if ($db->num_rows($db_result) == 0) {
-    $result = new Result(100, "不存在指定的程序。");
+    $db->free_result($db_result);
+    $result = new Result(100, '不存在指定的程序。');
     goto error;
 }
 
 $row = $db->fetch_one($db_result);
 $db->free_result($db_result);
 
-$res = HttpUtils::httpsGitLabSnippetContents($db->gitlab_host(),
-        $db->gitlab_token(), $row['gitlabId']);
-if (!$res) {
-    $result = new Result(100, "从 GitLab 服务器获取程序内容时失败。");
-    goto error;
-}
-
 $result = new Result(0, '成功');
-$result->extraMsg = $row['userId'];
-$result->data = $res;
+$result->extraMsg = $digest;
+$result->data = $row;
 
 error:
 header('content-type:application/json;charset=utf8');
