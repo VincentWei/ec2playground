@@ -98,7 +98,7 @@ if (!$db_result) {
 }
 
 $result = new Result(0, '成功');
-$result->extraMsg = $digest;
+$result->extraMsg = 'updated';
 $result->data = $gitlabId;
 
 error:

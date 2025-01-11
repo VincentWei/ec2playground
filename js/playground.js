@@ -56,11 +56,9 @@ function deleteProgram(btnElem) {
     var request = new XMLHttpRequest();
     request.open("POST", globals.pathPrefix + "tools/delete-snippet.php");
     request.onload = function (oEvent) {
-        console.log(request);
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
             let digest = response.extraMsg;
-            console.log("deleted: " + digest);
 
             let eleProgramList = document.getElementById('program-list');
             while (true) {
@@ -163,7 +161,6 @@ function refreshSelectedSnippets() {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
             let snippets = groupBy(response.data, "name");
-            console.log(snippets);
         }
     };
 
@@ -259,7 +256,7 @@ function updateUserFields() {
     let password = window.localStorage.getItem("password");
 
     if (username === null || password === null) {
-        console.log("not signed in.");
+        console.log("没有用户信息。");
         return null;
     }
     else {
@@ -327,7 +324,6 @@ function shareProgram() {
 
     const promptElem = document.getElementById("shareModalPromptUpdate");
     if (promptElem.style.display == 'none') {
-        console.log("push a new snippet");
         request.open("POST", globals.pathPrefix + "tools/push-new-snippet.php");
     }
     else {
@@ -335,22 +331,22 @@ function shareProgram() {
         const snippetDigest = searchParams.get('snippet');
         formData.append("digest", snippetDigest);
 
-        console.log("about to update an existing snippet");
         request.open("POST", globals.pathPrefix + "tools/update-existing-snippet.php");
     }
-    request.onerror = function (oEvent) {
-        console.log(oEvent);
-    };
     request.onload = function (oEvent) {
         const errElem = document.getElementById("shareModalErrorMsg");
         let response = JSON.parse(request.response);
-        console.log(response);
         if (request.status == 200 && response.retCode == 0) {
             const nameElem = document.getElementById("shareModalStudentName");
             const passElem = document.getElementById("shareModalParentName");
             saveUserInfo(nameElem.value, passElem.value);
             updateUserFields();
-            errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 访问。`;
+            if (response.extraMsg == 'updated') {
+                errElem.innerHTML = `已成功更新！`;
+            }
+            else {
+                errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 访问。`;
+            }
             refreshSnippetsByUsername(nameElem.value);
         }
         else {
@@ -388,7 +384,6 @@ function showShareModal(snippetHeaders) {
         elem.value = '';
     }
 
-    console.log("about to show share modal");
     const errElem = document.getElementById("shareModalErrorMsg");
     errElem.style.display = "none";
     const submitElem = document.getElementById("shareModalSubmit");
@@ -420,7 +415,6 @@ function tryToShareCode() {
             request.onload = function (oEvent) {
                 let response = JSON.parse(request.response);
                 let username = window.localStorage.getItem("username");
-                console.log(response);
                 if (response.retCode == 0 && response.data.username == username) {
                     showShareModal(response.data);
                 }
