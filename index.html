@@ -261,15 +261,15 @@
 <template id="mySnippetTemplate">
     <li class="d-flex align-items-center ps-3 pe-2" data-snippet-title="SNIPPET-TITLE" data-snippet-digest="SNIPPET-DIGEST">
       <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark text-decoration-none text-truncate rounded"
-            data-bs-toggle="tooltip" title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+            data-bs-toggle="tooltip" data-bs-title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
       <div class="d-flex ms-auto">
-        <button type="button" class="btn-icon mt-0 me-0" onclick="importProgram(this)" aria-label="导入代码" data-bs-toggle="tooltip" title="导入代码到编辑区">
+        <button type="button" class="btn-icon mt-0 me-0" onclick="importProgram(this)" aria-label="导入代码" data-bs-toggle="tooltip" data-bs-title="导入代码到编辑区">
           <i class="bi bi-arrow-down-right"></i>
         </button>
-        <button type="button" class="btn-icon mt-0 me-0" onclick="copyProgramLink(this)" aria-label="复制分享链接" data-bs-toggle="tooltip" title="复制分享链接到剪贴板">
+        <button type="button" class="btn-icon mt-0 me-0" onclick="copyProgramLink(this)" aria-label="复制分享链接" data-bs-toggle="tooltip" data-bs-title="复制分享链接到剪贴板">
           <i class="bi bi-link"></i>
         </button>
-        <button type="button" class="btn-icon mt-0 me-0 text-danger" onclick="deleteProgram(this)" aria-label="删除此程序" data-bs-toggle="tooltip" title="删除此程序">
+        <button type="button" class="btn-icon mt-0 me-0 text-danger" onclick="deleteProgram(this)" aria-label="删除此程序" data-bs-toggle="tooltip" data-bs-title="删除此程序">
           <i class="bi bi-trash"></i>
         </button>
       </div>
@@ -279,15 +279,15 @@
 <template id="othersSnippetTemplate">
     <li class="d-flex align-items-center ps-3 pe-2" data-snippet-title="SNIPPET-TITLE" data-snippet-digest="SNIPPET-DIGEST">
       <a href="?snippet=SNIPPET-DIGEST" target="_blank" class="link-dark text-decoration-none text-truncate rounded"
-            data-bs-toggle="tooltip" title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
+            data-bs-toggle="tooltip" data-bs-title="SNIPPET-DESCRIPTION">SNIPPET-TITLE</a>
       <div class="d-flex ms-auto">
-        <button type="button" class="btn-icon mt-0 me-0" onclick="importProgram(this)" aria-label="导入代码" data-bs-toggle="tooltip" title="导入代码到编辑区">
+        <button type="button" class="btn-icon mt-0 me-0" onclick="importProgram(this)" aria-label="导入代码" data-bs-toggle="tooltip" data-bs-title="导入代码到编辑区">
           <i class="bi bi-arrow-down-right"></i>
         </button>
-        <button type="button" class="btn-icon mt-0 me-0" onclick="copyProgramLink(this)" aria-label="复制分享链接" data-bs-toggle="tooltip" title="复制分享链接到剪贴板">
+        <button type="button" class="btn-icon mt-0 me-0" onclick="copyProgramLink(this)" aria-label="复制分享链接" data-bs-toggle="tooltip" data-bs-title="复制分享链接到剪贴板">
           <i class="bi bi-link"></i>
         </button>
-        <button type="button" class="btn-icon mt-0 me-0" onclick="toggleStar(this)" aria-label="点亮星星" data-bs-toggle="tooltip" title="点亮星星">
+        <button type="button" class="btn-icon mt-0 me-0" onclick="toggleStar(this)" aria-label="点亮星星" data-bs-toggle="tooltip" data-bs-title="点亮星星">
           <i class="bi bi-star"></i>
         </button>
       </div>

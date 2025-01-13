@@ -144,7 +144,7 @@ function refreshSnippetsByUsername(username) {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('title', snippet.title);
+                    eleA.setAttribute('data-bs-title', snippet.title);
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
@@ -209,7 +209,7 @@ function refreshLatestSnippets() {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('title', snippet.title);
+                    eleA.setAttribute('data-bs-title', snippet.title);
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
