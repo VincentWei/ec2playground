@@ -97,6 +97,29 @@ const groupBy = (array, key) => {
     }, {});
 };
 
+function enableTooltips(sectionElem) {
+    const sectionCollapseList = sectionElem.querySelectorAll(".program-section");
+    console.log('sectionCollapseList lenght: ' + sectionCollapseList.length);
+    sectionCollapseList.forEach(function(myCollapsible) {
+        console.log('myCollapsible addEventListener for ' + myCollapsible.className);
+        myCollapsible.addEventListener('hidden.bs.collapse', function(e) {
+            console.log('myCollapsible event' + e.type);
+        });
+
+        myCollapsible.addEventListener('shown.bs.collapse', function(e) {
+            console.log('myCollapsible shown');
+            const tooltipTriggerList =
+                    myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
+                    new bootstrap.Tooltip(tooltipTriggerEl));
+
+        });
+
+    });
+
+    console.log('Tooltips enabled');
+}
+
 function refreshSnippetsByUsername(username) {
     var formData = new FormData();
     formData.append("username", username);
@@ -152,6 +175,7 @@ function refreshSnippetsByUsername(username) {
 
                 sectionList.appendChild(newSectionNode);
             }
+            enableTooltips(sectionList);
         }
     };
 
@@ -217,6 +241,8 @@ function refreshLatestSnippets() {
 
                 sectionList.appendChild(newSectionNode);
             }
+
+            enableTooltips(sectionList);
         }
     };
 
@@ -234,33 +260,8 @@ function getUsername() {
     return null;
 }
 
-function enableTooltips() {
-    const repoPanelElem = document.getElementById('programListPanel');
-    const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
-    console.log('sectionCollapseList lenght: ' + sectionCollapseList.length);
-    sectionCollapseList.forEach(function(myCollapsible) {
-        console.log('myCollapsible addEventListener for ' + myCollapsible.className);
-        myCollapsible.addEventListener('hidden.bs.collapse', function(e) {
-            console.log('myCollapsible event' + e.type);
-        });
-
-        myCollapsible.addEventListener('shown.bs.collapse', function(e) {
-            console.log('myCollapsible shown');
-            const tooltipTriggerList =
-                    myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
-                    new bootstrap.Tooltip(tooltipTriggerEl));
-
-        });
-
-    });
-
-    console.log('Tooltips enabled');
-}
-
 function showRepository(btnElem) {
     document.getElementById('programListPanel').style.setProperty('left', '0px');
-    enableTooltips();
 }
 
 function refreshRepository(username) {
@@ -273,8 +274,6 @@ function refreshRepository(username) {
     if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
     }
-
-    enableTooltips();
 }
 
 function saveUserInfo(username, password) {
