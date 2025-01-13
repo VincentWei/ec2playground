@@ -239,7 +239,7 @@ function enableTooltips() {
     const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
     sectionCollapseList.forEach(function(myCollapsible) {
         console.log('myCollapsible addEventListener ' + myCollapsible.className);
-        myCollapsible.addEventListener('shown.bs.collapse', () => {
+        myCollapsible.addEventListener('shown.bs.collapse', function(e) {
             console.log('myCollapsible shown');
             const tooltipTriggerList =
                     myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
