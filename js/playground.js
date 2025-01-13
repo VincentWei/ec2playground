@@ -106,7 +106,7 @@ const groupBy = (array, key) => {
 function enableTooltips(sectionElem) {
     const sectionCollapseList = sectionElem.querySelectorAll(".program-section");
     sectionCollapseList.forEach(function(myCollapsible) {
-        const deleteBtns = myCollapsible.querySelector('[data-bs-title="删除此程序"]');
+        const deleteBtns = myCollapsible.querySelectorAll('[data-bs-title="删除此程序"]');
         const username = getUsername();
         deleteBtns.forEach(function(btnElem) {
             if (username == null) {
