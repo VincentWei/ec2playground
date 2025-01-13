@@ -236,13 +236,13 @@ function getUsername() {
 
 function enableTooltips() {
     const repoPanelElem = document.getElementById('program-list');
-    const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
+    const sectionCollapseList = document.querySelectorAll(".program-section");
     sectionCollapseList.forEach(function(myCollapsible) {
         console.log('myCollapsible addEventListener' . myCollapsible.classes);
         myCollapsible.addEventListener('shown.bs.collapse', event => {
             console.log('myCollapsible shown');
             const tooltipTriggerList =
-                    myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
+                    document.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
                     new bootstrap.Tooltip(tooltipTriggerEl));
 
