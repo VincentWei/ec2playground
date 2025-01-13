@@ -30,6 +30,10 @@ function copyProgramLink(btnElem) {
         navigator.clipboard.writeText(link);
         const tooltip = bootstrap.Tooltip.getInstance(btnElem);
         tooltip.setContent({ '.tooltip-inner': '已复制！' });
+        window.setTimeout(() => {
+            tooltip.setContent({ '.tooltip-inner': '复制分享链接到剪贴板' });
+            tooltip.hide();
+        }, 1000);
     }
     catch (error) {
         console.error(error.message);
