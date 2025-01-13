@@ -99,25 +99,15 @@ const groupBy = (array, key) => {
 
 function enableTooltips(sectionElem) {
     const sectionCollapseList = sectionElem.querySelectorAll(".program-section");
-    console.log('sectionCollapseList lenght: ' + sectionCollapseList.length);
     sectionCollapseList.forEach(function(myCollapsible) {
-        console.log('myCollapsible addEventListener for ' + myCollapsible.className);
-        myCollapsible.addEventListener('hidden.bs.collapse', function(e) {
-            console.log('myCollapsible event' + e.type);
-        });
-
         myCollapsible.addEventListener('shown.bs.collapse', function(e) {
-            console.log('myCollapsible shown');
             const tooltipTriggerList =
                     myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
                     new bootstrap.Tooltip(tooltipTriggerEl));
 
         });
-
     });
-
-    console.log('Tooltips enabled');
 }
 
 function refreshSnippetsByUsername(username) {
