@@ -238,7 +238,7 @@ function enableTooltips() {
     const repoPanelElem = document.getElementById('program-list');
     const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
     sectionCollapseList.forEach(function(myCollapsible) {
-        console.log('myCollapsible addEventListener ' + myCollapsible.className);
+        console.log('myCollapsible addEventListener for ' + myCollapsible.className);
         myCollapsible.addEventListener('shown.bs.collapse', function(e) {
             console.log('myCollapsible shown');
             const tooltipTriggerList =
@@ -246,6 +246,10 @@ function enableTooltips() {
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
                     new bootstrap.Tooltip(tooltipTriggerEl));
 
+        });
+
+        myCollapsible.addEventListener('hidden.bs.collapse', function(e) {
+            console.log('myCollapsible hidden');
         });
     });
 
