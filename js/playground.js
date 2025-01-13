@@ -244,7 +244,7 @@ function enableTooltips() {
                     new bootstrap.Tooltip(tooltipTriggerEl));
 
         });
-    }
+    });
 
     console.log('Tooltips enabled');
 }
