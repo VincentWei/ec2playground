@@ -111,11 +111,15 @@ function enableTooltips(sectionElem) {
         deleteBtns.forEach(function(btnElem) {
             if (username == null) {
                 btnElem.setAttribute('disabled', 'disabled');
+                btnElem.classList.remove('text-danger');
+                btnElem.classList.add('text-muted');
             }
             else {
                 let snippet_user = btnElem.getAttribute('data-snippet-username');
                 if (username != '老师' && username != snippet_user) {
                     btnElem.setAttribute('disabled', 'disabled');
+                    btnElem.classList.remove('text-danger');
+                    btnElem.classList.add('text-muted');
                 }
                 else {
                     btnElem.removeAttribute('disabled');
