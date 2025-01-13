@@ -64,7 +64,7 @@ body {
     opacity: var(--bs-btn-refresh-focus-opacity)
 }
 
-#program-list {
+#programListPanel {
   position: fixed;
   z-index: 100;
   width: 380px;
