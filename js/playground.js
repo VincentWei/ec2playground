@@ -167,7 +167,7 @@ function refreshSnippetsByUsername(username) {
                         eleA.setAttribute('data-bs-title', snippet.title);
                     }
                     else {
-                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><span class="fs-6">${snippet.description}</span>`);
+                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><small>${snippet.description}</small>`);
                     }
                     eleA.textContent = snippet.title;
 
@@ -238,7 +238,7 @@ function refreshLatestSnippets() {
                         eleA.setAttribute('data-bs-title', snippet.title);
                     }
                     else {
-                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><span class="fs-6">${snippet.description}</span>`);
+                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><small>${snippet.description}</small>`);
                     }
                     eleA.textContent = snippet.title;
 
