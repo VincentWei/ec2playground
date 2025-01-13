@@ -130,9 +130,11 @@ function enableTooltips(sectionElem) {
         myCollapsible.addEventListener('shown.bs.collapse', function(e) {
             const tooltipTriggerList =
                     myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
-                    new bootstrap.Tooltip(tooltipTriggerEl));
-
+            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                if (!tooltipTriggerEl.hasAttribute('disabled')) {
+                    const tooltip = new bootstrap.Tooltip(tooltipTriggerEl);
+                }
+            });
         });
     });
 }
