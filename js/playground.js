@@ -112,7 +112,7 @@ function enableTooltips(sectionElem) {
             if (username == null) {
                 btnElem.setAttribute('disabled', 'disabled');
                 btnElem.classList.remove('text-danger');
-                btnElem.classList.add('text-muted');
+                btnElem.classList.add('text-body-tertiary');
             }
             else {
                 let snippet_user = btnElem.getAttribute('data-snippet-username');
