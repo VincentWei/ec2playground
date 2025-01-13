@@ -243,6 +243,9 @@ function refreshRepository() {
     if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
     }
+
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 }
 
 function saveUserInfo(username, password) {
