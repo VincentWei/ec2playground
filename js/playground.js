@@ -28,6 +28,8 @@ function copyProgramLink(btnElem) {
         let link = assemblyShareLink(digest);
 
         navigator.clipboard.writeText(link);
+        const tooltip = bootstrap.Tooltip.getInstance(btnElem);
+        tooltip.setContent({ '.tooltip-inner': '已复制！' });
     }
     catch (error) {
         console.error(error.message);
@@ -157,7 +159,7 @@ function refreshSnippetsByUsername(username) {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('data-bs-title', snippet.title);
+                    eleA.setAttribute('data-bs-title', `${snippet.title}<br/>${snippet.description}`);
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
@@ -223,7 +225,7 @@ function refreshLatestSnippets() {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('data-bs-title', snippet.title);
+                    eleA.setAttribute('data-bs-title', `${snippet.title}<br/>${snippet.description}`);
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
