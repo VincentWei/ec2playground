@@ -258,6 +258,11 @@ function enableTooltips() {
     console.log('Tooltips enabled');
 }
 
+function showRepository(btnElem) {
+    document.getElementById('programListPanel').style.setProperty('left', '0px');
+    enableTooltips();
+}
+
 function refreshRepository(username) {
     refreshSnippetsByUsername('老师');
     // refreshSelectedSnippets();
