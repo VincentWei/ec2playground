@@ -235,7 +235,8 @@ function getUsername() {
 }
 
 function enableTooltips() {
-    const sectionCollapseList = document.querySelectorAll(".program-section");
+    const repoPanelElem = document.getElementById('program-list');
+    const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
     sectionCollapseList.forEach(function(myCollapsible) {
         myCollapsible.addEventListener('shown.collapse', event => {
             const tooltipTriggerList =
