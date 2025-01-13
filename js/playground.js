@@ -234,19 +234,27 @@ function getUsername() {
     return null;
 }
 
-function refreshRepository() {
+function enableTooltips() {
+    const tooltipTriggerList =
+        document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
+        new bootstrap.Tooltip(tooltipTriggerEl));
+
+    console.log('Tooltips enabled');
+}
+
+function refreshRepository(username) {
     refreshSnippetsByUsername('老师');
     // refreshSelectedSnippets();
     refreshLatestSnippets();
 
-    username = getUsername();
+    if (username == null)
+        username = getUsername();
     if (username !== null && username != '老师') {
         refreshSnippetsByUsername(username);
     }
 
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    console.log("tooltip initialized");
+    enableTooltips();
 }
 
 function saveUserInfo(username, password) {
@@ -281,13 +289,7 @@ function updateUserFields() {
 
 window.onload = function() {
     username = updateUserFields();
-
-    refreshSnippetsByUsername('老师');
-    //refreshSelectedSnippets();
-    refreshLatestSnippets();
-    if (username !== null && username != '老师') {
-        refreshSnippetsByUsername(username);
-    }
+    refreshRepository(username);
 
     const searchParams = new URLSearchParams(window.location.search);
     const snippetDigest = searchParams.get('snippet');
@@ -357,7 +359,7 @@ function shareProgram() {
             else {
                 errElem.innerHTML = `已成功分享！点击 <a href="${assemblyShareLink(response.extraMsg)}">链接</a> 访问。`;
             }
-            refreshSnippetsByUsername(nameElem.value);
+            refreshRepository(nameElem.value);
         }
         else {
             errElem.textContent = response.retMsg;
