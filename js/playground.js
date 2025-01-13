@@ -163,7 +163,12 @@ function refreshSnippetsByUsername(username) {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('data-bs-title', `${snippet.title}<br/>${snippet.description}`);
+                    if (snippet.description == null || snippet.description.length == 0) {
+                        eleA.setAttribute('data-bs-title', snippet.title);
+                    }
+                    else {
+                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><span class="fs-6">${snippet.description}</span>`);
+                    }
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
@@ -229,7 +234,12 @@ function refreshLatestSnippets() {
 
                     let eleA = newSnippetNode.querySelector('a');
                     eleA.setAttribute('href', `?snippet=${snippet.digest}`);
-                    eleA.setAttribute('data-bs-title', `${snippet.title}<br/>${snippet.description}`);
+                    if (snippet.description == null || snippet.description.length == 0) {
+                        eleA.setAttribute('data-bs-title', snippet.title);
+                    }
+                    else {
+                        eleA.setAttribute('data-bs-title', `${snippet.title}<br/><span class="fs-6">${snippet.description}</span>`);
+                    }
                     eleA.textContent = snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
