@@ -68,7 +68,7 @@ function deleteProgram(btnElem) {
         if (response.retCode == 0) {
             let digest = response.extraMsg;
 
-            let eleProgramList = document.getElementById('program-list');
+            let eleProgramList = document.getElementById('programListPanel');
             while (true) {
                 let eleLi = eleProgramList.querySelector(`li.snippet-${digest}`);
                 if (eleLi) {
@@ -235,8 +235,9 @@ function getUsername() {
 }
 
 function enableTooltips() {
-    const repoPanelElem = document.getElementById('program-list');
+    const repoPanelElem = document.getElementById('programListPanel');
     const sectionCollapseList = repoPanelElem.querySelectorAll(".program-section");
+    console.log('sectionCollapseList lenght: ' + sectionCollapseList.length);
     sectionCollapseList.forEach(function(myCollapsible) {
         console.log('myCollapsible addEventListener for ' + myCollapsible.className);
         myCollapsible.addEventListener('hidden.bs.collapse', function(e) {
@@ -327,7 +328,7 @@ window.onload = function() {
 }
 
 function dismissRepoPanel() {
-    document.getElementById('program-list').style.setProperty('left', '-400px');
+    document.getElementById('programListPanel').style.setProperty('left', '-400px');
 }
 
 function dismissShareModal() {
