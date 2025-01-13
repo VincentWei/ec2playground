@@ -235,10 +235,16 @@ function getUsername() {
 }
 
 function enableTooltips() {
-    const tooltipTriggerList =
-        document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
-        new bootstrap.Tooltip(tooltipTriggerEl));
+    const sectionCollapseList = document.querySelectorAll(".program-section");
+    sectionCollapseList.forEach(function(myCollapsible) {
+        myCollapsible.addEventListener('shown.collapse', event => {
+            const tooltipTriggerList =
+                    myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl =>
+                    new bootstrap.Tooltip(tooltipTriggerEl));
+
+        });
+    }
 
     console.log('Tooltips enabled');
 }
