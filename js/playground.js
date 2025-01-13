@@ -119,7 +119,7 @@ function enableTooltips(sectionElem) {
                 if (username != '老师' && username != snippet_user) {
                     btnElem.setAttribute('disabled', 'disabled');
                     btnElem.classList.remove('text-danger');
-                    btnElem.classList.add("text-body-tertiary');
+                    btnElem.classList.add('text-body-tertiary');
                 }
                 else {
                     btnElem.removeAttribute('disabled');
