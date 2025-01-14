@@ -44,6 +44,8 @@ wasmIOrunCode ()
         {
           sprintf (str, "wasmIOinput('算法: %s 请输入第 %d 个参数: %s')",
                    vm->main.funcname, i + 1, vm->main.funcargs[i]);
+          if (emscripten_run_script_int ("WasmMutex.runLock") == 0)
+            break;
           stack_push (vm, obj_newstr (vm, emscripten_run_script_string (str)));
         }
       start = clock ();
@@ -51,7 +53,8 @@ wasmIOrunCode ()
         {
         case 0:
           {
-
+            if (emscripten_run_script_int ("WasmMutex.runLock") == 0)
+              __losu_sigThrow (vm, VMSIGYIELD);
             stack_call (vm, narg, 1);
             end = clock ();
             cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -127,6 +130,7 @@ wasmIOrunCode ()
           break;
         }
     }
+endrun:
   vm_close (vm);
   Ec2WasmVM = NULL;
   emscripten_run_script ("WasmMutex.runLock = 0;");

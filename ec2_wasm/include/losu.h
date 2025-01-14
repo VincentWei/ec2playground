@@ -157,10 +157,10 @@ typedef struct LosuVm
   _l_gcint gcMax;   /* All Max */
   _l_gcint gcHook;  /* hookMax */
 
-  uint32_t loophook; // 循环计次器
-  uint32_t callhook; // 调用计次器
-  uint32_t aluhook;  // 算术计次器
-  uint32_t deephook;
+  int32_t loophook; // 循环计次器
+  int32_t callhook; // 调用计次器
+  int32_t aluhook;  // 算术计次器
+  int32_t deephook;
   struct __losuvmSTA *stacksta;
 
   struct main
