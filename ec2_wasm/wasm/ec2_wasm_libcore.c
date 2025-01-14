@@ -19,6 +19,8 @@ wasm_libcore_io_print (LosuVm *vm)
       printf ("%s", obj_tostr (vm, o));
     }
   printf ("\n");
+  emscripten_sleep (
+      50); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
   return 0;
 }
 // 输出(提示)
@@ -26,7 +28,8 @@ int32_t
 wasm_libcore_io_input (LosuVm *vm)
 {
   char text[1024] = { 0 };
-  snprintf (text, 1024, "wasmIOinput('%s')", obj_tostr (vm, arg_get (vm, 1)));
+  snprintf (text, 1024, "wasmIOinput('%s')",
+            obj_tostr (vm, arg_get (vm, 1))); // 通过 js 端执行打断操作
   arg_return (vm, obj_newstr (vm, emscripten_run_script_string (text)));
   return 1;
 }
@@ -250,11 +253,15 @@ wasm_libcore_exec (LosuVm *vm)
       emscripten_run_script ("wasmIOclapshow();");
       emscripten_sleep (1000);
       emscripten_run_script ("wasmIOclapclose();");
+      emscripten_sleep (1000); // 增加异步等待，方便打断
     }
   else if (!strcmp (cmd, "说出"))
     {
       sprintf (tmp, "wasmIOspeek('%s')", obj_tostr (vm, arg_get (vm, 2)));
       emscripten_run_script (tmp);
+      // 等待语音合成锁释放
+      while (emscripten_run_script_int ("WasmMutex.speekLock") == 1)
+        emscripten_sleep (100);
     }
   return 0;
 }

@@ -16,7 +16,7 @@ LosuExtern const char *unit2str (LosuVm *vm, LosuObj *obj);
 void
 wasmIOrunCode ()
 {
-  emscripten_run_script ("wasmLock = 1;");
+  emscripten_run_script ("WasmMutex.runLock = 1;");
   char str[128] = { 0 };
   LosuVm *vm = Ec2WasmVM = vm_create (1024);
   gc_setmax (vm, 1024 * 1024); // 1 M
@@ -39,19 +39,19 @@ wasmIOrunCode ()
       __losuvmJmp newjmp;
       vm->errjmp = &newjmp;
       int sta = setjmp (newjmp.jmpflag);
+      stack_push (vm, *vm->main.main);
+      for (int i = 0; i < narg; i++)
+        {
+          sprintf (str, "wasmIOinput('算法: %s 请输入第 %d 个参数: %s')",
+                   vm->main.funcname, i + 1, vm->main.funcargs[i]);
+          stack_push (vm, obj_newstr (vm, emscripten_run_script_string (str)));
+        }
+      start = clock ();
       switch (sta)
         {
         case 0:
           {
-            stack_push (vm, *vm->main.main);
-            for (int i = 0; i < narg; i++)
-              {
-                sprintf (str, "wasmIOinput('算法: %s 请输入第 %d 个参数: %s')",
-                         vm->main.funcname, i + 1, vm->main.funcargs[i]);
-                stack_push (
-                    vm, obj_newstr (vm, emscripten_run_script_string (str)));
-              }
-            start = clock ();
+
             stack_call (vm, narg, 1);
             end = clock ();
             cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
@@ -129,5 +129,10 @@ wasmIOrunCode ()
     }
   vm_close (vm);
   Ec2WasmVM = NULL;
-  emscripten_run_script ("wasmLock = 0;");
+  emscripten_run_script ("WasmMutex.runLock = 0;");
+}
+void
+wasmIObreakCode ()
+{
+  emscripten_run_script ("WasmMutex.runLock = 0;"); // 释放运行锁
 }

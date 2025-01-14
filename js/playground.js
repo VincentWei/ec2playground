@@ -440,9 +440,12 @@ window.onerror = function (message) {
 };
 
 function runCode() {
-    // 清除上一次的运行结果
-    if (wasmLock == 1)
+    if (WasmMutex.runLock == 1) {
+        // 处于运行中，执行打断操作
+        Module._wasmIObreakCode();
         return;
+    }
+    // 清除上一次的运行结果
     document.getElementById('output').innerHTML = new Date().toLocaleString() + "\n--------------------------------\n";
     // 运行 WebAssembly 代码
     Module._wasmIOrunCode();
