@@ -20,7 +20,7 @@ wasm_libcore_io_print (LosuVm *vm)
     }
   printf ("\n");
   emscripten_sleep (
-      50); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
+      0); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
   return 0;
 }
 // 输出(提示)
@@ -261,7 +261,7 @@ wasm_libcore_exec (LosuVm *vm)
       emscripten_run_script (tmp);
       // 等待语音合成锁释放
       while (emscripten_run_script_int ("WasmMutex.speekLock") == 1)
-        emscripten_sleep (100);
+        emscripten_sleep (0);
     }
   return 0;
 }
