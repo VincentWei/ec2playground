@@ -8,7 +8,7 @@ if (!(include "../config/database.php")) {
     goto error;
 }
 
-$db_result = $db->query("SELECT users.name, snippets.digest, snippets.section, snippets.title, snippets.description, snippets.gitlabId
+$db_result = $db->query("SELECT users.name AS username, snippets.digest, snippets.section, snippets.title, snippets.description, snippets.gitlabId
         FROM users, snippets
         WHERE users.id = snippets.userId
         ORDER BY snippets.rankValue DESC

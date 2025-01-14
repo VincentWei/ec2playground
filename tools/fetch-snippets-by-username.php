@@ -30,9 +30,9 @@ $row = $db->fetch_one($db_result);
 $userId = $row['id'];
 $db->free_result($db_result);
 
-$db_result = $db->query("SELECT digest, section, title, description, gitlabId
-        FROM snippets
-        WHERE userId = $userId");
+$db_result = $db->query("SELECT users.name AS username, snippets.digest, snippets.section, snippets.title, snippets.description, snippets.gitlabId
+        FROM users, snippets
+        WHERE users.id = snippets.userId AND snippets.userId = $userId");
 if (!$db_result) {
     $result = new Result(100, '数据库错误：' . $db->last_error());
     goto error;
