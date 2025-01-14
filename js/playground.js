@@ -115,7 +115,8 @@ function enableTooltips(sectionElem) {
                 btnElem.classList.add('text-body-tertiary');
             }
             else {
-                let snippet_user = btnElem.getAttribute('data-snippet-username');
+                const liElem = btnElem.parentElement.parentElement;
+                let snippet_user = liElem.getAttribute('data-snippet-username');
                 if (username != '老师' && username != snippet_user) {
                     btnElem.setAttribute('disabled', 'disabled');
                     btnElem.classList.remove('text-danger');
@@ -181,6 +182,7 @@ function refreshSnippetsByUsername(username) {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.classList.add(`snippet-${snippet.digest}`);
+                    eleLi.setAttribute('data-snippet-username', snippet.username);
                     eleLi.setAttribute('data-snippet-title', snippet.title);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
@@ -212,7 +214,7 @@ function refreshSelectedSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            let snippets = groupBy(response.data, "name");
+            let snippets = groupBy(response.data, "username");
         }
     };
 
@@ -225,7 +227,7 @@ function refreshLatestSnippets() {
     request.onload = function (oEvent) {
         let response = JSON.parse(request.response);
         if (response.retCode == 0) {
-            let snippets = groupBy(response.data, "name");
+            let snippets = groupBy(response.data, "username");
 
             let sectionList = document.getElementById('latestSnippets');
             sectionList.replaceChildren();
@@ -252,6 +254,7 @@ function refreshLatestSnippets() {
                     let newSnippetNode = snippetContent.cloneNode(true);
                     let eleLi = newSnippetNode.querySelector('li');
                     eleLi.classList.add(`snippet-${snippet.digest}`);
+                    eleLi.setAttribute('data-snippet-username', snippet.username);
                     eleLi.setAttribute('data-snippet-title', snippet.title);
                     eleLi.setAttribute('data-snippet-digest', snippet.digest);
 
