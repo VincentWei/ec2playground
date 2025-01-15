@@ -511,19 +511,19 @@ function runCode(btnElem) {
     if (WasmMutex.runLock == 1) {
         // 处于运行中，执行打断操作
         Module._wasmIObreakCode();
-        btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>运行';
+        btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i><span class="d-none d-md-block">运行</span>';
         btnElem.classList.remove('text-danger');
         btnElem.classList.add('text-white');
         return;
     }
     else {
-        btnElem.innerHTML = '<i class="bi bi-stop-circle d-block mx-auto mb-1 cmd-icon"></i>停止';
+        btnElem.innerHTML = '<i class="bi bi-stop-circle d-block mx-auto mb-1 cmd-icon"></i><span class="d-none d-md-block">停止</span>';
         btnElem.classList.remove('text-white');
         btnElem.classList.add('text-danger');
 
         let intervalID = window.setInterval(function(btnElem) {
                 if (WasmMutex.runLock == 0) {
-                    btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>运行';
+                    btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i><span class="d-none d-md-block">运行</span>';
                     btnElem.classList.remove('text-danger');
                     btnElem.classList.add('text-white');
                     window.clearInterval(intervalID);
