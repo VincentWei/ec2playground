@@ -266,7 +266,7 @@ function refreshLatestSnippets() {
                     else {
                         eleA.setAttribute('data-bs-title', `${snippet.title}<br/><small>${snippet.description}</small>`);
                     }
-                    eleA.textContent = snippet.title;
+                    eleA.textContent = snippet.section + '/' + snippet.title;
 
                     eleUl.appendChild(newSnippetNode);
                 }
@@ -548,8 +548,8 @@ function clearCode() {
     var result = confirm("确定要清空代码吗？");
     if (result) {
         document.location.assign(window.location.origin + window.location.pathname);
-        editor.setValue("");
-        document.getElementById('output').innerHTML = "";
+        // editor.setValue("");
+        // document.getElementById('output').innerHTML = "";
     }
 }
 
