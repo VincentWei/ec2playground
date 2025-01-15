@@ -404,7 +404,8 @@ function shareProgram() {
             const nameElem = document.getElementById("shareModalStudentName");
             const passElem = document.getElementById("shareModalParentName");
             saveUserInfo(nameElem.value, passElem.value);
-            updateUserFields();
+            if (response.data)
+                updateUserFields();
             if (response.extraMsg == 'updated') {
                 errElem.innerHTML = `已成功更新！`;
             }

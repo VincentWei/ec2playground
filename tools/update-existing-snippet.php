@@ -94,7 +94,7 @@ if (!$db_result) {
 
 $result = new Result(0, '成功');
 $result->extraMsg = 'updated';
-$result->data = $gitlabId;
+$result->data = false;
 
 error:
 header('content-type:application/json;charset=utf8');

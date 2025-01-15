@@ -23,6 +23,7 @@ if (!$db_result) {
     goto error;
 }
 
+$newUser = false;
 if ($db->num_rows($db_result) == 0) {
     $username = trim($username);
     if (strlen($username) < 2) {
@@ -43,6 +44,7 @@ if ($db->num_rows($db_result) == 0) {
         goto error;
     }
     $userId = $db->insert_id();
+    $newUser = true;
 }
 else {
     $row = $db->fetch_one($db_result);
@@ -111,7 +113,7 @@ if (!$db_result) {
 
 $result = new Result(0, '成功');
 $result->extraMsg = $digest;
-$result->data = $gitlabId;
+$result->data = $newUser;
 
 error:
 header('content-type:application/json;charset=utf8');
