@@ -549,7 +549,7 @@ function clearCode() {
     if (result) {
         editor.setValue("");
         document.getElementById('output').innerHTML = "";
-        document.location.search = "";
+        // document.location.assign(window.location.origin + window.location.pathname);
     }
 }
 
