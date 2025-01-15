@@ -327,6 +327,7 @@ function updateUserFields() {
         return null;
     }
     else {
+        document.getElementById("myUsername").textContent = username;
         let elemName = document.getElementById("shareModalStudentName");
         elemName.setAttribute("value", username);
         let elemPass = document.getElementById("shareModalParentName");
