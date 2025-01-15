@@ -191,7 +191,7 @@ __losu_objStringPool_resize (LosuVm *vm, __losuvmStrseg *strpool, _l_hash s)
         }
     }
   __losu_mem_free (vm, strpool->strobj);
-  vm->nblocks += (s - strpool->size) * sizeof (_inlineString *);
+  vm->nblocks += ((int64_t)s - (int64_t)strpool->size) * sizeof (_inlineString *);
   strpool->size = s;
   strpool->strobj = newstrobj;
 }

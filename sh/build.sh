@@ -6,7 +6,7 @@ emcc\
     -I ec2_wasm/include/\
     -s WASM=1\
     -s ALLOW_MEMORY_GROWTH=1\
-    -s EXPORTED_FUNCTIONS='["_wasmIOrunCode"]'\
+    -s EXPORTED_FUNCTIONS='["_wasmIOrunCode","_wasmIObreakCode"]'\
     -s ASYNCIFY=1\
     -o js/ec2_wasm.js\
     -O3\

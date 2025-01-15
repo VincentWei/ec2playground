@@ -1,5 +1,8 @@
-wasmLock = 0;
-
+// wasmLock = 0;
+var WasmMutex = {
+    'runLock': 0, // 运行锁
+    'speekLock': 0, // 语音合成锁
+};
 
 // wasm IO： 输出、输入、弹窗、拍手、说出、选择框、获取代码
 function wasmIOprint(str) {// C: printf(fmt);
@@ -9,7 +12,12 @@ function wasmIOprinterr(str) {
     document.getElementById('output').innerHTML += '<p style="color:red">' + str + "</p>";
 }
 function wasmIOinput(str) { // C: const char* s;
-    return prompt(str);
+    var s = prompt(str);
+    // 如果按下取消，打断wasm
+    if (s == null) {
+        Module._wasmIObreakCode();
+    }
+    return s;
 }
 function wasmIOalert(str) {
     alert(str);
@@ -31,8 +39,13 @@ function wasmIOspeek(str) {
         utterance.pitch = 1; // 设置音高（1 是默认值）
         utterance.rate = 1; // 设置语速（1 是默认值）
         utterance.volume = 1; // 设置音量（1 是最大值）
+        utterance.onend = function () {
+            WasmMutex.speekLock = 0; // 合成完成后释放语音合成锁
+        };
 
+        WasmMutex.speekLock = 1; // 语音合成锁
         window.speechSynthesis.speak(utterance);
+        // 在 C 代码中执行异步等待，直到合成锁被释放
     } else {
         wasmIOprint('[浏览器不支持语音合成]\n' + str);
     }

@@ -431,6 +431,7 @@ checktype1 (LosuVm *vm, LosuObj *o1, LosuObj *o2)
     vm_error (vm, " '%s' 与 '%s' 不可进行关系运算", obj_typeStr (vm, o1),
               obj_typeStr (vm, o2));
 }
+#include <emscripten.h>
 LosuObj *
 __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
 {
@@ -511,6 +512,9 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
   while (1)
     {
       vmInstruction i = *(cinfo->pc++);
+      if (emscripten_run_script_int ("WasmMutex.runLock")
+          == 0) // 如果没有运行锁，打断
+        __losu_sigThrow (vm, VMSIGYIELD);
 
       // printf ("@:%d\n", cgIns_GetOp (i));
       switch (cgIns_GetOp (i))
