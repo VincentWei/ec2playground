@@ -281,6 +281,10 @@ function refreshLatestSnippets() {
     request.send();
 }
 
+function searchSnippets(searchElem) {
+    console.log(searchElem.textContent);
+}
+
 function getUsername() {
     let username = window.localStorage.getItem("username");
     let password = window.localStorage.getItem("password");
@@ -327,7 +331,6 @@ function updateUserFields() {
         return null;
     }
     else {
-        document.getElementById("myUsername").textContent = username;
         let elemName = document.getElementById("shareModalStudentName");
         elemName.setAttribute("value", username);
         let elemPass = document.getElementById("shareModalParentName");
@@ -335,6 +338,17 @@ function updateUserFields() {
 
         let elemWrap = document.getElementById("shareModalNewUserFields");
         elemWrap.style.display = "none";
+
+        if (username == '老师') {
+            document.getElementById("searchedSnippetsWrap").style.display = "block";
+            document.getElementById("mySnippetsWrap").style.display = "none";
+        }
+        else {
+            document.getElementById("searchedSnippetsWrap").style.display = "none";
+            document.getElementById("mySnippetsWrap").style.display = "block";
+            document.getElementById("myUsername").textContent = username;
+        }
+
         return username;
     }
 }
