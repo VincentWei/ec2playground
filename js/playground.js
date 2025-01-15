@@ -140,7 +140,7 @@ function enableTooltips(sectionElem) {
     });
 }
 
-function refreshSnippetsByUsername(username) {
+function refreshSnippetsByUsername(username, forSearch) {
     var formData = new FormData();
     formData.append("username", username);
 
@@ -152,7 +152,10 @@ function refreshSnippetsByUsername(username) {
             let snippets = groupBy(response.data, "section");
 
             let sectionList = null;
-            if (username == '老师') {
+            if (forSearch) {
+                sectionList = document.getElementById('searchedSnippets');
+            }
+            else if (username == '老师') {
                 sectionList = document.getElementById('teachersSnippets');
             }
             else {
@@ -281,10 +284,6 @@ function refreshLatestSnippets() {
     request.send();
 }
 
-function searchSnippets(searchElem) {
-    console.log(searchElem.textContent);
-}
-
 function getUsername() {
     let username = window.localStorage.getItem("username");
     let password = window.localStorage.getItem("password");
@@ -296,19 +295,23 @@ function getUsername() {
     return null;
 }
 
+function searchSnippets(searchElem) {
+    refreshSnippetsByUsername(searchElem.textContent, true);
+}
+
 function showRepository(btnElem) {
     document.getElementById('programListPanel').style.setProperty('left', '0px');
 }
 
 function refreshRepository(username) {
-    refreshSnippetsByUsername('老师');
+    refreshSnippetsByUsername('老师', false);
     // refreshSelectedSnippets();
     refreshLatestSnippets();
 
     if (username == null)
         username = getUsername();
     if (username !== null && username != '老师') {
-        refreshSnippetsByUsername(username);
+        refreshSnippetsByUsername(username, false);
     }
 }
 
