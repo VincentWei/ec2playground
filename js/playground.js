@@ -497,7 +497,12 @@ window.onerror = function (message) {
 };
 
 function runCode(btnElem) {
-    const iElem = btnElem.querySelector("i");
+    var code = editor.getValue();
+    if (code.length < 10) {
+        showPromptModal("编辑区空空如也，运行啥呢？");
+        return;
+    }
+
     if (WasmMutex.runLock == 1) {
         // 处于运行中，执行打断操作
         Module._wasmIObreakCode();
