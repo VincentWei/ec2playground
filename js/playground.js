@@ -496,12 +496,22 @@ window.onerror = function (message) {
     return true; // 阻止默认的错误处理
 };
 
-function runCode() {
+function runCode(btnElem) {
+    const iElem = btnElem.querySelector("i");
     if (WasmMutex.runLock == 1) {
         // 处于运行中，执行打断操作
         Module._wasmIObreakCode();
+        btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>运行';
+        btnElem.classList.remove('text-danger');
+        btnElem.classList.add('text-white');
         return;
     }
+    else {
+        btnElem.innerHTML = '<i class="bi bi-stop-circle d-block mx-auto mb-1 cmd-icon"></i>停止';
+        btnElem.classList.remove('text-white');
+        btnElem.classList.add('text-danger');
+    }
+
     // 清除上一次的运行结果
     document.getElementById('output').innerHTML = new Date().toLocaleString() + "\n--------------------------------\n";
     // 运行 WebAssembly 代码
