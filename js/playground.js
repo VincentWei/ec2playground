@@ -547,9 +547,9 @@ function clearCode() {
 
     var result = confirm("确定要清空代码吗？");
     if (result) {
-        document.location.assign(window.location.origin + window.location.pathname);
-        // editor.setValue("");
-        // document.getElementById('output').innerHTML = "";
+        editor.setValue("");
+        document.getElementById('output').innerHTML = "";
+        document.location.search = "";
     }
 }
 
