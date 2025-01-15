@@ -518,6 +518,15 @@ function runCode(btnElem) {
         btnElem.innerHTML = '<i class="bi bi-stop-circle d-block mx-auto mb-1 cmd-icon"></i>停止';
         btnElem.classList.remove('text-white');
         btnElem.classList.add('text-danger');
+
+        let intervalID = window.setInterval(function(btnElem) {
+                if (WasmMutex.runLock == 0) {
+                    btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>运行';
+                    btnElem.classList.remove('text-danger');
+                    btnElem.classList.add('text-white');
+                    window.clearInterval(intervalID);
+                }
+            }, 500, btnElem);
     }
 
     // 清除上一次的运行结果
