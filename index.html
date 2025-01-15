@@ -381,7 +381,7 @@
               </button>
             </li -->
             <li>
-              <button class="nav-link text-white" onclick="getElementById('output-area').style.setProperty('right', '0'); runCode(this)">
+              <button class="nav-link text-white" onclick="runCode(this)">
                 <i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i>
                 运行
               </button>
@@ -427,7 +427,7 @@
     </div>
   </header>
 
-  <aside id="output-area" class="p-1 text-white bg-dark shadow-lg">
+  <aside id="outputPanel" class="p-1 text-white bg-dark shadow-lg">
     <div class="d-flex justify-content-between border-bottom">
       <div>
       </div>
@@ -436,7 +436,7 @@
       </div>
       <div data-bs-theme="dark">
         <button type="button" class="btn-close" aria-label="关闭"
-            onclick="getElementById('output-area').style.setProperty('right', '-50%')">
+            onclick="getElementById('outputPanel').style.setProperty('right', '-50%')">
         </button>
       </div>
     </div>

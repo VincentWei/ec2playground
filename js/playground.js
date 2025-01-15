@@ -503,6 +503,9 @@ function runCode(btnElem) {
         return;
     }
 
+    // Show outputPanel
+    document.getElementById('outputPanel').style.setProperty('right', '0');
+
     if (WasmMutex.runLock == 1) {
         // 处于运行中，执行打断操作
         Module._wasmIObreakCode();
