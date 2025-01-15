@@ -38,7 +38,6 @@ wasmIOrunCode ()
       __losuvmJmp *oldjmp = vm->errjmp;
       __losuvmJmp newjmp;
       vm->errjmp = &newjmp;
-      int sta = setjmp (newjmp.jmpflag);
       stack_push (vm, *vm->main.main);
       for (int i = 0; i < narg; i++)
         {
@@ -49,6 +48,7 @@ wasmIOrunCode ()
           stack_push (vm, obj_newstr (vm, emscripten_run_script_string (str)));
         }
       start = clock ();
+      int sta = setjmp (newjmp.jmpflag);
       switch (sta)
         {
         case 0:
