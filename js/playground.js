@@ -587,8 +587,8 @@ function showCodeInfo() {
                 document.getElementById("codeInfoSection").textContent = response.data.section;
                 document.getElementById("codeInfoTitle").textContent = response.data.title;
                 document.getElementById("codeInfoDescription").textContent = (response.data.description ? response.data.description : "（无）");
-                document.getElementById("codeInfoCreateAt").textContent = response.data.createAt;
-                document.getElementById("codeInfoUpdateAt").textContent = response.data.updateAt;
+                document.getElementById("codeInfoCreatedAt").textContent = response.data.createdAt;
+                document.getElementById("codeInfoUpdatedAt").textContent = response.data.updatedAt;
                 const codeInfoModal = new bootstrap.Modal('#codeInfoModal',
                         { dropback: true, focus: true, keyboard: true });
                 codeInfoModal.show();

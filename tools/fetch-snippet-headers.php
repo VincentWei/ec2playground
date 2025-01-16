@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST["digest"])) {
 
 $digest = $db->escape_string($_POST["digest"]);
 $db_result = $db->query( "SELECT
-        users.name AS username, snippets.title, snippets.section, snippets.description, snippets.gitlabId, snippets.createAt, snippets.updateAt
+        users.name AS username, snippets.title, snippets.section, snippets.description, snippets.gitlabId, snippets.createdAt, snippets.updatedAt
         FROM users, snippets
         WHERE users.id = snippets.userId AND snippets.digest = '$digest'");
 if (!$db_result) {
