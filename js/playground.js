@@ -371,6 +371,7 @@ window.onload = function() {
         request.onload = function (oEvent) {
             let response = JSON.parse(request.response);
             if (response.retCode == 0) {
+                document.getElementById("btnShowCodeInfo").style.display = "block";
                 editor.setValue(response.data);
                 if (response.extraMsg.length > 0)
                     showPromptModal(response.extraMsg);
@@ -567,6 +568,34 @@ function clearCode() {
         editor.setValue("");
         document.getElementById('output').innerHTML = "";
         // document.location.assign(window.location.origin + window.location.pathname);
+    }
+}
+
+function showCodeInfo() {
+    const searchParams = new URLSearchParams(window.location.search);
+    const snippetDigest = searchParams.get('snippet');
+    if (snippetDigest && snippetDigest.length == 32) {
+        var formData = new FormData();
+        formData.append("digest", snippetDigest);
+
+        var request = new XMLHttpRequest();
+        request.open("POST", globals.pathPrefix + "tools/fetch-snippet-headers.php");
+        request.onload = function (oEvent) {
+            let response = JSON.parse(request.response);
+            if (response.retCode == 0) {
+                document.getElementById("codeInfoUsername").textContent = response.data.username;
+                document.getElementById("codeInfoSection").textContent = response.data.section;
+                document.getElementById("codeInfoTitle").textContent = response.data.title;
+                document.getElementById("codeInfoDescription").textContent = (response.data.description ? response.data.description : "（无）");
+                document.getElementById("codeInfoCreateAt").textContent = response.data.createAt;
+                document.getElementById("codeInfoUpdateAt").textContent = response.data.updateAt;
+                const codeInfoModal = new bootstrap.Modal('#codeInfoModal',
+                        { dropback: true, focus: true, keyboard: true });
+                codeInfoModal.show();
+            }
+        };
+
+        request.send(formData);
     }
 }
 

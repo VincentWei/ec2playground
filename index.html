@@ -30,6 +30,40 @@
       </div>
   </div>
 
+  <div class="modal fade" id="codeInfoModal" tabindex="-1" aria-labelledby="codeInfoModalLabel">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5">程序信息</h1>
+            <button type="button" class="btn-close" id="codeInfoModalClose" data-bs-dismiss="modal" aria-label="关闭"></button>
+          </div>
+          <div class="modal-body">
+            <dl class="row">
+              <dt class="col-sm-3">程序作者</dt>
+              <dd class="col-sm-9" id="codeInfoUsername"></dd>
+
+              <dt class="col-sm-3">程序分组</dt>
+              <dd class="col-sm-9" id="codeInfoSection"></dd>
+
+              <dt class="col-sm-3">程序标题</dt>
+              <dd class="col-sm-9" id="codeInfoTitle"></dd>
+
+              <dt class="col-sm-3">程序描述</dt>
+              <dd class="col-sm-9" id="codeInfoDescription"></dd>
+
+              <dt class="col-sm-3">分享时间</dt>
+              <dd class="col-sm-9" id="codeInfoCreateAt"></dd>
+
+              <dt class="col-sm-3">修改时间</dt>
+              <dd class="col-sm-9" id="codeInfoUpdateAt"></dd>
+            </dl>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">知道啦</button>
+          </div>
+        </div>
+      </div>
+  </div>
   <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel">
       <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -135,6 +169,16 @@
                   </div>
                   <div class="mx-3">
                     <p>清空当前编辑器中的所有内容。若意外清空，可在编辑区中立即输入 Ctrl+Z 或 Cmd+Z 组合键恢复。</p>
+                  </div>
+                </div>
+
+                <div class="d-flex m-2 p-2 align-items-center justify-content-between border border-danger bg-secondary-subtle">
+                  <div class="text-bg-dark px-3" style="min-width:64px">
+                    <i class="bi bi-info-circle d-block mx-auto mb-1 cmd-icon"></i>
+                    信息
+                  </div>
+                  <div class="mx-3">
+                    <p>展示当前加载的程序之作者、分组、标题、描述等信息。</p>
                   </div>
                 </div>
 
@@ -392,6 +436,12 @@
               <button class="nav-link text-white" onclick="clearCode()">
                 <i class="bi bi-eraser-fill d-block mx-auto mb-1 cmd-icon"></i>
                 <span class="d-none d-md-block">清空</span>
+              </button>
+            </li>
+            <li id="btnShowCodeInfo" style="display:none">
+              <button class="nav-link text-white" onclick="showCodeInfo()">
+                <i class="bi bi-info-circle d-block mx-auto mb-1 cmd-icon"></i>
+                <span class="d-none d-md-block">信息</span>
               </button>
             </li>
           </ul>
