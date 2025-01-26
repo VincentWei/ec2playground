@@ -107,6 +107,10 @@ vm_create (int32_t size)
       .funcname = NULL,
       .main = NULL,
     },
+    .global_symbol = NULL,
+    .ng_symbol = 0,
+    .global_value = NULL,
+    .ng_value = 0,
 
   };
 
@@ -277,7 +281,39 @@ vm_setval (LosuVm *vm, const char *name, LosuObj val)
     .value.str = __losu_objString_new (vm, name),
   };
   *__losu_objUnit_set (vm, vm->global, &key) = val;
+  vm_addgsymbol (vm, name);
+  vm_addgvalue (vm, name);
 }
+
+LosuExtern void
+vm_addgsymbol (LosuVm *vm, const char *name)
+{
+  // search is exsist?
+  for (int32_t i = 0; i < vm->ng_symbol; i++)
+    if (strcmp (vm->global_symbol[i], name) == 0)
+      return;
+  // create new symbol
+  vm->global_symbol = __losu_mem_realloc (
+      vm, vm->global_symbol, (vm->ng_symbol + 1) * sizeof (char *));
+  vm->global_symbol[vm->ng_symbol++]
+      = __losu_mem_malloc (vm, strlen (name) + 1);
+  memcpy (vm->global_symbol[vm->ng_symbol - 1], name, strlen (name) + 1);
+}
+
+LosuExtern void
+vm_addgvalue (LosuVm *vm, const char *name)
+{
+  // search is exsist?
+  for (int32_t i = 0; i < vm->ng_value; i++)
+    if (strcmp (vm->global_value[i], name) == 0)
+      return;
+  // create new value
+  vm->global_value = __losu_mem_realloc (vm, vm->global_value,
+                                         (vm->ng_value + 1) * sizeof (char *));
+  vm->global_value[vm->ng_value++] = __losu_mem_malloc (vm, strlen (name) + 1);
+  memcpy (vm->global_value[vm->ng_value - 1], name, strlen (name) + 1);
+}
+
 LosuExtern void
 vm_close (LosuVm *vm)
 {
@@ -364,9 +400,9 @@ obj_type (LosuVm *vm, LosuObj *obj)
 LosuExtern const char *
 obj_typeStr (LosuVm *vm, LosuObj *obj)
 {
-  const char *typeStr[15] = {
-    "未定义", "浮点数", "整数", "字符", "字符串", "函数",
-    "unit",   "空",     "布尔", "携程", "调用",   "未知",
+  const char *typeStr[16] = {
+    "未定义", "浮点数", "整数", "字符", "字节", "字符串", "函数",
+    "unit",   "空",     "布尔", "携程", "调用", "未知",
   };
   int32_t t = ovtype (obj);
   switch (t)
@@ -420,6 +456,8 @@ obj_tonum (LosuVm *vm, LosuObj *obj)
       return atof (ovSstr (obj));
     case LosuTypeDefine_bool:
       return ovbool (obj);
+    case LosuTypeDefine_char:
+      return (_l_number)ovchar (obj);
     default:
       vm_error (vm, " '%s' 不可被视作数字类型", obj_typeStr (vm, obj));
       return 0;
@@ -448,6 +486,8 @@ obj_toint (LosuVm *vm, LosuObj *obj)
       return (_l_int)atoll (ovSstr (obj));
     case LosuTypeDefine_bool:
       return ovbool (obj);
+    case LosuTypeDefine_char:
+      return (_l_int)ovchar (obj);
     default:
       vm_error (vm, " '%s' 不可被视作整数类型", obj_typeStr (vm, obj));
       return 0;
@@ -482,8 +522,41 @@ obj_tounicode (LosuVm *vm, LosuObj *obj)
       }
     case LosuTypeDefine_bool:
       return ovbool (obj);
+    case LosuTypeDefine_char:
+      return (_l_unicode)ovchar (obj);
     default:
       vm_error (vm, " '%s' 不可被视作字符类型", obj_typeStr (vm, obj));
+      return 0;
+    }
+}
+
+LosuExtern LosuObj
+obj_newchar (LosuVm *vm, uint8_t b)
+{
+  return (LosuObj){
+    .type = LosuTypeDefine_char,
+    .value._char = b,
+  };
+}
+LosuExtern uint8_t
+obj_tochar (LosuVm *vm, LosuObj *obj)
+{
+  switch (ovtype (obj))
+    {
+    case LosuTypeDefine_number:
+      return (uint8_t)ovnumber (obj);
+    case LosuTypeDefine_int:
+      return (uint8_t)ovint (obj);
+    case LosuTypeDefine_unicode:
+      return (uint8_t)ovunicode (obj);
+    case LosuTypeDefine_string:
+      return (uint8_t)atoll (ovSstr (obj));
+    case LosuTypeDefine_bool:
+      return (uint8_t)ovbool (obj);
+    case LosuTypeDefine_char:
+      return ovchar (obj);
+    default:
+      vm_error (vm, " '%s' 不可被视作字节类型", obj_typeStr (vm, obj));
       return 0;
     }
 }
@@ -558,6 +631,11 @@ obj_tostr (LosuVm *vm, LosuObj *obj)
         return (const char *)__losu_objString_new (vm, tmp)->str;
         break;
       }
+    case LosuTypeDefine_char:
+      {
+        sprintf (stmp, "%c", ovchar (obj));
+        return (const char *)__losu_objString_new (vm, stmp)->str;
+      }
     default:
       vm_error (vm, " '%s' 不可被视作字符串", obj_typeStr (vm, obj));
       return "";
@@ -598,6 +676,11 @@ unit2str (LosuVm *vm, LosuObj *obj)
               }
             case LosuTypeDefine_unicode:
               {
+                sprintf (tmp, "%s''%s''", tmp, obj_tostr (vm, value));
+                break;
+              }
+            case LosuTypeDefine_char:
+              {
                 sprintf (tmp, "%s'%s'", tmp, obj_tostr (vm, value));
                 break;
               }
@@ -631,6 +714,11 @@ unit2str (LosuVm *vm, LosuObj *obj)
                 break;
               }
             case LosuTypeDefine_unicode:
+              {
+                sprintf (tmp, "%s''%s''", tmp, obj_tostr (vm, n));
+                break;
+              }
+            case LosuTypeDefine_char:
               {
                 sprintf (tmp, "%s'%s'", tmp, obj_tostr (vm, n));
                 break;

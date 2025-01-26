@@ -122,15 +122,28 @@ static int32_t __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v,
 static int32_t __losuSyntaxParExplist (_syntaxLex *lex);
 static void __losuSyntaxParAdStack (_syntaxLex *lex, int32_t nv, int32_t ne);
 static void __losuSyntaxParAdLcvar (_syntaxLex *lex, int32_t nv);
-static void __losuSyntaxParVarFunc (_syntaxLex *lex, _syntaxExp *v);
+static void __losuSyntaxParVarFunc (_syntaxLex *lex, _syntaxExp *v,
+                                    _sytaxLocal getlocal);
 static void __losuSyntaxParExp (_syntaxLex *lex);
 static void __losuSyntaxParSvar (_syntaxLex *lex, _inlineString *n,
-                                 _syntaxExp *v);
+                                 _syntaxExp *v, _sytaxLocal getlocal);
 static int32_t __losuSyntaxParStrconst (_syntaxFunc *func, _inlineString *s);
 static int32_t __losuSyntaxParSubExp (_syntaxLex *lex, _syntaxExp *v, int l);
 static void __losuSyntaxParExpFargs (_syntaxLex *lex, _l_bool slf);
 static int32_t __losuSyntaxParExpVarlevel (_syntaxLex *lex, _inlineString *n,
                                            _syntaxExp *v);
+static int32_t __losuSyntaxParExpVarlevel_function (_syntaxLex *lex,
+                                                    _inlineString *n,
+                                                    _syntaxExp *v);
+static int32_t __losuSyntaxParExpVarlevel_left (_syntaxLex *lex,
+                                                _inlineString *n,
+                                                _syntaxExp *v);
+static int32_t __losuSyntaxParExpVarlevel_right (_syntaxLex *lex,
+                                                 _inlineString *n,
+                                                 _syntaxExp *v);
+static int32_t __losuSyntaxParExpVarlevel_global (_syntaxLex *lex,
+                                                  _inlineString *n,
+                                                  _syntaxExp *v);
 static void __losuSyntaxParSimpleExp (_syntaxLex *lex, _syntaxExp *v);
 static void __losuSyntaxParUnitConstructor (_syntaxLex *lex, char sflag,
                                             char eflag);
@@ -351,7 +364,7 @@ struct
 
   { "算始", TOKEN_SUB },      { "算终", TOKEN_ENDSUB },
 
-  { "定义", TOKEN_VAR },      { "未定义", TOKEN_NULL },
+  { "全局", TOKEN_VAR },      { "未定义", TOKEN_NULL },
   { "假", TOKEN_FALSE },      { "真", TOKEN_TRUE },
   { "空", TOKEN_SPACE },
 
@@ -359,6 +372,7 @@ struct
   { "继续", TOKEN_CONTINUE }, { "当终", TOKEN_ENDWHILE },
 
   { "声明", TOKEN_DECLARE },  { "导入", TOKEN_IMPORT },
+  { "定义", TOKEN_DEFINE },
 
 };
 
@@ -712,7 +726,7 @@ lex_start:
           {
             next (lex);
             if (lex->current != '=')
-              return '=';
+              return TOKEN_SET;
             else
               {
                 next (lex);
@@ -788,19 +802,37 @@ lex_start:
         case '\'':
           {
             next (lex);
-            int32_t len = __utf8CheckLen ((uint8_t)lex->current);
-            _l_unicode i = 0;
-            for (int j = 0; j < len; j++)
-              {
-                i = (i << 8) + (uint8_t)lex->current;
-                next (lex);
-              }
             if (lex->current != '\'')
-              __losuSyntaxError (lex, "字符缺少 `'`", lex->current);
+              {
+                tkv->_char = lex->current;
+                next (lex);
+                if (lex->current != '\'')
+                  __losuSyntaxError (lex, "错误的字节格式");
+                next (lex);
+                return TOKEN_CHAR;
+              }
             else
-              next (lex);
-            tkv->unicode = i;
-            return TOKEN_UNICODE;
+              {
+                next (lex);
+                int32_t len = __utf8CheckLen ((uint8_t)lex->current);
+                _l_unicode i = 0;
+                for (int j = 0; j < len; j++)
+                  {
+                    i = (i << 8) + (uint8_t)lex->current;
+                    next (lex);
+                  }
+                if (lex->current != '\'')
+                  __losuSyntaxError (lex, "字符缺少 `'`", lex->current);
+                else
+                  {
+                    next (lex);
+                    if (lex->current != '\'')
+                      __losuSyntaxError (lex, "字符缺少 `'`", lex->current);
+                    next (lex);
+                  }
+                tkv->unicode = i;
+                return TOKEN_UNICODE;
+              }
           }
         case ':':
           {
@@ -902,7 +934,8 @@ lex_start:
 
             if (ts->marked > 255)
               {
-                if (ts->marked == TOKEN_DECLARE || ts->marked == TOKEN_IMPORT)
+                if (ts->marked == TOKEN_DECLARE || ts->marked == TOKEN_IMPORT
+                    || ts->marked == TOKEN_DEFINE)
                   {
                     while (lex->current != '\n')
                       {
@@ -951,7 +984,8 @@ __losu_syntaxParser_parse (LosuVm *vm, _syntaxIO *io)
                          .read = 0,
                          .size = 0,
                          .tmp = 0,
-                     } };
+                     } ,
+                     .isMain = 0, };
   _syntaxFunc func;
 
   lex.deepth = 0;
@@ -962,8 +996,9 @@ __losu_syntaxParser_parse (LosuVm *vm, _syntaxIO *io)
   __losuSyntaxParNext (&lex);
   while (!islast && !__losuSyntaxParCheckBlock (lex.tk.token))
     islast = __losuSyntaxParStat ((_syntaxLex *)(&lex));
-  //   __losuSyntaxParCheckCondtion (&lex, (lex.tk.token != TOKEN_ELSEIF),
-  //                                 __config_losucore_errmsg_msgInvalidElif);
+
+  __losuSyntaxParCheckCondtion (&lex, lex.tk.token == TOKEN_EOZ,
+                                "错误的程序结构");
   //   __losuSyntaxParCheckCondtion (&lex, (lex.tk.token != TOKEN_ELSE),
   //                                 __config_losucore_errmsg_msgInvalidElse);
   //   __losuSyntaxParCheckCondtion (&lex, (lex.tk.token == TOKEN_EOZ),
@@ -1083,8 +1118,13 @@ __losuSyntaxParCheckMatch (_syntaxLex *lex, int16_t l, int16_t r, int32_t line)
       char tl[8], tr[8];
       __losuSyntaxLexTtS (l, tl);
       __losuSyntaxLexTtS (r, tr);
-      __losuSyntaxError (lex, __config_losucore_errmsg_msgCheckMatch, tl, line,
-                         tr);
+      if (l == TOKEN_IF)
+        __losuSyntaxError (
+            lex, __config_losucore_errmsg_msgCheckMatch " 或 '若另' ", tl,
+            line, tr);
+      else
+        __losuSyntaxError (lex, __config_losucore_errmsg_msgCheckMatch, tl,
+                           line, tr);
     }
   __losuSyntaxParNext (lex);
 }
@@ -1126,6 +1166,7 @@ __losuSyntaxParNewlcvar (_syntaxLex *lex, _inlineString *name, int16_t i)
                          _inlineLocalvar, vmIns_MaxA,
                          __config_losucore_errmsg_msgVectorOverflow);
   f->localvar[f->nlocalvar].name = name;
+  f->localvar[f->nlocalvar].type = VL;
   func->aloc[func->naloc + i] = f->nlocalvar++;
 }
 
@@ -1178,6 +1219,8 @@ __losuSyntaxParStat (_syntaxLex *lex)
       }
     case TOKEN_FUNC:
       {
+        if (lex->deepth)
+          __losuSyntaxError (lex, "当前位置不允许定义函数");
         lex->deepth++;
         __losuSyntaxParStatFunc (lex, line, 0);
         lex->deepth--;
@@ -1185,7 +1228,12 @@ __losuSyntaxParStat (_syntaxLex *lex)
       }
     case TOKEN_SUB:
       {
+        if (lex->isMain)
+          __losuSyntaxError (lex, "重复定义的算法");
+        if (lex->deepth)
+          __losuSyntaxError (lex, "当前位置不允许定义算法");
         lex->deepth++;
+        lex->isMain = 1;
         __losuSyntaxParStatFunc (lex, line, 1);
         lex->deepth--;
         return 0;
@@ -1325,28 +1373,53 @@ __losuSyntaxParStatFunc (_syntaxLex *lex, int32_t line, _l_bool isMain)
 static void
 __losuSyntaxParStatVar (_syntaxLex *lex)
 {
-#define isSet(lex, c)                                                         \
-  ((lex->tk.token == c) ? (__losuSyntaxParNext (lex), 1) : 0)
+  // 被修改为 global
+  // #define isSet(lex, c)
+  //   ((lex->tk.token == c) ? (__losuSyntaxParNext (lex), 1) : 0)
 
-  if (lex->deepth == 0) /* global */
-    {
-      __losuSyntaxParNext (lex);
-      __losuSyntaxParStatName (lex, 0);
-      return;
-    }
+  // if (lex->deepth == 0) /* global */
+  //   {
+  //     __losuSyntaxParNext (lex);
+  //     __losuSyntaxParStatName (lex, 0);
+  //     return;
+  //   }
+  _syntaxFunc *func = lex->fs;
+  _inlineScode *f = func->fcode;
   int32_t nv = 0, ne = 0;
   do
     {
       __losuSyntaxParNext (lex);
-      __losuSyntaxParNewlcvar (lex, __losuSyntaxParCheckName (lex), nv++);
+      _inlineString *ts = __losuSyntaxParCheckName (lex);
+      vm_addgvalue (lex->vm, ts->str);
+      __losuSyntaxParNewlcvar (lex, ts, nv++);
+      f->localvar[f->nlocalvar - 1].type = VG;
+      // {
+      //   _syntaxFunc *func = lex->fs;
+      //   _inlineScode *f = func->fcode;
+
+      //   /* check limit? */
+      //   __losuSyntaxParCheckLimit (
+      //       lex, func->naloc + i + 1, vmOl_MaxLocalvar,
+      //       __config_losucore_errmsg_msgCheckLimitTMlocvar);
+
+      //   __losu_mem_growvector (lex->vm, f->localvar, f->nlocalvar, 1,
+      //                          _inlineLocalvar, vmIns_MaxA,
+      //                          __config_losucore_errmsg_msgVectorOverflow);
+      //   f->localvar[f->nlocalvar].name = name;
+      //   f->localvar[f->nlocalvar].type = VL;
+      //   func->aloc[func->naloc + i] = f->nlocalvar++;
+      // }
     }
   while (lex->tk.token == ',');
-  if (isSet (lex, '='))
-    ne = __losuSyntaxParExplist (lex);
-  else
-    ne = 0;
+  ne = 0;
   __losuSyntaxParAdStack (lex, nv, ne);
   __losuSyntaxParAdLcvar (lex, nv);
+  // if (isSet (lex, '='))
+  //   ne = __losuSyntaxParExplist (lex);
+  // else
+  //   ne = 0;
+  // __losuSyntaxParAdStack (lex, nv, ne);
+  // __losuSyntaxParAdLcvar (lex, nv);
 
 #undef isSet
 }
@@ -1355,7 +1428,10 @@ __losuSyntaxParStatName (_syntaxLex *lex, _l_bool onlyDec)
 {
   _syntaxFunc *func = lex->fs;
   _syntaxExp v;
-  __losuSyntaxParVarFunc (lex, &v);
+  if (lex->deepth)
+    __losuSyntaxParVarFunc (lex, &v, __losuSyntaxParExpVarlevel_left);
+  else // 全局
+    __losuSyntaxParVarFunc (lex, &v, __losuSyntaxParExpVarlevel_global);
   if (v.type == VE)
     {
       __losuSyntaxParCheckCondtion (lex, __losuSyntaxCgenIsopen (func),
@@ -1412,7 +1488,7 @@ __losuSyntaxParStatFuncName (_syntaxLex *lex, _syntaxExp *v, _l_bool isMain)
 {
   _l_bool i = 0;
   _inlineString *ins = __losuSyntaxParCheckName (lex);
-  __losuSyntaxParSvar (lex, ins, v);
+  __losuSyntaxParSvar (lex, ins, v, __losuSyntaxParExpVarlevel_function);
   if (isMain)
     lex->vm->main.funcname
         = __losu_objString_newconst (lex->vm, (const char *)ins->str)->str;
@@ -1539,12 +1615,13 @@ static int32_t
 __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar,
                                 _l_bool onlyDec)
 {
+  _l_bool b = 0;
   int32_t left = 0;
   if (lex->tk.token == ',')
     {
       _syntaxExp nv;
       __losuSyntaxParNext (lex);
-      __losuSyntaxParVarFunc (lex, &nv);
+      __losuSyntaxParVarFunc (lex, &nv, __losuSyntaxParExpVarlevel_left);
       __losuSyntaxParCheckCondtion (lex, (nv.type != VE),
                                     __config_losucore_errmsg_msgInvalidExp);
       left = __losuSyntaxParStatNameAssment (lex, &nv, nvar + 1, onlyDec);
@@ -1552,21 +1629,62 @@ __losuSyntaxParStatNameAssment (_syntaxLex *lex, _syntaxExp *v, int32_t nvar,
   else
     {
       int32_t nexp = 0;
-      if (lex->tk.token == '=')
+      if (lex->tk.token == '=') // 拷贝赋值
         {
+          b = 0;
           __losuSyntaxParNext (lex);
           nexp = __losuSyntaxParExplist (lex);
         }
-      else if (onlyDec)
+      else if (lex->tk.token == TOKEN_SET) // 引用赋值
+        {
+          b = 1;
+          __losuSyntaxParNext (lex);
+          nexp = __losuSyntaxParExplist (lex);
+        }
+      else if (onlyDec) // 引用赋值
         __losuSyntaxError (lex, "未知的关键词，起始于 %d 行", onlyDec);
       __losuSyntaxParAdStack (lex, nvar, nexp);
     }
-  if (v->type != VI)
-    __losuSyntaxCgenSetVar (lex, v);
-  else
+  if (b == 0)
     {
-      __losuSyntaxCgenCodearg2 (lex->fs, INS_SETUNIT, left + nvar + 2, 1);
-      left += 2;
+      if (v->type != VI)
+        __losuSyntaxCgenSetVar (lex, v);
+      else
+        {
+          __losuSyntaxCgenCodearg2 (lex->fs, INS_SETUNIT, left + nvar + 2, 1);
+          left += 2;
+        }
+    }
+  else // 引用赋值
+    {
+      if (v->type != VI)
+        {
+          // __losuSyntaxCgenSetVar (lex, v);
+          _syntaxFunc *func = lex->fs;
+          _syntaxExp *var = v;
+          switch (var->type)
+            {
+            case VL:
+              __losuSyntaxCgenCodearg1 (func, EC2INS_SETLOCAL,
+                                        var->value.index);
+              break;
+            case VG:
+              __losuSyntaxCgenCodearg1 (func, EC2INS_SETGLOBAL,
+                                        var->value.index);
+              break;
+            case VI:
+              __losuSyntaxCgenCodearg2 (func, EC2INS_SETUNIT, 3, 3);
+              break;
+            default:
+              break;
+            }
+        }
+      else
+        {
+          __losuSyntaxCgenCodearg2 (lex->fs, EC2INS_SETUNIT, left + nvar + 2,
+                                    1);
+          left += 2;
+        }
     }
   return left;
 }
@@ -1613,7 +1731,7 @@ __losuSyntaxParAdLcvar (_syntaxLex *lex, int32_t nv)
         = lex->fs->pc;
 }
 static void
-__losuSyntaxParVarFunc (_syntaxLex *lex, _syntaxExp *v)
+__losuSyntaxParVarFunc (_syntaxLex *lex, _syntaxExp *v, _sytaxLocal getlocal)
 {
 #define lookahead(lex)                                                        \
   {                                                                           \
@@ -1621,7 +1739,7 @@ __losuSyntaxParVarFunc (_syntaxLex *lex, _syntaxExp *v)
         lex, (_syntaxTkvalue *)(&((lex)->tkahead.info)));                     \
   }
 
-  __losuSyntaxParSvar (lex, __losuSyntaxParCheckName (lex), v);
+  __losuSyntaxParSvar (lex, __losuSyntaxParCheckName (lex), v, getlocal);
   while (1)
     {
       switch (lex->tk.token)
@@ -1714,43 +1832,178 @@ __losuSyntaxParExpVarlevel (_syntaxLex *lex, _inlineString *n, _syntaxExp *v)
   return -1;
 }
 
-static void
-__losuSyntaxParSvar (_syntaxLex *lex, _inlineString *n, _syntaxExp *var)
+static int32_t
+__losuSyntaxParExpVarlevel_function (_syntaxLex *lex, _inlineString *n,
+                                     _syntaxExp *v)
 {
-  int32_t l = __losuSyntaxParExpVarlevel (lex, n, var);
-  if (l >= 1)
-    {
-      { /* push closure */
-        _syntaxFunc *func = lex->fs;
-        _syntaxExp v;
-        int32_t l = __losuSyntaxParExpVarlevel (lex, n, &v);
-        if (l == -1)
-          v.value.index = __losuSyntaxParStrconst (func->prev, n);
-        else if (l != 1)
-          __losuSyntaxError (lex, __config_losucore_errmsg_msgInvalidClosure,
-                             n->str);
+  /*
+    创建函数
+    修改全局作用域
+    修改全局符号表
+  */
+  // _syntaxFunc *func;
+  // int32_t lev = 0;
+  // for (func = lex->fs; func; func = func->prev)
+  //   {
+  //     for (int32_t i = func->naloc - 1; i >= 0; i--)
+  //       {
+  //         if (n == func->fcode->localvar[func->aloc[i]].name)
+  //           {
+  //             v->type = VL;
+  //             v->value.index = i;
+  //             return lev;
+  //           }
+  //       }
+  //     lev++;
+  //   }
+  // v->type = VG;
 
-        /* index closure */
-        int16_t c = -1;
-        for (int16_t i = 0; i < func->nclosure; i++)
-          if (func->closure[i].type == v.type
-              && func->closure[i].value.index == v.value.index)
-            {
-              c = i;
-              break;
-            }
-        if (c < 0)
-          {
-            func->closure[func->nclosure] = v;
-            c = func->nclosure++;
-          }
-        __losuSyntaxCgenCodearg1 (func, INS_PUSHUPVALUE, c);
-      }
-      var->type = VE;
-      var->value._bool.t = var->value._bool.f = NO_JUMP;
+  vm_addgsymbol (lex->vm, n->str);
+  vm_addgvalue (lex->vm, n->str);
+  v->type = VG;
+  return -1;
+}
+
+static int32_t
+__losuSyntaxParExpVarlevel_left (_syntaxLex *lex, _inlineString *n,
+                                 _syntaxExp *v)
+{
+  /*
+    是否在全局符号表？-> VG
+    |-> 是否在当前作用域? -> VG/VL
+        |-> 创建局部变量 -> VL
+  */
+  _syntaxFunc *func = lex->fs;
+  // 查找全局符号表
+  for (int32_t i = 0; i < lex->vm->ng_symbol; i++)
+    {
+      if (strcmp (lex->vm->global_symbol[i], n->str) == 0)
+        {
+          v->type = VG;
+          return -1;
+        }
     }
-  else if (l == -1)
+  // 查找当前作用域
+  for (int32_t i = func->naloc - 1; i >= 0; i--)
+    {
+      if (n == func->fcode->localvar[func->aloc[i]].name)
+        {
+          v->type = func->fcode->localvar[func->aloc[i]].type;
+          if (v->type == VG)
+            return -1;
+          v->value.index = i;
+          return 0;
+        }
+    }
+  // 查不到，创建
+  __losuSyntaxParNewlcvar (lex, n, 0);
+  __losuSyntaxParAdStack (lex, 1, 0);
+  __losuSyntaxParAdLcvar (lex, 1);
+  // printf ("create lcvar '%s'\n", n->str);
+  return __losuSyntaxParExpVarlevel_left (lex, n, v);
+}
+
+static int32_t
+__losuSyntaxParExpVarlevel_right (_syntaxLex *lex, _inlineString *n,
+                                  _syntaxExp *v)
+{
+  /*
+    是否在全局符号表？-> VG
+    |-> 是否在当前作用域? -> VG/VL
+        |-> 是否在全局作用域？ -> VG
+            |-> 报错
+  */
+  _syntaxFunc *func = lex->fs;
+  // 查找全局符号表
+  for (int32_t i = 0; i < lex->vm->ng_symbol; i++)
+    {
+      if (strcmp (lex->vm->global_symbol[i], n->str) == 0)
+        {
+          v->type = VG;
+          return -1;
+        }
+    }
+  // 查找当前作用域
+  for (int32_t i = func->naloc - 1; i >= 0; i--)
+    {
+      if (n == func->fcode->localvar[func->aloc[i]].name)
+        {
+
+          v->type = func->fcode->localvar[func->aloc[i]].type;
+          if (v->type == VG)
+            return -1;
+          v->value.index = i;
+          return 0;
+        }
+    }
+  // 查找全局变量域
+  for (int32_t i = 0; i < lex->vm->ng_value; i++)
+    {
+      if (strcmp (lex->vm->global_value[i], n->str) == 0)
+        {
+          v->type = VG;
+          return -1;
+        }
+    }
+  // 报错
+  __losuSyntaxError (lex, "找不到变量 '%s' ", n->str);
+  return 2;
+}
+
+static int32_t
+__losuSyntaxParExpVarlevel_global (_syntaxLex *lex, _inlineString *n,
+                                   _syntaxExp *v)
+{
+  vm_addgvalue (lex->vm, n->str);
+  v->type = VG;
+  return -1;
+}
+
+static void
+__losuSyntaxParSvar (_syntaxLex *lex, _inlineString *n, _syntaxExp *var,
+                     _sytaxLocal getlocal)
+{
+  int32_t l = getlocal (lex, n, var);
+  if (l == -1)
     var->value.index = __losuSyntaxParStrconst (lex->fs, n);
+  else if (l >= 1)
+    __losuSyntaxError (lex, "错误的闭包变量 '%s'", n->str);
+
+  // int32_t l = __losuSyntaxParExpVarlevel (lex, n, var);
+  // if (l >= 1)
+  //   {
+  //     { /* push closure */
+  //       _syntaxFunc *func = lex->fs;
+  //       _syntaxExp v;
+  //       int32_t l = __losuSyntaxParExpVarlevel (lex, n, &v);
+  //       if (l == -1)
+  //         v.value.index = __losuSyntaxParStrconst (func->prev, n);
+  //       else if (l != 1)
+  //         __losuSyntaxError (lex,
+  //         __config_losucore_errmsg_msgInvalidClosure,
+  //                            n->str);
+
+  //       /* index closure */
+  //       int16_t c = -1;
+  //       for (int16_t i = 0; i < func->nclosure; i++)
+  //         if (func->closure[i].type == v.type
+  //             && func->closure[i].value.index == v.value.index)
+  //           {
+  //             c = i;
+  //             break;
+  //           }
+  //       if (c < 0)
+  //         {
+  //           func->closure[func->nclosure] = v;
+  //           c = func->nclosure++;
+  //         }
+  //       __losuSyntaxCgenCodearg1 (func, INS_PUSHUPVALUE, c);
+  //     }
+  //     var->type = VE;
+  //     var->value._bool.t = var->value._bool.f = NO_JUMP;
+  //   }
+  // else if (l == -1)
+  //   var->value.index = __losuSyntaxParStrconst (lex->fs, n);
 }
 static int32_t
 __losuSyntaxParStrconst (_syntaxFunc *func, _inlineString *s)
@@ -1978,6 +2231,13 @@ __losuSyntaxParSimpleExp (_syntaxLex *lex, _syntaxExp *v)
         __losuSyntaxParNext (lex);
         break;
       }
+    case TOKEN_CHAR:
+      {
+        __losuSyntaxCgenCodearg1 (lex->fs, EC2INS_PUSHCHAR,
+                                  lex->tk.info._char);
+        __losuSyntaxParNext (lex);
+        break;
+      }
     case TOKEN_TRUE:
       {
         __losuSyntaxCgenCodearg1 (lex->fs, EC2INS_PUSHBOOL, 1);
@@ -2007,7 +2267,7 @@ __losuSyntaxParSimpleExp (_syntaxLex *lex, _syntaxExp *v)
 
     case TOKEN_NAME:
       {
-        __losuSyntaxParVarFunc (lex, v);
+        __losuSyntaxParVarFunc (lex, v, __losuSyntaxParExpVarlevel_right);
         return;
       }
     case '{':
@@ -2298,7 +2558,8 @@ static const struct
 
   { iU, 0, 0 }, /* INS_YIELD */
   { iO, 1, 0 }, /* EC2INS_PUSHSPACE */
-  { iU, 1, 0 }, /* EC2INS_UNICODE */
+  { iU, 1, 0 }, /* EC2INS_PUSHUNICODE */
+  { iU, 1, 0 }, /* EC2INS_ PUSHCHAR*/
   { iS, 1, 0 }, /* EC2INS_PUSHINT */
   { iU, 1, 0 }, /* EC2INS_PUSHBOOL */
 
@@ -2312,6 +2573,10 @@ static const struct
   { iO, 0, 0 }, /* EC2INS_PUSHSTA */
   { iO, 0, 0 }, /* EC2INS_POPSTA */
   { iO, 0, 0 }, /* EC2INS_SETSTA */
+
+  { iU, 0, 1 },  /* EC2INS_SETLOCAL */
+  { iU, 0, 1 },  /* EC2INS_SETGLOBAL */
+  { iBA, V, 0 }, /* EC2INS_SETUNIT */
 
 };
 
@@ -2341,10 +2606,12 @@ __losuSyntaxCgenCodearg (_syntaxFunc *func, vmIns_OP o, int32_t arg1,
         break;
       }
     case INS_SETUNIT:
+    case EC2INS_SETUNIT:
       {
         dt = -arg2;
         break;
       }
+
     case INS_SETLIST:
       {
         if (arg2 == 0)
@@ -2383,6 +2650,7 @@ __losuSyntaxCgenCodearg (_syntaxFunc *func, vmIns_OP o, int32_t arg1,
         switch (cgIns_GetOp (i))
           {
           case INS_SETUNIT:
+          case EC2INS_SETUNIT:
             {
               cgIns_SetB (i, cgIns_GetB (i) + arg1);
               optd = 1;

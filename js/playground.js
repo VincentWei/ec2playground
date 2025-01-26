@@ -2,7 +2,7 @@
 function importProgram(btnElem) {
     var formData = new FormData();
     formData.append("digest",
-          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
+        btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
 
     var request = new XMLHttpRequest();
     request.open("POST", globals.pathPrefix + "tools/fetch-snippet-contents.php");
@@ -44,7 +44,7 @@ function showPromptModal(message) {
     const msgElem = document.getElementById("promptModalMsg");
     msgElem.textContent = message;
     const promptModal = new bootstrap.Modal('#promptModal',
-            { dropback: true, focus: true, keyboard: true });
+        { dropback: true, focus: true, keyboard: true });
     promptModal.show();
 }
 
@@ -63,7 +63,7 @@ function deleteProgram(btnElem) {
 
     var formData = new FormData();
     formData.append("digest",
-          btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
+        btnElem.parentElement.parentElement.getAttribute('data-snippet-digest'));
     formData.append("username", username);
     formData.append("password", password);
 
@@ -93,7 +93,7 @@ function deleteProgram(btnElem) {
 }
 
 const groupBy = (array, key) => {
-        return array.reduce((result, currentValue) => {
+    return array.reduce((result, currentValue) => {
         const groupKey = currentValue[key];
         if (!result[groupKey]) {
             result[groupKey] = [];
@@ -105,10 +105,10 @@ const groupBy = (array, key) => {
 
 function enableTooltips(sectionElem) {
     const sectionCollapseList = sectionElem.querySelectorAll(".program-section");
-    sectionCollapseList.forEach(function(myCollapsible) {
+    sectionCollapseList.forEach(function (myCollapsible) {
         const deleteBtns = myCollapsible.querySelectorAll('[data-bs-title="删除此程序"]');
         const username = getUsername();
-        deleteBtns.forEach(function(btnElem) {
+        deleteBtns.forEach(function (btnElem) {
             if (username == null) {
                 btnElem.setAttribute('disabled', 'disabled');
                 btnElem.classList.remove('text-danger');
@@ -128,10 +128,10 @@ function enableTooltips(sectionElem) {
             }
         });
 
-        myCollapsible.addEventListener('shown.bs.collapse', function(e) {
+        myCollapsible.addEventListener('shown.bs.collapse', function (e) {
             const tooltipTriggerList =
-                    myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
-            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                myCollapsible.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
                 if (!tooltipTriggerEl.hasAttribute('disabled')) {
                     const tooltip = new bootstrap.Tooltip(tooltipTriggerEl);
                 }
@@ -356,7 +356,7 @@ function updateUserFields() {
     }
 }
 
-window.onload = function() {
+window.onload = function () {
     username = updateUserFields();
     refreshRepository(username);
 
@@ -388,9 +388,9 @@ function dismissRepoPanel() {
 
 function dismissShareModal() {
     window.setTimeout(() => {
-            const closeBtn = document.getElementById("shareModalClose");
-            closeBtn.click();
-        }, 3000);
+        const closeBtn = document.getElementById("shareModalClose");
+        closeBtn.click();
+    }, 3000);
 }
 
 function shareProgram() {
@@ -473,7 +473,7 @@ function showShareModal(snippetHeaders) {
     submitElem.removeAttribute("disabled");
 
     const shareModal = new bootstrap.Modal('#shareModal',
-            { dropback: true, focus: true, keyboard: true });
+        { dropback: true, focus: true, keyboard: true });
     shareModal.show();
 }
 
@@ -511,7 +511,7 @@ function tryToShareCode() {
 }
 
 window.onerror = function (message) {
-    var errorMessage = `页面崩溃: ${message}\n需要刷新`;
+    var errorMessage = `WASM平台出现了崩溃性错误: ${message}\n当前环境已经不再可靠\n建议保存代码后刷新界面`;
     wasmIOprinterr(errorMessage);
     return true; // 阻止默认的错误处理
 };
@@ -539,14 +539,14 @@ function runCode(btnElem) {
         btnElem.classList.remove('text-white');
         btnElem.classList.add('text-danger');
 
-        let intervalID = window.setInterval(function(btnElem) {
-                if (WasmMutex.runLock == 0) {
-                    btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i><span class="d-none d-md-block">运行</span>';
-                    btnElem.classList.remove('text-danger');
-                    btnElem.classList.add('text-white');
-                    window.clearInterval(intervalID);
-                }
-            }, 500, btnElem);
+        let intervalID = window.setInterval(function (btnElem) {
+            if (WasmMutex.runLock == 0) {
+                btnElem.innerHTML = '<i class="bi bi-caret-right-fill d-block mx-auto mb-1 cmd-icon"></i><span class="d-none d-md-block">运行</span>';
+                btnElem.classList.remove('text-danger');
+                btnElem.classList.add('text-white');
+                window.clearInterval(intervalID);
+            }
+        }, 500, btnElem);
     }
 
     // 清除上一次的运行结果
@@ -590,7 +590,7 @@ function showCodeInfo() {
                 document.getElementById("codeInfoCreatedAt").textContent = response.data.createdAt;
                 document.getElementById("codeInfoUpdatedAt").textContent = response.data.updatedAt;
                 const codeInfoModal = new bootstrap.Modal('#codeInfoModal',
-                        { dropback: true, focus: true, keyboard: true });
+                    { dropback: true, focus: true, keyboard: true });
                 codeInfoModal.show();
             }
         };

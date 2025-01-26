@@ -19,8 +19,7 @@ wasm_libcore_io_print (LosuVm *vm)
       printf ("%s", obj_tostr (vm, o));
     }
   printf ("\n");
-  emscripten_sleep (
-      0); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
+  emscripten_sleep (0); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
   return 0;
 }
 // 输出(提示)
@@ -212,6 +211,11 @@ wasm_libcore_type_any_len (LosuVm *vm)
             len++;
           }
         arg_return (vm, obj_newint (vm, len));
+        break;
+      }
+    case LosuTypeDefine_char:
+      {
+        arg_return (vm, obj_newint (vm, sizeof (uint8_t)));
         break;
       }
     case LosuTypeDefine_unit:

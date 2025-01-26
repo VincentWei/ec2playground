@@ -66,6 +66,7 @@ _l_bool __losu_object_str2num (const char *s, _l_number *n);
 #define ovhash(o) ((o)->value.hash)
 #define ovcall(o) ((o)->value.call)
 #define ovcoro(o) ((o)->value.coro)
+#define ovchar(o) ((o)->value._char)
 #define ostr2num(s, p) (strtod ((s), (p)))
 
 #endif /* DEFINE_INCLUDE_LOSU_OBJECT_H_LOSU_OBJECT */

@@ -109,10 +109,10 @@ void
 __losu_vmHeap_rawcall (LosuVm *vm, LosuObj *func, int32_t nres)
 {
   vm->callhook++;
-  vm->deephook++;
-  if (vm->deephook > 998)
-    vm_error (vm, "超出最大递归限制");
-  ;
+  // vm->deephook++;
+  // if (vm->deephook > 998)
+  //   vm_error (vm, "超出最大递归限制");
+  // ;
   _inlineCallinfo cinfo = { NULL };
   if (ovtype (func) != LosuTypeDefine_function)
     vm_error (vm, __config_losucore_errmsg_msgCalledNotFunc);
@@ -141,7 +141,7 @@ __losu_vmHeap_rawcall (LosuVm *vm, LosuObj *func, int32_t nres)
       for (; nres > 0; nres--)
         ovtype ((vm->top++)) = LosuTypeDefine_null;
     }
-  vm->deephook--;
+  // vm->deephook--;
 }
 
 void
@@ -416,15 +416,99 @@ __losuVmcoreFunction (LosuVm *vm, int32_t niss)
 }
 
 static void
+covtype (LosuVm *vm, LosuObj *l, LosuObj *r)
+{
+  switch (ovtype (l))
+    {
+    case LosuTypeDefine_number:
+      {
+        switch (ovtype (r))
+          {
+          case LosuTypeDefine_number:
+          case LosuTypeDefine_int:
+          case LosuTypeDefine_char:
+          case LosuTypeDefine_unicode:
+
+            ovnumber (r) = obj_tonum (vm, r);
+            ovtype (r) = LosuTypeDefine_number;
+            break;
+          default:
+            break;
+          }
+        break;
+      }
+    case LosuTypeDefine_int:
+      {
+        switch (ovtype (r))
+          {
+          case LosuTypeDefine_number:
+          case LosuTypeDefine_int:
+          case LosuTypeDefine_char:
+          case LosuTypeDefine_unicode:
+            ovint (r) = obj_toint (vm, r);
+            ovtype (r) = LosuTypeDefine_int;
+
+            break;
+          default:
+            break;
+          }
+        break;
+      }
+    case LosuTypeDefine_char:
+      {
+        switch (ovtype (r))
+          {
+          case LosuTypeDefine_number:
+          case LosuTypeDefine_int:
+          case LosuTypeDefine_char:
+          case LosuTypeDefine_unicode:
+            {
+              ovchar (r) = obj_tochar (vm, r);
+              ovtype (r) = LosuTypeDefine_char;
+
+              break;
+            }
+          default:
+            break;
+          }
+        break;
+      }
+    case LosuTypeDefine_unicode:
+      {
+        switch (ovtype (r))
+          {
+          case LosuTypeDefine_number:
+          case LosuTypeDefine_int:
+          case LosuTypeDefine_char:
+          case LosuTypeDefine_unicode:
+            {
+              ovunicode (r) = obj_tounicode (vm, r);
+              ovtype (r) = LosuTypeDefine_unicode;
+
+              break;
+            }
+          default:
+            break;
+          }
+        break;
+      }
+    default:
+      break;
+    }
+}
+
+static void // < <= > >=
 checktype (LosuVm *vm, LosuObj *o1, LosuObj *o2)
 {
+  covtype (vm, o1, o2);
   if (strcmp (obj_typeStr (vm, o1), obj_typeStr (vm, o2)))
     vm_error (vm, " '%s' 与 '%s' 不可进行关系运算", obj_typeStr (vm, o1),
               obj_typeStr (vm, o2));
 }
-static void
+static void // == !=
 checktype1 (LosuVm *vm, LosuObj *o1, LosuObj *o2)
 {
+  covtype (vm, o1, o2);
   if ((ovtype (o1) != ovtype (o2))
       && (ovtype (o1) != LosuTypeDefine_bool
           && ovtype (o2) != LosuTypeDefine_bool))
@@ -508,9 +592,14 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
   //     pc++;
   //   }
   // printf ("--------\n");
-
+  int32_t count = 0;
   while (1)
     {
+      if (count++ > 100000)
+        {
+          emscripten_sleep (0);
+          count = 0;
+        }
       vmInstruction i = *(cinfo->pc++);
       if (emscripten_run_script_int ("WasmMutex.runLock")
           == 0) // 如果没有运行锁，打断
@@ -531,12 +620,13 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           }
         case INS_CALL:
           {
-            if (vm->callhook > 65535 || vm->loophook > 65535)
-              {
-                vm_error (vm, "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
-                          vm->callhook > 65535 ? "❗️" : "",
-                          vm->loophook > 65535 ? "❗️" : "");
-              }
+            // if (vm->callhook > 65535 || vm->loophook > 65535)
+            //   {
+            //     vm_error (vm,
+            //     "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
+            //               vm->callhook > 65535 ? "❗️" : "",
+            //               vm->loophook > 65535 ? "❗️" : "");
+            //   }
             vm->top = top; // update top
 
             int16_t nres = cgIns_GetB (i);
@@ -731,6 +821,36 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
             vm->aluhook++;
             LosuObj *t = top - cgIns_GetA (i);
             vm->top = top;
+            if (ovtype (top - 1) == LosuTypeDefine_unit)
+              {
+                // copy index
+                LosuObj new = obj_newunit (vm, 0);
+                LosuObj obj = *(top - 1);
+                if (ovhash (&obj)->isMap) // map
+                  {
+                    ovhash (&new)->isMap = 1;
+                    LosuNode *n = obj_unit_first (vm, obj);
+                    while (n)
+                      {
+                        obj_setunit (vm, new, n->key, n->value);
+                        n = obj_unit_next (vm, obj, n);
+                      }
+                  }
+                else // list
+                  {
+                    ovhash (&new)->isMap = 0;
+                    int i = 0;
+                    while (1)
+                      {
+                        LosuObj *v = obj_indexunitbynum (vm, obj, i);
+                        if (ovtype (v) == LosuTypeDefine_null)
+                          break;
+                        obj_setunitbynum (vm, new, i, *v);
+                        i++;
+                      }
+                  }
+                *(top - 1) = new;
+              }
             __losuVmcoreSetunit (vm, t, t + 1);
             top -= cgIns_GetB (i);
             break;
@@ -764,130 +884,99 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           {
             vm->aluhook++;
             vm->top = top;
-
-            if (ovtype ((top - 1)) != ovtype ((top - 2)))
+            // + 判读逻辑： 以左侧数据类型为准，字符串自动转换
+            switch (ovtype (top - 2))
               {
-                if (ovtype (top - 2) == LosuTypeDefine_unit
-                    && ovhash (top - 2)->isMap == 0)
-                  {
-                    int32_t len = 0;
-                    LosuNode *n = obj_unit_first (vm, *(top - 2));
-                    while (n)
-                      {
-                        n = obj_unit_next (vm, *(top - 2), n);
-                        len++;
-                      }
-                    obj_setunitbynum (vm, *(top - 2), len, *(top - 1));
-                  }
-                else if (ovtype (top - 1) == LosuTypeDefine_unit
-                         && ovhash (top - 1)->isMap == 0)
-                  {
-                    LosuObj newlist = obj_newunit (vm, 0);
-                    obj_setunitbynum (vm, newlist, 0, *(top - 2));
-                    for (int32_t i = 0;; i++)
-                      {
-                        LosuObj *v = obj_indexunitbynum (vm, *(top - 1), i);
-                        if (ovtype (v) == LosuTypeDefine_null)
-                          break;
-                        obj_setunitbynum (vm, newlist, i + 1, *v);
-                        *(top - 2) = newlist;
-                      }
-                  }
-                else
-                  {
-                    // number + int
-                    _l_number n1 = obj_tonum (vm, top - 2);
-                    _l_number n2 = obj_tonum (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_number;
-                    ovnumber (top - 2) = n1 + n2;
-                  }
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    ovnumber (top - 2) += ovnumber (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    ovint (top - 2) += ovint (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2) += ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    char *s1, *s2, *s0;
-                    s1 = ovSstr ((top - 2));
-                    s2 = ovSstr ((top - 1));
-                    s0 = __losu_mem_malloc (vm, strlen (s1) + strlen (s2) + 1);
-                    snprintf (s0, strlen (s1) + strlen (s2) + 1, "%s%s", s1,
-                              s2);
-                    ovIstr (top - 2) = __losu_objString_new (vm, s0);
-                    __losu_mem_free (vm, s0);
-                    break;
-                  }
-                case LosuTypeDefine_unit:
-                  {
-                    if (ovhash (top - 2)->isMap + ovhash (top - 1)->isMap
-                        == 0) // all list
-                      {
-                        LosuObj newlist = obj_newunit (vm, 0);
-                        int32_t i = 0;
-                        for (int32_t j = 0;; j++)
-                          {
-                            LosuObj *o
-                                = obj_indexunitbynum (vm, *(top - 2), j);
-                            if (ovtype (o) == LosuTypeDefine_null)
-                              break;
-                            obj_setunitbynum (vm, newlist, i++, *o);
-                          }
-                        for (int32_t j = 0;; j++)
-                          {
-                            LosuObj *o
-                                = obj_indexunitbynum (vm, *(top - 1), j);
-                            if (ovtype (o) == LosuTypeDefine_null)
-                              break;
-                            obj_setunitbynum (vm, newlist, i++, *o);
-                          }
-                        *(top - 2) = newlist;
-                        break;
-                      }
-                    if (ovhash (top - 2)->isMap + ovhash (top - 1)->isMap
-                        == 2) // allmap
-                      {
-                        LosuObj newmap = obj_newunit (vm, 1);
-                        LosuNode *n = obj_unit_first (vm, *(top - 2));
-                        while (n)
-                          {
-                            obj_setunit (vm, newmap, n->key, n->value);
-                            n = obj_unit_next (vm, *(top - 2), n);
-                          }
-                        n = obj_unit_first (vm, *(top - 1));
-                        while (n)
-                          {
-                            obj_setunit (vm, newmap, n->key, n->value);
-                            n = obj_unit_next (vm, *(top - 1), n);
-                          }
-                        *(top - 2) = newmap;
-                        break;
-                      }
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  ovnumber (top - 2) += obj_tonum (vm, top - 1);
+                  break;
                 }
+              case LosuTypeDefine_int:
+                {
+                  ovint (top - 2) += obj_toint (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) += obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_string:
+                {
+                  char *s1, *s2, *s0;
+                  s1 = ovSstr ((top - 2));
+                  s2 = (char *)obj_tostr (vm, (top - 1));
+                  s0 = __losu_mem_malloc (vm, strlen (s1) + strlen (s2) + 1);
+                  snprintf (s0, strlen (s1) + strlen (s2) + 1, "%s%s", s1, s2);
+                  ovIstr (top - 2) = __losu_objString_new (vm, s0);
+                  __losu_mem_free (vm, s0);
+                  break;
+                }
+              case LosuTypeDefine_unit:
+                {
+                  if (ovtype (top - 1) != LosuTypeDefine_unit)
+                    vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
+                              obj_typeStr (vm, top - 2),
+                              obj_typeStr (vm, top - 1));
+
+                  if (ovhash (top - 2)->isMap + ovhash (top - 1)->isMap
+                      == 0) // all list
+                    {
+                      LosuObj newlist = obj_newunit (vm, 0);
+                      int32_t i = 0;
+                      for (int32_t j = 0;; j++)
+                        {
+                          LosuObj *o = obj_indexunitbynum (vm, *(top - 2), j);
+                          if (ovtype (o) == LosuTypeDefine_null)
+                            break;
+                          obj_setunitbynum (vm, newlist, i++, *o);
+                        }
+                      for (int32_t j = 0;; j++)
+                        {
+                          LosuObj *o = obj_indexunitbynum (vm, *(top - 1), j);
+                          if (ovtype (o) == LosuTypeDefine_null)
+                            break;
+                          obj_setunitbynum (vm, newlist, i++, *o);
+                        }
+                      *(top - 2) = newlist;
+                      break;
+                    }
+                  if (ovhash (top - 2)->isMap + ovhash (top - 1)->isMap
+                      == 2) // allmap
+                    {
+                      LosuObj newmap = obj_newunit (vm, 1);
+                      LosuNode *n = obj_unit_first (vm, *(top - 2));
+                      while (n)
+                        {
+                          obj_setunit (vm, newmap, n->key, n->value);
+                          n = obj_unit_next (vm, *(top - 2), n);
+                        }
+                      n = obj_unit_first (vm, *(top - 1));
+                      while (n)
+                        {
+                          obj_setunit (vm, newmap, n->key, n->value);
+                          n = obj_unit_next (vm, *(top - 1), n);
+                        }
+                      *(top - 2) = newmap;
+                      break;
+                    }
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) += obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
 
             top--;
             break;
@@ -895,46 +984,36 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
         case INS_SUB:
           {
             vm->aluhook++;
-            if (ovtype (top - 1) != ovtype (top - 2))
+
+            switch (ovtype (top - 2))
               {
-                _l_number n1, n2;
-                n1 = obj_tonum (vm, top - 2);
-                n2 = obj_tonum (vm, top - 1);
-                ovtype (top - 2) = LosuTypeDefine_number;
-                ovnumber (top - 2) = n1 - n2;
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    ovnumber (top - 2) -= ovnumber (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    ovint (top - 2) -= ovint (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2) -= ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    ovnumber (top - 2)
-                        = obj_tonum (vm, top - 2) - obj_tonum (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_number;
-                    break;
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '-' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  ovnumber (top - 2) -= obj_tonum (vm, top - 1);
+                  break;
                 }
+              case LosuTypeDefine_int:
+                {
+                  ovint (top - 2) -= obj_toint (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) -= obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) -= obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '-' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
 
             top--;
             break;
@@ -942,46 +1021,36 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
         case INS_MULT:
           {
             vm->aluhook++;
-            if (ovtype (top - 1) != ovtype (top - 2))
+
+            switch (ovtype (top - 2))
               {
-                _l_number n1, n2;
-                n1 = obj_tonum (vm, top - 2);
-                n2 = obj_tonum (vm, top - 1);
-                ovtype (top - 2) = LosuTypeDefine_number;
-                ovnumber (top - 2) = n1 * n2;
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    ovnumber (top - 2) *= ovnumber (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    ovint (top - 2) *= ovint (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2) *= ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    ovnumber (top - 2)
-                        = obj_tonum (vm, top - 2) * obj_tonum (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_number;
-                    break;
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '*' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  ovnumber (top - 2) *= obj_tonum (vm, top - 1);
+                  break;
                 }
+              case LosuTypeDefine_int:
+                {
+                  ovint (top - 2) *= obj_toint (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) *= obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) *= obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '*' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
 
             top--;
             break;
@@ -989,115 +1058,69 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
         case INS_DIV:
           {
             vm->aluhook++;
-            if (ovtype (top - 1) != ovtype (top - 2))
+
+            switch (ovtype (top - 2))
               {
-                _l_number n1, n2;
-                n1 = obj_tonum (vm, top - 2);
-                n2 = obj_tonum (vm, top - 1);
-                ovtype (top - 2) = LosuTypeDefine_number;
-                ovnumber (top - 2) = n1 / n2;
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
+              case LosuTypeDefine_int:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    _l_number n1, n2, n;
-                    n1 = ovnumber (top - 2);
-                    n2 = ovnumber (top - 1);
-                    n = n1 / n2;
-                    if ((_l_int)n == n)
-                      {
-                        ovint (top - 2) = (_l_int)n;
-                        ovtype (top - 2) = LosuTypeDefine_int;
-                      }
-                    else
-                      ovnumber (top - 2) = n;
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    double i
-                        = (double)ovint (top - 2) / (double)ovint (top - 1);
-                    _l_int j = (_l_int)i;
-                    if (j != i)
-                      {
-                        ovtype (top - 2) = LosuTypeDefine_number;
-                        ovnumber (top - 2) = i;
-                      }
-                    else
-                      ovint (top - 2) = j;
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2) /= ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    ovnumber (top - 2)
-                        = obj_tonum (vm, top - 2) / obj_tonum (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_number;
-                    break;
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '/' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  _l_number n1 = obj_tonum (vm, top - 2);
+                  _l_number n2 = obj_tonum (vm, top - 1);
+                  ovnumber (top - 2) = n1 / n2;
+                  ovtype (top - 2) = LosuTypeDefine_number;
+                  break;
                 }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) /= obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) /= obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '/' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
             top--;
             break;
           }
         case INS_POW: // 被重写为 取模
           {
             vm->aluhook++;
-            if (ovtype (top - 1) != ovtype (top - 2))
+            switch (ovtype (top - 2))
               {
-                _l_int n1, n2;
-                n1 = obj_toint (vm, top - 2);
-                n2 = obj_toint (vm, top - 1);
-                ovtype (top - 2) = LosuTypeDefine_int;
-                ovint (top - 2) = n1 % n2;
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
+              case LosuTypeDefine_int:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    _l_int n1 = obj_toint (vm, top - 2);
-                    _l_int n2 = obj_toint (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_int;
-                    ovint (top - 2) = n1 % n2;
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    ovint (top - 2) = ovint (top - 2) % ovint (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2)
-                        = ovunicode (top - 2) % ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    ovint (top - 2)
-                        = obj_toint (vm, top - 2) % obj_toint (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_int;
-                    break;
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '%' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  _l_int n1 = obj_toint (vm, top - 2);
+                  _l_int n2 = obj_toint (vm, top - 1);
+                  ovtype (top - 2) = LosuTypeDefine_int;
+                  ovint (top - 2) = n1 % n2;
+                  break;
                 }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) %= obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) %= obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '%' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
 
             top--;
             break;
@@ -1105,48 +1128,35 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
         case INS_CONCAT: // 被重写为 整除
           {
             vm->aluhook++;
-            if (ovtype (top - 1) != ovtype (top - 2))
+
+            switch (ovtype (top - 2))
               {
-                _l_int n1, n2;
-                n1 = obj_toint (vm, top - 2);
-                n2 = obj_toint (vm, top - 1);
-                ovtype (top - 2) = LosuTypeDefine_int;
-                ovint (top - 2) = n1 / n2;
-              }
-            else
-              switch (ovtype (top - 2))
+              case LosuTypeDefine_number:
+              case LosuTypeDefine_int:
                 {
-                case LosuTypeDefine_number:
-                  {
-                    _l_number n = ovnumber (top - 2) / ovnumber (top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_int;
-                    ovint (top - 2) = (_l_int)n;
-                    break;
-                  }
-                case LosuTypeDefine_int:
-                  {
-                    ovint (top - 2) /= ovint (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_unicode:
-                  {
-                    ovunicode (top - 2) /= ovunicode (top - 1);
-                    break;
-                  }
-                case LosuTypeDefine_string:
-                  {
-                    ovint (top - 2)
-                        = obj_toint (vm, top - 2) / obj_toint (vm, top - 1);
-                    ovtype (top - 2) = LosuTypeDefine_int;
-                    break;
-                  }
-                default:
-                  {
-                    vm_error (vm, " '%s' 与 '%s' 不能进行 '//' 操作",
-                              obj_typeStr (vm, top - 2),
-                              obj_typeStr (vm, top - 1));
-                  }
+                  _l_number n1 = obj_tonum (vm, top - 2);
+                  _l_number n2 = obj_tonum (vm, top - 1);
+                  ovint (top - 2) = (_l_int)(n1 / n2);
+                  ovtype (top - 2) = LosuTypeDefine_int;
+                  break;
                 }
+              case LosuTypeDefine_unicode:
+                {
+                  ovunicode (top - 2) /= obj_tounicode (vm, top - 1);
+                  break;
+                }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 2) /= obj_tochar (vm, top - 1);
+                  break;
+                }
+              default:
+                {
+                  vm_error (vm, " '%s' 与 '%s' 不能进行 '/' 操作",
+                            obj_typeStr (vm, top - 2),
+                            obj_typeStr (vm, top - 1));
+                }
+              }
             top--;
             break;
           }
@@ -1165,19 +1175,16 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
                   ovint (top - 1) = -ovint (top - 1);
                   break;
                 }
-              case LosuTypeDefine_string:
+              case LosuTypeDefine_unicode:
                 {
-                  ovnumber (top - 1) = -obj_tonum (vm, top - 1);
-                  ovtype (top - 1) = LosuTypeDefine_number;
+                  ovunicode (top - 1) = -ovunicode (top - 1);
                   break;
                 }
-                // case LosuTypeDefine_unit:
-                //   {
-                //     if (ovhash (top - 1)->isMap)
-                //       goto ins_neg_err;
-                //     LosuObj newlist = obj_newunit (vm, 0);
-
-                //   }
+              case LosuTypeDefine_char:
+                {
+                  ovchar (top - 1) = -ovchar (top - 1);
+                  break;
+                }
               default:
                 {
                 ins_neg_err:
@@ -1434,6 +1441,14 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
             _l_unicode u = cgIns_GetU (i);
             ovtype (top) = LosuTypeDefine_unicode;
             ovunicode (top) = u;
+            top++;
+            break;
+          }
+        case EC2INS_PUSHCHAR:
+          {
+            uint8_t u = cgIns_GetU (i);
+            ovtype (top) = LosuTypeDefine_char;
+            ovchar (top) = u;
             top++;
             break;
           }
@@ -1694,16 +1709,104 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
           }
         case EC2INS_SETSTA:
           {
-            if (vm->callhook > 65535 || vm->loophook > 65535)
-              {
-                vm_error (vm, "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
-                          vm->callhook > 65535 ? "❗️" : "",
-                          vm->loophook > 65535 ? "❗️" : "");
-              }
+            // if (vm->callhook > 65535 || vm->loophook > 65535)
+            //   {
+            //     vm_error (vm,
+            //     "运行资源超出最大限制:\n\t调用[%s]\t循环[%s]\n",
+            //               vm->callhook > 65535 ? "❗️" : "",
+            //               vm->loophook > 65535 ? "❗️" : "");
+            //   }
             vm->loophook++;
             top = vm->stacksta->top;
             break;
           }
+        case EC2INS_SETLOCAL:
+          {
+            vm->aluhook++;
+            // if (ovtype (top - 1) == LosuTypeDefine_unit)
+            //   {
+            //     // copy index
+            //     LosuObj new = obj_newunit (vm, 0);
+            //     LosuObj obj = *(--top);
+            //     if (ovhash (&obj)->isMap) // map
+            //       {
+            //         ovhash (&new)->isMap = 1;
+            //         LosuNode *n = obj_unit_first (vm, obj);
+            //         while (n)
+            //           {
+            //             obj_setunit (vm, new, n->key, n->value);
+            //             n = obj_unit_next (vm, obj, n);
+            //           }
+            //       }
+            //     else // list
+            //       {
+            //         ovhash (&new)->isMap = 0;
+            //         int i = 0;
+            //         while (1)
+            //           {
+            //             LosuObj *v = obj_indexunitbynum (vm, obj, i);
+            //             if (ovtype (v) == LosuTypeDefine_null)
+            //               break;
+            //             obj_setunitbynum (vm, new, i, *v);
+            //             i++;
+            //           }
+            //       }
+            //     *(base + cgIns_GetU (i)) = new;
+            //   }
+            // else
+            *(base + cgIns_GetU (i)) = *(--top);
+            break;
+          }
+        case EC2INS_SETGLOBAL:
+          {
+            vm->aluhook++;
+            // if (ovtype (top - 1) == LosuTypeDefine_unit)
+            //   {
+            //     // copy index
+            //     LosuObj new = obj_newunit (vm, 0);
+            //     LosuObj obj = *(top - 1);
+            //     if (ovhash (&obj)->isMap) // map
+            //       {
+            //         ovhash (&new)->isMap = 1;
+            //         LosuNode *n = obj_unit_first (vm, obj);
+            //         while (n)
+            //           {
+            //             obj_setunit (vm, new, n->key, n->value);
+            //             n = obj_unit_next (vm, obj, n);
+            //           }
+            //       }
+            //     else // list
+            //       {
+            //         ovhash (&new)->isMap = 0;
+            //         int i = 0;
+            //         while (1)
+            //           {
+            //             LosuObj *v = obj_indexunitbynum (vm, obj, i);
+            //             if (ovtype (v) == LosuTypeDefine_null)
+            //               break;
+            //             obj_setunitbynum (vm, new, i, *v);
+            //             i++;
+            //           }
+            //       }
+            //     *(top - 1) = new;
+            //   }
+
+            vm->top = top;
+            __losuVmcoreSetglobal (vm, (_inlineString *)lcstr[cgIns_GetU (i)]);
+            top--;
+            break;
+          }
+
+        case EC2INS_SETUNIT:
+          {
+            vm->aluhook++;
+            LosuObj *t = top - cgIns_GetA (i);
+            vm->top = top;
+            __losuVmcoreSetunit (vm, t, t + 1);
+            top -= cgIns_GetB (i);
+            break;
+          }
+
         default:
           {
             vm_error (vm,

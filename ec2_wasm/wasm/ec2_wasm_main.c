@@ -65,10 +65,10 @@ wasmIOrunCode ()
                        (char *)unit2str (vm, vm->top - 1));
             else
               fprintf (stdout, "返回值:\t%s\n", obj_tostr (vm, vm->top - 1));
-            fprintf (stdout, "统计\n\t运算:\t%d\n\t调用:\t%d\n\t循环:\t%d\n",
-                     vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
-                     vm->callhook - 2 > 0 ? vm->callhook - 2 : 0,
-                     vm->loophook);
+            fprintf (
+                stdout, "统计\n\t运算:\t%lld\n\t调用:\t%lld\n\t循环:\t%lld\n",
+                vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
+                vm->callhook - 2 > 0 ? vm->callhook - 2 : 0, vm->loophook);
             fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
             if (gc_getmemMax (vm) > 1024 * 1024 * 1024)
               fprintf (stdout, "最大内存占用:\t %.5f GB\n",
@@ -89,10 +89,10 @@ wasmIOrunCode ()
             // output log
             fprintf (stdout, "--------------------------------\n");
             fprintf (stdout, "程序被终止\n");
-            fprintf (stdout, "统计\n\t运算:\t%d\n\t调用:\t%d\n\t循环:\t%d\n",
-                     vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
-                     vm->callhook - 2 > 0 ? vm->callhook - 2 : 0,
-                     vm->loophook);
+            fprintf (
+                stdout, "统计\n\t运算:\t%lld\n\t调用:\t%lld\n\t循环:\t%lld\n",
+                vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
+                vm->callhook - 2 > 0 ? vm->callhook - 2 : 0, vm->loophook);
             fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
             if (gc_getmemMax (vm) > 1024 * 1024 * 1024)
               fprintf (stdout, "最大内存占用:\t %.5f GB\n",
@@ -112,7 +112,8 @@ wasmIOrunCode ()
           // output log
           fprintf (stdout, "--------------------------------\n");
           fprintf (stdout, "程序出错\n");
-          fprintf (stdout, "统计\n\t运算:\t%d\n\t调用:\t%d\n\t循环:\t%d\n",
+          fprintf (stdout,
+                   "统计\n\t运算:\t%lld\n\t调用:\t%lld\n\t循环:\t%lld\n",
                    vm->aluhook - 1 > 0 ? vm->aluhook - 1 : 0,
                    vm->callhook - 2 > 0 ? vm->callhook - 2 : 0, vm->loophook);
           fprintf (stdout, "CPU时间:\t%.5fs\n", cpu_time_used);
