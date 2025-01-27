@@ -595,11 +595,11 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
   int32_t count = 0;
   while (1)
     {
-      if (count++ > 1000)
-        {
+      // if (count++ > 1000)
+        // {
           emscripten_sleep (0);
-          count = 0;
-        }
+          // count = 0;
+        // }
       vmInstruction i = *(cinfo->pc++);
       if (emscripten_run_script_int ("WasmMutex.runLock")
           == 0) // 如果没有运行锁，打断
