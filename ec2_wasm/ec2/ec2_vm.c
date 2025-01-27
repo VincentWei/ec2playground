@@ -54,6 +54,7 @@
 #include "losu_object.h"
 #include "losu_syntax.h"
 #include "losu_vm.h"
+#include <emscripten.h>
 #include <math.h>
 #include <setjmp.h>
 #include <stdio.h>
@@ -309,7 +310,7 @@ __losuVmcoreSetunit (LosuVm *vm, LosuObj *t, LosuObj *key)
                   if (ovtype (nnext) == LosuTypeDefine_null)
                     break;
                 }
-
+              emscripten_sleep (0);
               return;
             }
           else // generic
@@ -515,7 +516,7 @@ checktype1 (LosuVm *vm, LosuObj *o1, LosuObj *o2)
     vm_error (vm, " '%s' 与 '%s' 不可进行关系运算", obj_typeStr (vm, o1),
               obj_typeStr (vm, o2));
 }
-#include <emscripten.h>
+
 LosuObj *
 __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
 {
@@ -595,11 +596,11 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
   int32_t count = 0;
   while (1)
     {
-      // if (count++ > 1000)
-        // {
+      if (count++ > 1000)
+        {
           emscripten_sleep (0);
-          // count = 0;
-        // }
+          count = 0;
+        }
       vmInstruction i = *(cinfo->pc++);
       if (emscripten_run_script_int ("WasmMutex.runLock")
           == 0) // 如果没有运行锁，打断
@@ -940,6 +941,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
                           obj_setunitbynum (vm, newlist, i++, *o);
                         }
                       *(top - 2) = newlist;
+                      emscripten_sleep (0);
                       break;
                     }
                   if (ovhash (top - 2)->isMap + ovhash (top - 1)->isMap
@@ -959,6 +961,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
                           n = obj_unit_next (vm, *(top - 1), n);
                         }
                       *(top - 2) = newmap;
+                      emscripten_sleep (0);
                       break;
                     }
                   vm_error (vm, " '%s' 与 '%s' 不能进行 '+' 操作",
