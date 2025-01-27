@@ -595,7 +595,7 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
   int32_t count = 0;
   while (1)
     {
-      if (count++ > 100000)
+      if (count++ > 1000)
         {
           emscripten_sleep (0);
           count = 0;
