@@ -198,8 +198,9 @@ typedef enum
 
   INS_YIELD, /* iU   0   0 */
 
-  EC2INS_PUSHSPACE,   /* iO   1   0  */
-  EC2INS_PUSHUNICODE, /* iU  1   0 */
+  EC2INS_PUSHSPACE,   /* iO   1   0 */
+  EC2INS_PUSHUNICODE, /* iU   1   0 */
+  EC2INS_PUSHCHAR,    /* iU   1   0 */
   EC2INS_PUSHINT,     /* iS   1   0 */
   EC2INS_PUSHBOOL,    /* iU   1   0 */
 
@@ -213,6 +214,10 @@ typedef enum
   EC2INS_PUSHSTA, /*iO 0 0 */
   EC2INS_POPSTA,  /* iO 0 0 */
   EC2INS_SETSTA,  /* iO 0 0 */
+
+  EC2INS_SETLOCAL,  /* iU   0   1 */
+  EC2INS_SETGLOBAL, /* iU   0   1 */
+  EC2INS_SETUNIT,   /* iBA  V   0 */
   vmIns_Number,
 
 } vmInsList;

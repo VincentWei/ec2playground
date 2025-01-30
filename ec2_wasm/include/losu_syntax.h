@@ -64,6 +64,7 @@ typedef union _syntaxTkvalue
   _inlineString *s;
   _l_int intnum;
   _l_unicode unicode;
+  uint8_t _char;
 } _syntaxTkvalue;
 
 typedef struct _syntaxToken
@@ -111,6 +112,7 @@ typedef struct _syntaxLex
     int32_t size;   /* size of idt */
     int32_t tmp;    /* temp */
   } _syntaxLexIdt;
+  _l_bool isMain;
 } _syntaxLex;
 
 typedef struct _syntaxFunc
@@ -232,13 +234,14 @@ enum _lexerToken
 
   TOKEN_DECLARE, // 声明
   TOKEN_IMPORT,  // 导入
-
+  TOKEN_DEFINE,  // 定义
   /* == >= <= !=  &*/
   TOKEN_EQ,   // ==
   TOKEN_GE,   // >=
   TOKEN_LE,   // <=
   TOKEN_NE,   // !=
   TOKEN_DIVI, // & -> '//' 整除
+  TOKEN_SET,  // =
 
   TOKEN_LSH, // <<
   TOKEN_RSH, // >>
@@ -248,6 +251,7 @@ enum _lexerToken
   TOKEN_INT,     // int
   TOKEN_STRING,  // string
   TOKEN_UNICODE, // unicode
+  TOKEN_CHAR,    // char
 
   TOKEN_EOZ,
 };
@@ -282,4 +286,9 @@ _inlineScode *__losu_syntaxIrload_load (LosuVm *vm, _syntaxIO *io);
 
 #endif /* DEFINE_INCLUDE_LOSU_SYNTAX_H_IRLOAD */
 
+typedef int32_t (*_sytaxLocal) (_syntaxLex *lex, _inlineString *n,
+                                _syntaxExp *v);
+
+LosuExtern void vm_addgsymbol (LosuVm *vm, const char *name);
+LosuExtern void vm_addgvalue (LosuVm *vm, const char *name);
 #endif /* DEFINE_INCLUDE_LOSU_SYNTAX_H  */

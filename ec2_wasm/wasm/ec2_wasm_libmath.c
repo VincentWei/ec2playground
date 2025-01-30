@@ -2,6 +2,7 @@
 #include "losu.h"
 #include "losu_malloc.h"
 #include "losu_object.h"
+#include <emscripten.h>
 
 // #include <emscripten.h>
 #include <math.h>
@@ -80,6 +81,20 @@ wasm_libmath_log2 (LosuVm *vm)
   return simgleNumber (vm, log2);
 }
 
+EM_JS (double, jsfloor, (double x), { return Math.floor (x); });
+EM_JS (double, jsceil, (double x), { return Math.ceil (x); });
+int32_t
+wasm_libmath_floor (LosuVm *vm)
+{
+  return simgleNumber (vm, jsfloor);
+}
+
+int32_t
+wasm_libmath_ceil (LosuVm *vm)
+{
+  return simgleNumber (vm, jsceil);
+}
+
 #define make(s) wasm_libmath_##s
 
 static struct
@@ -87,9 +102,11 @@ static struct
   const char *name;
   LosuApi func;
 } libfunc[] = {
-  { "abs", make (abs) },     { "sqrt", make (sqrt) }, { "cbrt", make (cbrt) },
-  { "pow", make (pow) },     { "log", make (log) },   { "log2", make (log2) },
-  { "log10", make (log10) },
+  { "abs", make (abs) },     { "sqrt", make (sqrt) },
+  { "cbrt", make (cbrt) },   { "pow", make (pow) },
+  { "log", make (log) },     { "log2", make (log2) },
+  { "log10", make (log10) }, { "floor", make (floor) },
+  { "ceil", make (ceil) },
 };
 
 static void
@@ -104,7 +121,7 @@ static void
 addNumToUnit (LosuVm *vm, LosuObj *unit, const char *name, double n)
 {
   LosuObj o = obj_newnum (vm, n);
-  obj_setunitbystr (vm, *unit, (char*)name, o);
+  obj_setunitbystr (vm, *unit, (char *)name, o);
 }
 
 static void

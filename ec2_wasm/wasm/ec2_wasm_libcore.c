@@ -19,8 +19,7 @@ wasm_libcore_io_print (LosuVm *vm)
       printf ("%s", obj_tostr (vm, o));
     }
   printf ("\n");
-  emscripten_sleep (
-      0); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
+  emscripten_sleep (0); // 为每次 IO 操作添加异步等待，返回至浏览器进行渲染工作
   return 0;
 }
 // 输出(提示)
@@ -61,6 +60,12 @@ int32_t
 wasm_libcore_type_unicode (LosuVm *vm)
 {
   arg_return (vm, obj_newunicode (vm, obj_tounicode (vm, arg_get (vm, 1))));
+  return 1;
+}
+int32_t
+wasm_libcore_type_char (LosuVm *vm)
+{
+  arg_return (vm, obj_newchar (vm, obj_tochar (vm, arg_get (vm, 1))));
   return 1;
 }
 // 字符串
@@ -214,6 +219,11 @@ wasm_libcore_type_any_len (LosuVm *vm)
         arg_return (vm, obj_newint (vm, len));
         break;
       }
+    case LosuTypeDefine_char:
+      {
+        arg_return (vm, obj_newint (vm, sizeof (uint8_t)));
+        break;
+      }
     case LosuTypeDefine_unit:
       {
         if (ovhash (o)->isMap) // iaMap, can't length
@@ -321,6 +331,7 @@ static struct
   { "终止", wasm_libcore_io_exit },
   { "整数", wasm_libcore_type_int },
   { "浮点数", wasm_libcore_type_number },
+  { "字节", wasm_libcore_type_char },
   { "字符", wasm_libcore_type_unicode },
   { "字符串", wasm_libcore_type_string },
   { "字符序列", wasm_libcore_type_string_unilist },

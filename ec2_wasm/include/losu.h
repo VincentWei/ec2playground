@@ -88,14 +88,15 @@ typedef uint64_t vmInstruction, _l_instruction; // 虚拟机指令
 #define LosuTypeDefine_number 1    // 系统浮点数
 #define LosuTypeDefine_int 2       // 整数：新增
 #define LosuTypeDefine_unicode 3   // unicode：新增
-#define LosuTypeDefine_string 4    // 字符串
-#define LosuTypeDefine_function 5  // 函数
-#define LosuTypeDefine_unit 6      // 序列与映射
-#define LosuTypeDefine_space 7     // 空
-#define LosuTypeDefine_bool 8      // 布尔
-#define LosuTypeDefine_coroutine 9 // 携程：冗余
-#define LosuTypeDefine_callinfo 10 // 调用信息：冗余
-#define LosuTypeDefine_unknown 11
+#define LosuTypeDefine_char 4   // 字节：新增
+#define LosuTypeDefine_string 5    // 字符串
+#define LosuTypeDefine_function 6  // 函数
+#define LosuTypeDefine_unit 7      // 序列与映射
+#define LosuTypeDefine_space 8     // 空
+#define LosuTypeDefine_bool 9       // 布尔
+#define LosuTypeDefine_coroutine 10 // 携程：冗余
+#define LosuTypeDefine_callinfo 11 // 调用信息：冗余
+#define LosuTypeDefine_unknown 12
 
 #define LosuErrorCode_Over -1,  /* Catastrophic crash */
 #define LosuErrorCode_Ok 0      /* Success */
@@ -157,9 +158,9 @@ typedef struct LosuVm
   _l_gcint gcMax;   /* All Max */
   _l_gcint gcHook;  /* hookMax */
 
-  int32_t loophook; // 循环计次器
-  int32_t callhook; // 调用计次器
-  int32_t aluhook;  // 算术计次器
+  int64_t loophook; // 循环计次器
+  int64_t callhook; // 调用计次器
+  int64_t aluhook;  // 算术计次器
   int32_t deephook;
   struct __losuvmSTA *stacksta;
 
@@ -175,6 +176,11 @@ typedef struct LosuVm
 #endif
   unsigned char staticbuff[__config_losucore_vm_vmbuff];
   const char *name;
+
+  char **global_symbol;
+  int32_t ng_symbol;
+  char **global_value;
+  int32_t ng_value;
 
 } LosuVm;
 
@@ -195,6 +201,7 @@ typedef struct LosuObj
     _l_int intnum;
     _l_unicode unicode;
     _l_bool boolnum;
+    uint8_t _char;
   } value;
 } LosuObj;
 
@@ -343,6 +350,7 @@ typedef struct _inlineLocalvar
   struct _inlineString *name; /* Name of the local variable */
   int startpc;
   int endpc;
+  _l_bool type;
 } _inlineLocalvar;
 
 LosuExtern const LosuObj _inlineNullObj;
@@ -400,6 +408,9 @@ LosuExtern _l_int obj_toint (LosuVm *vm, LosuObj *obj);
 
 LosuExtern LosuObj obj_newunicode (LosuVm *vm, _l_unicode b);
 LosuExtern _l_unicode obj_tounicode (LosuVm *vm, LosuObj *obj);
+
+LosuExtern LosuObj obj_newchar (LosuVm *vm, uint8_t b);
+LosuExtern uint8_t obj_tochar (LosuVm *vm, LosuObj *obj);
 
 LosuExtern LosuObj obj_newstr (LosuVm *vm, char *str);
 LosuExtern const char *obj_tostr (LosuVm *vm, LosuObj *obj);
