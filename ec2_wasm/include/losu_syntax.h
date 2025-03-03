@@ -252,6 +252,7 @@ enum _lexerToken
   TOKEN_STRING,  // string
   TOKEN_UNICODE, // unicode
   TOKEN_CHAR,    // char
+  TOKEN_BYTES,   // bytes
 
   TOKEN_EOZ,
 };

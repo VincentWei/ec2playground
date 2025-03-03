@@ -694,30 +694,62 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
             vm->aluhook++;
             vm->top = top;
             top--;
-            if (ovtype ((top - 1)) == LosuTypeDefine_string) // string
-              { // get index number
-                // 截取 str 中第 pos 个uincode字符，从0 开始
-                _l_int pos = obj_toint (vm, top);
-                _l_unicode u = 0;
-                const char *str = obj_tostr (vm, top - 1);
-                while (*str && pos > 0)
-                  {
-                    uint8_t len = charset_utf8len (str[0]);
-                    if (len == 0)
-                      break; // 非法 UTF-8 序列
-                    str += len;
-                    pos--;
-                  }
-                uint8_t len = charset_utf8len (str[0]);
-                for (int i = 0; i < len; i++)
-                  {
-                    u = (u << 8) + (uint8_t)str[i];
-                  }
-                ovtype ((top - 1)) = LosuTypeDefine_unicode;
-                ovunicode ((top - 1)) = u;
+            switch (ovtype (top - 1))
+              {
+              case LosuTypeDefine_string:
+                {
+                  // 截取 str 中第 pos 个uincode字符，从0 开始
+                  _l_int pos = obj_toint (vm, top);
+                  _l_unicode u = 0;
+                  const char *str = obj_tostr (vm, top - 1);
+                  while (*str && pos > 0)
+                    {
+                      uint8_t len = charset_utf8len (str[0]);
+                      if (len == 0)
+                        break; // 非法 UTF-8 序列
+                      str += len;
+                      pos--;
+                    }
+                  if (str[0])
+                    {
+                      uint8_t len = charset_utf8len (str[0]);
+                      for (int i = 0; i < len; i++)
+                        {
+                          u = (u << 8) + (uint8_t)str[i];
+                        }
+                      ovtype ((top - 1)) = LosuTypeDefine_unicode;
+                      ovunicode ((top - 1)) = u;
+                    }
+                  else
+                    {
+                      ovtype ((top - 1)) = LosuTypeDefine_null;
+                    }
+                  break;
+                }
+              case LosuTypeDefine_bytes:
+                {
+                  // 截取 bytes 中第 pos 个字节，从0 开始
+                  _l_int pos = obj_toint (vm, top);
+                  uint8_t c = 0;
+                  _inlineString *S = ovIstr (top - 1);
+                  if (pos < S->len)
+                    {
+                      c = S->str[pos];
+                      ovtype ((top - 1)) = LosuTypeDefine_char;
+                      ovchar ((top - 1)) = c;
+                    }
+                  else
+                    {
+                      ovtype ((top - 1)) = LosuTypeDefine_null;
+                    }
+                  break;
+                }
+              default:
+                {
+                  *(top - 1) = *__losuVmcoreGetunit (vm, top - 1);
+                  break;
+                }
               }
-            else
-              *(top - 1) = *__losuVmcoreGetunit (vm, top - 1);
 
             break;
           }
@@ -911,6 +943,23 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
                   s0 = __losu_mem_malloc (vm, strlen (s1) + strlen (s2) + 1);
                   snprintf (s0, strlen (s1) + strlen (s2) + 1, "%s%s", s1, s2);
                   ovIstr (top - 2) = __losu_objString_new (vm, s0);
+                  __losu_mem_free (vm, s0);
+                  break;
+                }
+              case LosuTypeDefine_bytes:
+                {
+                  _inlineString *S1, *S2;
+                  char *s1, *s2, *s0;
+                  S1 = ovIstr ((top - 2));
+                  S2 = ovIstr ((top - 1));
+                  s1 = S1->str;
+                  s2 = S2->str;
+                  s0 = __losu_mem_malloc (vm, S1->len + S2->len + 1);
+                  memset (s0, 0, S1->len + S2->len + 1);
+                  memcpy (s0, s1, S1->len);
+                  memcpy (s0 + S1->len, s2, S2->len);
+                  ovIstr (top - 2) = __losu_objString_newstr (
+                      vm, s0, S1->len + S2->len );
                   __losu_mem_free (vm, s0);
                   break;
                 }
@@ -1809,7 +1858,13 @@ __losu_vmCore_exec (LosuVm *vm, _inlineCallinfo *cinfo, LosuObj *recall)
             top -= cgIns_GetB (i);
             break;
           }
-
+        case EC2INS_PUSHBYTES:
+          {
+            ovtype (top) = LosuTypeDefine_bytes;
+            ovIstr (top) = (_inlineString *)lcstr[cgIns_GetU (i)];
+            top++;
+            break;
+          }
         default:
           {
             vm_error (vm,

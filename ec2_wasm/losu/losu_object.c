@@ -90,11 +90,11 @@ __losu_object_isObjEqual (const LosuObj *t1, const LosuObj *t2)
         return ovfunc (t1) == ovfunc (t2);
         break;
       }
-    case LosuTypeDefine_coroutine:
-      {
-        return ovcoro (t1) == ovcoro (t2);
-        break;
-      }
+    // case LosuTypeDefine_coroutine:
+    //   {
+    //     return ovcoro (t1) == ovcoro (t2);
+    //     break;
+    //   }
     default:
       return 0;
     }
