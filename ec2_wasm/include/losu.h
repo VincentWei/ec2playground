@@ -88,13 +88,13 @@ typedef uint64_t vmInstruction, _l_instruction; // 虚拟机指令
 #define LosuTypeDefine_number 1    // 系统浮点数
 #define LosuTypeDefine_int 2       // 整数：新增
 #define LosuTypeDefine_unicode 3   // unicode：新增
-#define LosuTypeDefine_char 4   // 字节：新增
+#define LosuTypeDefine_char 4      // 字节：新增
 #define LosuTypeDefine_string 5    // 字符串
 #define LosuTypeDefine_function 6  // 函数
 #define LosuTypeDefine_unit 7      // 序列与映射
 #define LosuTypeDefine_space 8     // 空
-#define LosuTypeDefine_bool 9       // 布尔
-#define LosuTypeDefine_coroutine 10 // 携程：冗余
+#define LosuTypeDefine_bool 9      // 布尔
+#define LosuTypeDefine_bytes 10    // 字节串
 #define LosuTypeDefine_callinfo 11 // 调用信息：冗余
 #define LosuTypeDefine_unknown 12
 
@@ -439,6 +439,8 @@ LosuExtern LosuObj obj_newspace (LosuVm *vm);
 LosuExtern LosuObj obj_newbool (LosuVm *vm, _l_bool b);
 LosuExtern _l_bool obj_tobool (LosuVm *vm, LosuObj *obj);
 
+LosuExtern LosuObj obj_newbytes (LosuVm *vm, const char *str, size_t len);
+LosuExtern _inlineString *obj_tobytes (LosuVm *vm, LosuObj *obj);
 LosuExtern int32_t arg_num (LosuVm *vm);
 LosuExtern LosuObj *arg_get (LosuVm *vm, int idx);
 LosuExtern void arg_return (LosuVm *vm, LosuObj val);

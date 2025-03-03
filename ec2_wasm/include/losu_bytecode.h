@@ -218,6 +218,7 @@ typedef enum
   EC2INS_SETLOCAL,  /* iU   0   1 */
   EC2INS_SETGLOBAL, /* iU   0   1 */
   EC2INS_SETUNIT,   /* iBA  V   0 */
+  EC2INS_PUSHBYTES, /* iU   1   0 */
   vmIns_Number,
 
 } vmInsList;

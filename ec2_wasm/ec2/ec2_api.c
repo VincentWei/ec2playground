@@ -401,8 +401,8 @@ LosuExtern const char *
 obj_typeStr (LosuVm *vm, LosuObj *obj)
 {
   const char *typeStr[16] = {
-    "未定义", "浮点数", "整数", "字符", "字节", "字符串", "函数",
-    "unit",   "空",     "布尔", "携程", "调用", "未知",
+    "未定义", "浮点数", "整数", "字符",   "字节", "字符串", "函数",
+    "unit",   "空",     "布尔", "字节串", "调用", "未知",
   };
   int32_t t = ovtype (obj);
   switch (t)
@@ -550,7 +550,8 @@ obj_tochar (LosuVm *vm, LosuObj *obj)
     case LosuTypeDefine_unicode:
       return (uint8_t)ovunicode (obj);
     case LosuTypeDefine_string:
-      return (uint8_t)atoll (ovSstr (obj));
+    case LosuTypeDefine_bytes:
+      return (uint8_t)ovSstr (obj)[0];
     case LosuTypeDefine_bool:
       return (uint8_t)ovbool (obj);
     case LosuTypeDefine_char:
@@ -604,6 +605,7 @@ obj_tostr (LosuVm *vm, LosuObj *obj)
         return (const char *)__losu_objString_new (vm, u)->str;
       }
     case LosuTypeDefine_string:
+    case LosuTypeDefine_bytes:
       {
         return (const char *)ovSstr (obj);
       }
@@ -873,6 +875,28 @@ obj_tobool (LosuVm *vm, LosuObj *obj)
     default:
       return 1;
     }
+}
+
+LosuExtern LosuObj
+obj_newbytes (LosuVm *vm, const char *str, size_t len)
+{
+  return (LosuObj){
+    .type = LosuTypeDefine_bytes,
+    .value.str = __losu_objString_newstr (vm, str, len),
+  };
+}
+LosuExtern _inlineString *
+obj_tobytes (LosuVm *vm, LosuObj *obj)
+{
+  switch (ovtype (obj))
+    {
+    case LosuTypeDefine_bytes:
+      return obj->value.str;
+    default:
+      vm_error (vm, " '%s' 不可被视作字节串类型 ");
+      break;
+    }
+  return NULL;
 }
 
 #endif

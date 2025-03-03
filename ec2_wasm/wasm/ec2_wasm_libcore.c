@@ -56,11 +56,252 @@ wasm_libcore_type_number (LosuVm *vm)
   return 1;
 }
 // 字符
+static int
+is_valid_utf8 (const char *str)
+{
+  while (*str)
+    {
+      uint8_t byte = (uint8_t)*str;
+      if (byte < 0x80)
+        {
+          // 0xxxxxxx
+          str++;
+        }
+      else if ((byte & 0xE0) == 0xC0)
+        {
+          // 110xxxxx 10xxxxxx
+          if ((*(str + 1) & 0xC0) != 0x80)
+            return 0;
+          str += 2;
+        }
+      else if ((byte & 0xF0) == 0xE0)
+        {
+          // 1110xxxx 10xxxxxx 10xxxxxx
+          if ((*(str + 1) & 0xC0) != 0x80 || (*(str + 2) & 0xC0) != 0x80)
+            return 0;
+          str += 3;
+        }
+      else if ((byte & 0xF8) == 0xF0)
+        {
+          // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+          if ((*(str + 1) & 0xC0) != 0x80 || (*(str + 2) & 0xC0) != 0x80
+              || (*(str + 3) & 0xC0) != 0x80)
+            return 0;
+          str += 4;
+        }
+      else
+        {
+          // Invalid UTF-8 sequence
+          return 0;
+        }
+    }
+  return 1;
+}
+static int
+is_valid_utf32_be (const unsigned char *buffer, size_t length)
+{
+  if (length % 4 != 0)
+    {
+      return 0; // Length must be a multiple of 4
+    }
+
+  for (size_t i = 0; i < length; i += 4)
+    {
+      uint32_t codepoint = (buffer[i] << 24) | (buffer[i + 1] << 16)
+                           | (buffer[i + 2] << 8) | buffer[i + 3];
+      if (codepoint > 0x10FFFF || (codepoint >= 0xD800 && codepoint <= 0xDFFF))
+        {
+          return 0; // Invalid Unicode code point
+        }
+    }
+
+  return 1;
+}
+
+static int
+is_valid_utf32_le (const unsigned char *buffer, size_t length)
+{
+  if (length % 4 != 0)
+    {
+      return 0; // Length must be a multiple of 4
+    }
+
+  for (size_t i = 0; i < length; i += 4)
+    {
+      uint32_t codepoint = (buffer[i + 3] << 24) | (buffer[i + 2] << 16)
+                           | (buffer[i + 1] << 8) | buffer[i];
+      if (codepoint > 0x10FFFF || (codepoint >= 0xD800 && codepoint <= 0xDFFF))
+        {
+          return 0; // Invalid Unicode code point
+        }
+    }
+
+  return 1;
+}
+
+int
+is_valid_utf16_be (const unsigned char *buffer, size_t length)
+{
+  if (length % 2 != 0)
+    {
+      return 0; // Length must be a multiple of 2
+    }
+
+  for (size_t i = 0; i < length; i += 2)
+    {
+      uint32_t code_unit = (buffer[i] << 8) | buffer[i + 1];
+      if (code_unit >= 0xD800 && code_unit <= 0xDFFF)
+        {
+          // Surrogate pair detected
+          if (i + 4 > length)
+            {
+              return 0; // Not enough bytes for a surrogate pair
+            }
+          uint16_t next_code_unit = (buffer[i + 2] << 8) | buffer[i + 3];
+          if (next_code_unit < 0xDC00 || next_code_unit > 0xDFFF)
+            {
+              return 0; // Invalid surrogate pair
+            }
+          i += 2; // Skip the second code unit of the surrogate pair
+        }
+      else if (code_unit > 0x10FFFF)
+        {
+          return 0; // Invalid Unicode code point
+        }
+    }
+
+  return 1;
+}
+
+int
+is_valid_utf16_le (const unsigned char *buffer, size_t length)
+{
+  if (length % 2 != 0)
+    {
+      return 0; // Length must be a multiple of 2
+    }
+
+  for (size_t i = 0; i < length; i += 2)
+    {
+      uint32_t code_unit = (buffer[i + 1] << 8) | buffer[i];
+      if (code_unit >= 0xD800 && code_unit <= 0xDFFF)
+        {
+          // Surrogate pair detected
+          if (i + 4 > length)
+            {
+              return 0; // Not enough bytes for a surrogate pair
+            }
+          uint16_t next_code_unit = (buffer[i + 3] << 8) | buffer[i + 2];
+          if (next_code_unit < 0xDC00 || next_code_unit > 0xDFFF)
+            {
+              return 0; // Invalid surrogate pair
+            }
+          i += 2; // Skip the second code unit of the surrogate pair
+        }
+      else if (code_unit > 0x10FFFF)
+        {
+          return 0; // Invalid Unicode code point
+        }
+    }
+
+  return 1;
+}
+
 int32_t
 wasm_libcore_type_unicode (LosuVm *vm)
 {
-  arg_return (vm, obj_newunicode (vm, obj_tounicode (vm, arg_get (vm, 1))));
-  return 1;
+  if (arg_num (vm) == 1)
+    {
+      arg_return (vm,
+                  obj_newunicode (vm, obj_tounicode (vm, arg_get (vm, 1))));
+      return 1;
+    }
+  else
+    {
+      if (arg_get (vm, 1)->type != LosuTypeDefine_bytes)
+        vm_error (vm, " '%s' 类型没有转码", obj_typeStr (vm, arg_get (vm, 1)));
+      const char *e = obj_tostr (vm, arg_get (vm, 2));
+      const unsigned char *s
+          = (const unsigned char *)(obj_tobytes (vm, arg_get (vm, 1))->str);
+      size_t l = obj_tobytes (vm, arg_get (vm, 1))->len;
+      if (strcmp (e, "UTF-8") == 0)
+        {
+          if (is_valid_utf8 ((const char *)s))
+            {
+              uint8_t len = charset_utf8len (s[0]);
+              _l_unicode unicode = 0;
+              for (uint8_t i = 0; i < len; i++)
+                unicode = (unicode << 8) + (uint8_t)s[i];
+              arg_return (vm, obj_newunicode (vm, unicode));
+              return 1;
+            }
+          else
+            {
+              return 0;
+            }
+        }
+      if (strcmp (e, "UTF32-BE") == 0)
+        {
+          if (is_valid_utf32_be (s, l))
+            {
+              _l_unicode uni = 0;
+              for (uint8_t i = 0; i < 4; i++)
+                uni = (uni << 8) + (uint8_t)s[i];
+              arg_return (vm, obj_newunicode (vm, uni));
+              return 1;
+            }
+          else
+            {
+              return 0;
+            }
+        }
+      if (strcmp (e, "UTF32-LE") == 0)
+        {
+          if (is_valid_utf32_le (s, l))
+            {
+              _l_unicode uni = 0;
+              for (uint8_t i = 0; i < 4; i++)
+                uni = (uni << 8) + (uint8_t)s[i];
+              arg_return (vm, obj_newunicode (vm, uni));
+              return 1;
+            }
+          else
+            {
+              return 0;
+            }
+        }
+      if (strcmp (e, "UTF16-BE") == 0)
+        {
+          if (is_valid_utf16_be (s, l))
+            {
+              _l_unicode uni = 0;
+              for (uint8_t i = 0; i < 2; i++)
+                uni = (uni << 8) + (uint8_t)s[i];
+              arg_return (vm, obj_newunicode (vm, uni));
+              return 1;
+            }
+          else
+            {
+              return 0;
+            }
+        }
+      if (strcmp (e, "UTF16-LE") == 0)
+        {
+          if (is_valid_utf16_le (s, l))
+            {
+              _l_unicode uni = 0;
+              for (uint8_t i = 0; i < 2; i++)
+                uni = (uni << 8) + (uint8_t)s[i];
+              arg_return (vm, obj_newunicode (vm, uni));
+              return 1;
+            }
+          else
+            {
+              return 0;
+            }
+        }
+    }
+  return 0;
 }
 int32_t
 wasm_libcore_type_char (LosuVm *vm)
@@ -98,21 +339,38 @@ wasm_libcore_type_string_unilist (LosuVm *vm)
 int32_t
 wasm_libcore_type_string_strtok (LosuVm *vm)
 {
-  char tmp[5] = { 0 };
-  LosuObj newlist = obj_newunit (vm, 0);
-  const char *str = obj_tostr (vm, arg_get (vm, 1));
-  int32_t n = 0;
-  while (str[0] != '\0')
+  if (arg_get (vm, 1)->type == LosuTypeDefine_string)
     {
-      int32_t len = charset_utf8len ((uint8_t)str[0]);
-      _l_unicode u = 0;
-      memset (tmp, 0, 5);
-      memcpy (tmp, str, len);
-      obj_setunitbynum (vm, newlist, n++, obj_newstr (vm, tmp));
-      str += len;
+
+      char tmp[5] = { 0 };
+      LosuObj newlist = obj_newunit (vm, 0);
+      const char *str = obj_tostr (vm, arg_get (vm, 1));
+      int32_t n = 0;
+      while (str[0] != '\0')
+        {
+          int32_t len = charset_utf8len ((uint8_t)str[0]);
+          _l_unicode u = 0;
+          memset (tmp, 0, 5);
+          memcpy (tmp, str, len);
+          obj_setunitbynum (vm, newlist, n++, obj_newstr (vm, tmp));
+          str += len;
+        }
+      arg_return (vm, newlist);
+      return 1;
     }
-  arg_return (vm, newlist);
-  return 1;
+  if (arg_get (vm, 1)->type == LosuTypeDefine_bytes)
+    {
+      LosuObj newlist = obj_newunit (vm, 0);
+      const char *str = obj_tobytes (vm, arg_get (vm, 1))->str;
+      size_t len = obj_tobytes (vm, arg_get (vm, 1))->len;
+      for (size_t i = 0; i < len; i++)
+        {
+          obj_setunitbynum (vm, newlist, i, obj_newchar (vm, str[i]));
+        }
+      arg_return (vm, newlist);
+      return 1;
+    }
+  return 0;
 }
 // 映射：键序列
 int32_t
@@ -217,6 +475,11 @@ wasm_libcore_type_any_len (LosuVm *vm)
             len++;
           }
         arg_return (vm, obj_newint (vm, len));
+        break;
+      }
+    case LosuTypeDefine_bytes:
+      {
+        arg_return (vm, obj_newint (vm, obj_tobytes (vm, o)->len));
         break;
       }
     case LosuTypeDefine_char:

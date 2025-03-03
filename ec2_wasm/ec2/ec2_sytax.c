@@ -657,6 +657,7 @@ __lexReadstring (_syntaxLex *lex, uint8_t del, _syntaxTkvalue *tkv)
   return 0;
 }
 
+#include <emscripten.h>
 static int16_t
 __losuSyntaxLexNext (_syntaxLex *lex, _syntaxTkvalue *tkv)
 {
@@ -918,6 +919,131 @@ lex_start:
                 return TOKEN_INT;
               }
             return TOKEN_NUMBER;
+          }
+
+        case '@':
+          {
+            // printf ("@\n");
+            next (lex);
+            char *tmp = (char *)malloc (1024);
+            size_t l = 0;
+            memset ((void *)tmp, 0, 1024);
+            switch (lex->current)
+              {
+              case 'a':
+                {
+                  next (lex);
+                  while (l < 1024)
+                    {
+                      if (lex->current == '\n' || lex->current == ' '
+                          || lex->current == EOZ)
+                        break;
+                      else if (lex->current == '\\')
+                        {
+                          // \xAB[两位16进制]
+                          next (lex); // lex->current == 'x'
+                          next (lex); // lex->current == 'A'
+                          uint8_t c = 0;
+                          if (!isxdigit (lex->current))
+                            __losuSyntaxError (lex, "错误的转义字符");
+                          c = hex2int (lex->current);
+                          next (lex); // lex->current == 'B'
+                          if (!isxdigit (lex->current))
+                            __losuSyntaxError (lex, "错误的转义字符");
+                          c = (c << 4) | hex2int (lex->current);
+                          tmp[l++] = c;
+                        }
+                      else
+                        {
+                          tmp[l++] = lex->current;
+                        }
+                      next (lex);
+                    }
+                  tkv->s = __losu_objString_newstr (lex->vm, tmp, l);
+                  break;
+                }
+              case 'b':
+                {
+                  next (lex);
+                  while (l < 1024)
+                    {
+                      uint8_t c = 0;
+                      for (int i = 0; i < 8; i++)
+                        {
+                          if (lex->current == '\n' || lex->current == ' '
+                              || lex->current == EOZ)
+                            break;
+                          else if (lex->current == '\'')
+                            {
+                              next (lex);
+                              i--;
+                            }
+                          else
+                            {
+                              if (lex->current != '0' && lex->current != '1')
+                                __losuSyntaxError (lex, "错误的字节串格式");
+                              c = c << 1 | (uint8_t)(lex->current - '0');
+                              next (lex);
+                            }
+                        }
+                      tmp[l++] = c;
+                      if (lex->current == '\n' || lex->current == ' '
+                          || lex->current == EOZ)
+                        break;
+                    }
+                  tkv->s = __losu_objString_newstr (lex->vm, tmp, l);
+                  break;
+                }
+              case 'x':
+                {
+                  next (lex);
+                  while (l < 1024)
+                    {
+                      if (lex->current == '\n' || lex->current == ' '
+                          || lex->current == EOZ)
+                        break;
+                      // AB 两位16进制
+                      uint8_t c = 0;
+                      if (!isxdigit (lex->current))
+                        __losuSyntaxError (lex, "错误的字节串格式");
+                      c = hex2int (lex->current);
+                      next (lex);
+                      if (!isxdigit (lex->current))
+                        __losuSyntaxError (lex, "错误的字节串格式");
+                      c = (c << 4) | hex2int (lex->current);
+                      tmp[l++] = c;
+                      next (lex);
+                    }
+                  tkv->s = __losu_objString_newstr (lex->vm, tmp, l);
+                  break;
+                }
+              case 's':
+                {
+                  next (lex);
+                  while (l < 1024)
+                    {
+                      if (lex->current == '\n' || lex->current == ' '
+                          || lex->current == EOZ)
+                        break;
+                      else
+                        tmp[l++] = lex->current;
+                      next (lex);
+                    }
+                  char *s = malloc (2048);
+                  sprintf (s, "atob('%s')", tmp);
+                  char *s2 = emscripten_run_script_string (s);
+                  // printf("@%p\n",s2);
+                  tkv->s = __losu_objString_newstr (lex->vm, s2, strlen (s2));
+                  free (s);
+                  break;
+                }
+              default:
+                __losuSyntaxError (lex, "错误的字节串格式");
+                break;
+              }
+            free (tmp);
+            return TOKEN_BYTES;
+            break;
           }
 
         default:
@@ -2264,6 +2390,14 @@ __losuSyntaxParSimpleExp (_syntaxLex *lex, _syntaxExp *v)
         __losuSyntaxParNext (lex);
         break;
       }
+    case TOKEN_BYTES:
+      {
+        __losuSyntaxCgenCodearg1 (
+            lex->fs, EC2INS_PUSHBYTES,
+            __losuSyntaxParStrconst (lex->fs, lex->tk.info.s));
+        __losuSyntaxParNext (lex);
+        break;
+      }
 
     case TOKEN_NAME:
       {
@@ -2577,6 +2711,7 @@ static const struct
   { iU, 0, 1 },  /* EC2INS_SETLOCAL */
   { iU, 0, 1 },  /* EC2INS_SETGLOBAL */
   { iBA, V, 0 }, /* EC2INS_SETUNIT */
+  { iU, 1, 0 },  /* EC2INS_PUSHBYTES */
 
 };
 

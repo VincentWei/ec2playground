@@ -134,9 +134,9 @@ __losu_object_isObjEqual (const LosuObj *t1, const LosuObj *t2)
             return 1;
             break;
           }
-        case LosuTypeDefine_coroutine:
+        case LosuTypeDefine_bytes:
           {
-            return ovcoro (t1) == ovcoro (t2);
+            return ovIstr (t1) == ovIstr (t2);
             break;
           }
         case LosuTypeDefine_int:
@@ -176,6 +176,7 @@ __losu_object_isObjLess (const LosuObj *t1, const LosuObj *t2)
     case LosuTypeDefine_unicode:
       return ovunicode (t1) < ovunicode (t2);
     case LosuTypeDefine_string:
+    case LosuTypeDefine_bytes:
       {
         const void *l = (const void *)(ovSstr (t1));
         const void *r = (const void *)(ovSstr (t2));

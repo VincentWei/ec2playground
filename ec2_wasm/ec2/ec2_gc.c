@@ -46,9 +46,9 @@
 #ifndef DEFINE_SOURCE_LOSU_GC_C
 #define DEFINE_SOURCE_LOSU_GC_C
 
-#include "losu_gc.h"
 #include "losu.h"
 #include "losu_errmsg.h"
+#include "losu_gc.h"
 #include "losu_malloc.h"
 #include "losu_object.h"
 #include <stdio.h>
@@ -152,6 +152,7 @@ __losuGcmarkObj (_inlineGc *gc, LosuObj *o)
   switch (ovtype ((o)))
     {
     case LosuTypeDefine_string:
+    case LosuTypeDefine_bytes:
       /*     case LosuTypeDefine_byte: */
       {
         ovIstr (o)->marked = 1;
@@ -171,11 +172,11 @@ __losuGcmarkObj (_inlineGc *gc, LosuObj *o)
           }
         break;
       }
-    case LosuTypeDefine_coroutine:
-      {
-        ovcoro (o)->marked = 1;
-        break;
-      }
+    // case LosuTypeDefine_bytes:
+    //   {
+    //     ovcoro (o)->marked = 1;
+    //     break;
+    //   }
     case LosuTypeDefine_callinfo:
       {
         if (ovcall (o)->isMalloc)
@@ -397,4 +398,3 @@ __losuGcAdjbuff (LosuVm *vm)
 #endif /* DEFINE_SOURCE_LOSU_GC_C_GCCOLLECT */
 
 #endif
-
